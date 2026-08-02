@@ -462,7 +462,7 @@ export async function analyzeWordAI(params: {
     return localAnalyzeWordResult(params, model, usedFallback);
   }
 
-  const cacheKey = cacheKeyFor(params.wordText, params.root || '');
+  const cacheKey = cacheKeyFor(params.wordText);
   const cached = getCachedWordAnalysis(cacheKey);
   if (cached) {
     return {
@@ -550,7 +550,7 @@ export async function analyzeWordAI(params: {
 
     setCachedWordAnalysis(cacheKey, {
       word: params.wordText,
-      root: params.root || '',
+      root: wordAnalysis.root,
       analysis: wordAnalysis,
       model: usedModel,
     });
