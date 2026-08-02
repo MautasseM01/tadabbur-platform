@@ -87,5 +87,5 @@ export const MOCK_VIDEOS: VideoExplanation[] = [
 
 export const AUDIO_YOUTUBE_IDS: Record<number, string> = {
   21: "0h7Cuotfbjw", // Surah Al-Anbiya
-  1: "b0V-x7e0m18"   // Surah Al-Fatiha placeholder
+  1: "MDVTdJRGKOo"   // Surah Al-Fatiha (عبدالرحمن العوسي)
 };

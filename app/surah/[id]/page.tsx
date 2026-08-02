@@ -1,5 +1,5 @@
 import SurahViewer from '@/components/surah/SurahViewer';
-import { AUDIO_YOUTUBE_IDS, Ayah } from '@/lib/mock-data';
+import { AUDIO_YOUTUBE_IDS, MOCK_VIDEOS, Ayah, VideoExplanation } from '@/lib/mock-data';
 import { getDb } from '@/lib/db';
 import {
   getSurahSyncsFirestore,
@@ -147,20 +147,33 @@ export default async function SurahPage({
     return <div className="text-center p-20 text-2xl font-amiri">سورة غير صالحة.</div>;
   }
 
-  // Fetch real surah data from API
+// Fetch real surah data from API
   let surahData = null;
   try {
-    const res = await fetch(`https://api.alquran.cloud/v1/surah/${surahId}/ar.quran-simple`, { next: { revalidate: 3600 } });
-    const json = await res.json();
+    const res = await fetch(`https://api.alquran.cloud/v1/surah/${surahId}/ar.quran-simple`, {
+      next: { revalidate: 3600 },
+      headers: { Accept: 'application/json' },
+    });
+    // Decode as UTF-8 explicitly to avoid mojibake on some serverless runtimes
+    const buffer = await res.arrayBuffer();
+    const text = new TextDecoder('utf-8').decode(buffer);
+    const json = JSON.parse(text);
     surahData = json.data;
   } catch (error) {
     return <div className="text-center p-20 text-xl font-sans">حدث خطأ أثناء جلب السورة.</div>;
   }
 
-  // Fetch Firestore syncs, videos & audio IDs
+  // Merge sources so nothing disappears in production:
+  // - Surah audio/videos come from Firestore when available
+  // - Local JSON DB + mock lists are ALWAYS unioned so admin-added data survives.
+  const db = getDb();
+
   let savedSyncs: Ayah[] = [];
-  let allVideos = [];
+  let allVideos: VideoExplanation[] = [];
   let audioId = AUDIO_YOUTUBE_IDS[surahId] || "";
+
+  const union = (a: VideoExplanation[], b: VideoExplanation[]) =>
+    Array.from(new Map([...a, ...b].map(v => [v.id, v])).values());
 
   try {
     const [firestoreSyncs, firestoreVideos, firestoreAudioId] = await Promise.all([
@@ -168,16 +181,19 @@ export default async function SurahPage({
       getVideosFirestore(),
       getSurahAudioIdFirestore(surahId)
     ]);
-    savedSyncs = firestoreSyncs;
-    allVideos = firestoreVideos;
-    if (firestoreAudioId) audioId = firestoreAudioId;
+    savedSyncs = firestoreSyncs && firestoreSyncs.length > 0 ? firestoreSyncs : (db.surahSyncs[surahId] || []);
+    allVideos = firestoreVideos && firestoreVideos.length > 0
+      ? union(db.videos, firestoreVideos)
+      : union([], [...MOCK_VIDEOS, ...db.videos]);
+    const dbAudio = (db.surahAudioIds && db.surahAudioIds[surahId] !== undefined)
+      ? db.surahAudioIds[surahId] : "";
+    audioId = firestoreAudioId || dbAudio || AUDIO_YOUTUBE_IDS[surahId] || "";
   } catch (err) {
     console.warn('Fallback to local DB:', err);
-    const db = getDb();
     savedSyncs = db.surahSyncs[surahId] || [];
-    allVideos = [...db.videos];
-    audioId = (db.surahAudioIds && db.surahAudioIds[surahId] !== undefined) 
-      ? db.surahAudioIds[surahId] 
+    allVideos = [...MOCK_VIDEOS, ...db.videos];
+    audioId = (db.surahAudioIds && db.surahAudioIds[surahId] !== undefined)
+      ? db.surahAudioIds[surahId]
       : (AUDIO_YOUTUBE_IDS[surahId] || "");
   }
 

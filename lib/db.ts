@@ -1,4 +1,5 @@
 import { Ayah } from './mock-data';
+import { TRACKED_DB } from './trackedDb';
 
 export interface VideoExplanation {
   id: string;
@@ -16,15 +17,9 @@ export interface AppDatabase {
   surahAudioIds: Record<number, string>; // SurahID -> YouTube Video ID
 }
 
-const defaultData: AppDatabase = {
-  videos: [],
-  surahSyncs: {},
-  surahAudioIds: {}
-};
-
 export function getDb(): AppDatabase {
   if (typeof window !== 'undefined') {
-    return defaultData;
+    return TRACKED_DB;
   }
   try {
     const fs = eval("require")('fs');
@@ -35,12 +30,19 @@ export function getDb(): AppDatabase {
       fs.mkdirSync(dir, { recursive: true });
     }
     if (!fs.existsSync(DB_PATH)) {
-      fs.writeFileSync(DB_PATH, JSON.stringify(defaultData, null, 2), 'utf-8');
+      fs.writeFileSync(DB_PATH, JSON.stringify(TRACKED_DB, null, 2), 'utf-8');
+      return { ...TRACKED_DB };
     }
-    const raw = fs.readFileSync(DB_PATH, 'utf-8');
-    return JSON.parse(raw) as AppDatabase;
+    const raw = JSON.parse(fs.readFileSync(DB_PATH, 'utf-8')) as AppDatabase;
+    // Merge embedded data as a base so nothing is lost even if the runtime
+    // file is stale or partially missing (e.g. serverless deployments).
+    return {
+      videos: Array.from(new Map([...TRACKED_DB.videos, ...(raw.videos || [])].map(v => [v.id, v])).values()),
+      surahAudioIds: { ...TRACKED_DB.surahAudioIds, ...(raw.surahAudioIds || {}) },
+      surahSyncs: { ...TRACKED_DB.surahSyncs, ...(raw.surahSyncs || {}) },
+    };
   } catch {
-    return defaultData;
+    return { ...TRACKED_DB };
   }
 }
 
