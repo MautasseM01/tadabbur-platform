@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { Word, Ayah } from '@/lib/mock-data';
 import { getWordLexiconEntry } from '@/lib/arabicLexicon';
 import { getSelectedAIModel } from '@/lib/aiClient';
+import { AIWordAnalysis } from '@/lib/ai';
 import { syncDashboardProgressToFirestore } from '@/lib/firebaseSync';
 import { 
   X, 
@@ -43,6 +44,7 @@ export default function WordRootModal({
 }: WordRootModalProps) {
   const [aiAnalysis, setAiAnalysis] = useState<string | null>(null);
   const [aiSource, setAiSource] = useState<string>('');
+  const [aiWordAnalysis, setAiWordAnalysis] = useState<AIWordAnalysis | null>(null);
   const [loadingAi, setLoadingAi] = useState(false);
   const [showOccurrences, setShowOccurrences] = useState(false);
 
@@ -51,16 +53,24 @@ export default function WordRootModal({
     return getWordLexiconEntry(word.text, word.root);
   }, [word]);
 
-  // Calculate occurrences of words sharing the exact same root in this Surah
+  // The linguistic AI agent is the authoritative source once it responds
+  const displayRoot = aiWordAnalysis?.root || lexiconEntry?.root || '---';
+  const displayRootLetters = aiWordAnalysis?.rootLetters || lexiconEntry?.rootLetters || [];
+  const displayReferences = aiWordAnalysis?.lexiconReferences && aiWordAnalysis.lexiconReferences.length > 0
+    ? aiWordAnalysis.lexiconReferences
+    : (lexiconEntry?.lexiconReferences || []);
+  const displayDerivatives = aiWordAnalysis?.derivatives || [];
+
+  // Calculate occurrences of words sharing the same root in this Surah
   const rootOccurrences = useMemo(() => {
     if (!word || !lexiconEntry || !surahAyahs || surahAyahs.length === 0) return [];
-    const targetRoot = lexiconEntry.root.trim();
+    const targetRoot = displayRoot.trim();
     const matches: { ayahNumber: number; wordText: string; ayahText: string }[] = [];
 
     surahAyahs.forEach((ayah) => {
       ayah.words.forEach((w) => {
         const wRoot = w.root ? w.root.trim() : '';
-        if (wRoot === targetRoot || (targetRoot !== '---' && w.text.includes(word.text.slice(0, 3)))) {
+        if (wRoot === targetRoot) {
           matches.push({
             ayahNumber: ayah.ayahNumber,
             wordText: w.text,
@@ -71,7 +81,7 @@ export default function WordRootModal({
     });
 
     return matches;
-  }, [word, lexiconEntry, surahAyahs]);
+  }, [word, lexiconEntry, displayRoot, surahAyahs]);
 
   const handleAskAI = async () => {
     if (!word || !lexiconEntry) return;
@@ -93,7 +103,8 @@ export default function WordRootModal({
       });
       const data = await res.json();
       if (data.text) {
-        setAiAnalysis(data.text);
+        setAiWordAnalysis(data.wordAnalysis || null);
+        setAiAnalysis(data.wordAnalysis?.analysis || data.text);
         setAiSource(data.model || '');
         try {
           const saved = localStorage.getItem('tadabbur_progress_data_v1');
@@ -222,13 +233,13 @@ export default function WordRootModal({
               {/* Root Letters Breakdown */}
               <div className="flex flex-wrap items-center justify-center gap-2 pt-2 border-t border-amber-200/60">
                 <span className="text-xs font-bold font-sans text-natural-500">
-                  الجذر اللغوي الثلاثي:
+                  الجذر اللغوي:
                 </span>
                 <span className="px-3.5 py-1.5 rounded-xl bg-white text-amber-900 border border-amber-300 font-amiri text-xl font-bold shadow-xs">
-                  {lexiconEntry.root}
+                  {displayRoot}
                 </span>
                 <div className="flex items-center gap-1.5">
-                  {lexiconEntry.rootLetters.map((char, index) => (
+                  {displayRootLetters.map((char, index) => (
                     <span
                       key={index}
                       className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-800 border border-amber-300/60 font-amiri text-lg font-bold flex items-center justify-center"
@@ -237,6 +248,12 @@ export default function WordRootModal({
                     </span>
                   ))}
                 </div>
+                {aiWordAnalysis && (
+                  <span className="w-full text-[10px] font-sans font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full inline-flex items-center justify-center gap-1">
+                    <CheckCircle2 className="w-3 h-3" />
+                    الجذر مُحقَّق بواسطة الوكيل اللغوي (بحث حقيقي)
+                  </span>
+                )}
               </div>
             </div>
 
@@ -244,15 +261,26 @@ export default function WordRootModal({
             <div className={`p-5 rounded-2xl border ${t.defCard}`}>
               <div className="flex items-center gap-2 mb-2 text-amber-700 font-sans font-bold text-sm">
                 <Info className="w-4 h-4" />
-                <span>التعريف اللغوي المبسط</span>
+                <span>التعريف اللغوي</span>
+                {aiWordAnalysis && (
+                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full mr-auto">
+                    بيانات حقيقية من الوكيل اللغوي
+                  </span>
+                )}
               </div>
               <p className="text-sm sm:text-base font-sans text-natural-800 leading-relaxed">
-                {lexiconEntry.simpleDefinition}
+                {aiWordAnalysis?.simpleDefinition || lexiconEntry.simpleDefinition}
               </p>
-              {lexiconEntry.quranicUsageNote && (
+              {aiWordAnalysis?.etymology ? (
+                <div className="mt-3 pt-3 border-t border-natural-200 text-xs sm:text-sm font-sans text-natural-600 leading-relaxed">
+                  <span className="font-bold text-natural-800">أصل الاشتقاق: </span>
+                  {aiWordAnalysis.etymology}
+                </div>
+              ) : null}
+              {(aiWordAnalysis?.quranicUsageNote || lexiconEntry.quranicUsageNote) && (
                 <div className="mt-3 pt-3 border-t border-natural-200 text-xs sm:text-sm font-sans text-natural-600 leading-relaxed">
                   <span className="font-bold text-natural-800">في الاستعمال القرآني: </span>
-                  {lexiconEntry.quranicUsageNote}
+                  {aiWordAnalysis?.quranicUsageNote || lexiconEntry.quranicUsageNote}
                 </div>
               )}
             </div>
@@ -265,12 +293,12 @@ export default function WordRootModal({
                   <span>مراجع من المعاجم اللغوية المعتمدة</span>
                 </div>
                 <span className="text-xs text-natural-500 font-sans">
-                  {lexiconEntry.lexiconReferences.length} معجم
+                  {displayReferences.length} معجم
                 </span>
               </div>
 
               <div className="grid grid-cols-1 gap-3">
-                {lexiconEntry.lexiconReferences.map((ref, idx) => (
+                {displayReferences.map((ref, idx) => (
                   <div
                     key={idx}
                     className={`p-4 rounded-2xl border transition-all ${t.lexiconCard}`}
@@ -291,6 +319,26 @@ export default function WordRootModal({
               </div>
             </div>
 
+            {/* 3b. Derivatives from the same root (AI agent) */}
+            {displayDerivatives.length > 0 && (
+              <div>
+                <div className="flex items-center gap-2 mb-3 font-sans font-bold text-sm text-natural-900">
+                  <Layers className="w-4 h-4 text-amber-600" />
+                  <span>مشتقات من الجذر ({displayRoot}) في القرآن</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {displayDerivatives.map((d, idx) => (
+                    <span
+                      key={idx}
+                      className="px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 font-amiri text-sm font-bold"
+                    >
+                      {d}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* 4. Occurrences in Current Surah */}
             <div>
               <button
@@ -299,7 +347,7 @@ export default function WordRootModal({
                 className={`w-full flex items-center justify-between p-3.5 rounded-2xl border transition text-xs font-bold font-sans cursor-pointer ${t.buttonSecondary}`}
               >
                 <span>
-                  مواضع الجذر ({lexiconEntry.root}) في {surahName} ({rootOccurrences.length} آيات)
+                  مواضع الجذر ({displayRoot}) في {surahName} ({rootOccurrences.length} آيات)
                 </span>
                 <span className="text-amber-600 font-sans">
                   {showOccurrences ? 'إخفاء ▲' : 'عرض المواضع ▼'}
@@ -353,7 +401,7 @@ export default function WordRootModal({
                 ) : (
                   <>
                     <Sparkles className="w-4 h-4 text-amber-400" />
-                    <span>طلب التحليل البياني والدلالي العميق</span>
+                    <span>تحليل الوكيل اللغوي (تأصيل الجذر + بحث في المصادر)</span>
                   </>
                 )}
               </button>

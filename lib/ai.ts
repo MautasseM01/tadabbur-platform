@@ -1,5 +1,6 @@
 import { GoogleGenAI } from '@google/genai';
 import { getWordLexiconEntry, stripArabicDiacritics, WordLexiconEntry } from './arabicLexicon';
+import { searchWeb } from './webSearch';
 
 export type AIProviderId = 'local' | 'gemini' | 'groq' | 'openrouter';
 
@@ -23,6 +24,25 @@ export interface AIResult {
   provider: AIProviderId;
   model: string;
   usedFallback: boolean;
+  wordAnalysis?: AIWordAnalysis;
+}
+
+export interface LexiconReferenceAI {
+  source: string;
+  author: string;
+  quote: string;
+  volume?: string;
+}
+
+export interface AIWordAnalysis {
+  root: string;
+  rootLetters: string[];
+  simpleDefinition: string;
+  quranicUsageNote: string;
+  etymology: string;
+  derivatives: string[];
+  lexiconReferences: LexiconReferenceAI[];
+  analysis: string;
 }
 
 export const AI_MODEL_STORAGE_KEY = 'tadabbur_ai_model_v1';
@@ -111,8 +131,43 @@ function resolveProvider(providerId?: string): { provider: AIProviderOption; use
   return { provider: getProviderById('local')!, usedFallback: true };
 }
 
-const WORD_PROMPT = (wordText: string, root: string, context: string) => `
-أنت عالم لغوي متخصص في القرآن الكريم. يرجى تقديم تحليل مختصر (3-5 جمل) للكلمة القرآنية "${wordText}" والتي جذرها "${root}" في سياق الآية "${context}". اشرح المعنى الدقيق واللمسة البيانية لاستخدام هذه الكلمة بحسب ما ورد من المفسرين المعاصرين المهتمين بالبيان القرآني.
+const WORD_PROMPT = (
+  wordText: string,
+  rootGuess: string,
+  context: string,
+  searchResults: { title: string; snippet: string; url: string }[]
+) => `
+أنت «الوكيل اللغوي» — عالم لغويات متخصص في أصول الكلمات (علم الاشتقاق والجذور العربية) وعلوم القرآن الكريم، موثوق ودقيق ومتحرر من الحفظ الخاطئ.
+
+الكلمة القرآنية المطلوب تحليلها: «${wordText}»
+سياقها في الآية الكريمة: «${context}»
+
+نفّذ المهمة بالترتيب التالي:
+1. استخرج الجذر الحقيقي للكلمة (ثلاثي أو رباعي عادةً) بمنهجية علماء الاشتقاق، وتعامَل بكفاءة مع الجذور المعتلة والناقصة والثنائية الظاهرة (مثل: الدِّينِ ← دين، مالك ← ملك، الصراط ← صرط، المستقيم ← قوم). لا تثق بأي جذر تقديري وارد إليك، بل حقق منه بنفسك.
+2. حدد حروف الجذر بحسب ترتيبها الصحيح.
+3. بيّن المعنى اللغوي المحوري للجذر.
+4. اشرح أصل الاشتقاق ودلالة صيغة الكلمة (وزنها).
+5. اذكر مشتقات أخرى من الجذر نفسه وردت في القرآن الكريم.
+6. اذكر 2-4 شواهد من المعاجم العربية المعتمدة (لسان العرب، مقاييس اللغة، مفردات ألفاظ القرآن للراغب الأصفهاني، المعجم الوسيط، الصحاح...). انقل الشاهد نصًا أو لخّصه بأمانة دون تحريف، واكتب اسم المعجم ومؤلفه. إن لم تتيقن من نص معجمي بعينه فلا تخترعه أبدًا — ما تعرفه بأمانة خير من نص مُلفّق.
+7. اكتب تحليلًا بيانيًا وجيزًا (3-5 جمل) لدلالة الكلمة في موقعها من الآية.
+
+نتائج بحث واقعي من الإنترنت أُجري للتو لتأصيل الجذر (قد تكون دقيقة أو لا، فراجعها وتثبت منها قبل الاعتماد عليها):
+${searchResults.length > 0
+  ? searchResults.map((r, i) => `${i + 1}. «${r.title}» — ${r.snippet.slice(0, 300)} (${r.url})`).join('\n')
+  : 'لم تُرجع نتائج لهذا البحث.'}
+
+أجب حصريًا بترميز JSON واحد صالح (دون أي نص آخر قبله أو بعده، دون إشارات ترميز markdown) بالبنية التالية حرفيًا:
+{
+  "root": "الجذر الحقيقي",
+  "rootLetters": ["حرف1", "حرف2", "حرف3"],
+  "simpleDefinition": "تعريف لغوي مبسط للجذر",
+  "quranicUsageNote": "دلالة الكلمة في الاستعمال القرآني",
+  "etymology": "أصل الاشتقاق وصيغة الكلمة",
+  "derivatives": ["مشتق1", "مشتق2"],
+  "lexiconReferences": [{ "source": "اسم المعجم", "author": "المؤلف", "quote": "النص الشاهد" }],
+  "analysis": "التحليل البياني للكلمة في الآية"
+}
+القاعدة الذهبية: بيانات حقيقية موثوقة فقط — لا كذب ولا اختلاق ولا تعميم وهمي.
 `;
 
 const COMPARE_PROMPT = (word1: { text: string; root: string }, word2: { text: string; root: string }, contextAyah: string) => `
@@ -185,6 +240,98 @@ function localWordComparison(
   ].join('\n');
 }
 
+/**
+ * Extracts a clean triliteral/quadriliteral Arabic root from arbitrary text.
+ */
+export function sanitizeRoot(value: string): string {
+  if (!value) return '';
+  const letters = stripArabicDiacritics(value).replace(/[^\u0621-\u064A]/g, '');
+  return letters.length >= 2 && letters.length <= 4 ? letters : '';
+}
+
+/**
+ * Parses the linguistic agent's JSON reply into a validated AIWordAnalysis.
+ * Throws on invalid output so callers can fall back to the local analyzer.
+ */
+function parseWordAnalysis(raw: string): AIWordAnalysis {
+  let jsonText = raw.trim();
+  const fence = jsonText.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (fence) jsonText = fence[1].trim();
+
+  const start = jsonText.indexOf('{');
+  const end = jsonText.lastIndexOf('}');
+  if (start === -1 || end <= start) {
+    throw new Error('Linguistic agent did not return a JSON object.');
+  }
+
+  const parsed = JSON.parse(jsonText.slice(start, end + 1));
+
+  const root = sanitizeRoot(typeof parsed.root === 'string' ? parsed.root : '');
+  if (!root) throw new Error('Linguistic agent returned an invalid root.');
+
+  const asString = (v: unknown): string => (typeof v === 'string' ? v.trim() : '');
+
+  const rootLetters = Array.isArray(parsed.rootLetters)
+    ? parsed.rootLetters.map((s: unknown) => asString(s)).filter((s: string) => /^[\u0621-\u064A]$/.test(s))
+    : root.split('');
+
+  const derivatives = Array.isArray(parsed.derivatives)
+    ? parsed.derivatives.map(asString).filter(Boolean).slice(0, 10)
+    : [];
+
+  const refs = Array.isArray(parsed.lexiconReferences)
+    ? parsed.lexiconReferences
+        .map((r: unknown) => {
+          const obj = (r || {}) as Record<string, unknown>;
+          return {
+            source: asString(obj.source),
+            author: asString(obj.author),
+            quote: asString(obj.quote),
+            volume: asString(obj.volume) || undefined,
+          };
+        })
+        .filter((r: { source: string; author: string; quote: string; volume?: string }) => r.source || r.quote)
+        .slice(0, 5)
+    : [];
+
+  return {
+    root,
+    rootLetters: rootLetters.length > 0 ? rootLetters : root.split(''),
+    simpleDefinition: asString(parsed.simpleDefinition),
+    quranicUsageNote: asString(parsed.quranicUsageNote),
+    etymology: asString(parsed.etymology),
+    derivatives,
+    lexiconReferences: refs,
+    analysis: asString(parsed.analysis),
+  };
+}
+
+function formatWordAnalysisText(a: AIWordAnalysis): string {
+  const lines = [
+    `تحليل الوكيل اللغوي للكلمة الكريمة`,
+    ``,
+    `الجذر اللغوي: ( ${a.root} ) — الحروف: ${a.rootLetters.join(' - ')}`,
+    ``,
+    `المعنى المحوري: ${a.simpleDefinition}`,
+    ...(a.etymology ? [`أصل الاشتقاق: ${a.etymology}`] : []),
+    ...(a.quranicUsageNote ? [`دلالتها القرآنية: ${a.quranicUsageNote}`] : []),
+    ...(a.derivatives.length > 0
+      ? [`مشتقات من الجذر في القرآن: ${a.derivatives.join('، ')}`]
+      : []),
+    ...(a.lexiconReferences.length > 0
+      ? [
+          ``,
+          `شواهد المعاجم المعتمدة:`,
+          ...a.lexiconReferences.map(
+            (r) => `• ${r.source} (${r.author}${r.volume ? `، ${r.volume}` : ''}): ${r.quote}`
+          ),
+        ]
+      : []),
+    ...(a.analysis ? [``, a.analysis] : []),
+  ];
+  return lines.join('\n');
+}
+
 async function callGemini(prompt: string, model: string): Promise<string> {
   const apiKey = process.env.GEMINI_API_KEY;
   const ai = new GoogleGenAI({ apiKey });
@@ -200,7 +347,8 @@ async function callOpenAICompatible(
   endpoint: string,
   apiKey: string,
   model: string,
-  prompt: string
+  prompt: string,
+  maxTokens = 1200
 ): Promise<string> {
   const res = await fetch(endpoint, {
     method: 'POST',
@@ -211,8 +359,8 @@ async function callOpenAICompatible(
     body: JSON.stringify({
       model,
       messages: [{ role: 'user', content: prompt }],
-      temperature: 0.5,
-      max_tokens: 1200,
+      temperature: 0.3,
+      max_tokens: maxTokens,
     }),
   });
 
@@ -229,7 +377,7 @@ async function callOpenAICompatible(
   return text.trim();
 }
 
-async function runRemote(providerId: string, model: string, prompt: string): Promise<string> {
+async function runRemote(providerId: string, model: string, prompt: string, maxTokens = 1200): Promise<string> {
   switch (providerId) {
     case 'gemini':
       return callGemini(prompt, model);
@@ -238,14 +386,16 @@ async function runRemote(providerId: string, model: string, prompt: string): Pro
         'https://api.groq.com/openai/v1/chat/completions',
         process.env.GROQ_API_KEY || '',
         model,
-        prompt
+        prompt,
+        maxTokens
       );
     case 'openrouter':
       return callOpenAICompatible(
         'https://openrouter.ai/api/v1/chat/completions',
         process.env.OPENROUTER_API_KEY || '',
         model,
-        prompt
+        prompt,
+        maxTokens
       );
     default:
       throw new Error(`Unsupported provider: ${providerId}`);
@@ -253,8 +403,9 @@ async function runRemote(providerId: string, model: string, prompt: string): Pro
 }
 
 /**
- * Analyzes a single Quranic word using the selected provider, falling back to the
- * local offline analyzer when the provider is unavailable.
+ * Analyzes a single Quranic word using the linguistic AI agent: it verifies the
+ * true root, grounds itself with a real internet search, and returns structured
+ * verified data. Falls back to the local offline analyzer when unavailable.
  */
 export async function analyzeWordAI(params: {
   wordText: string;
@@ -274,8 +425,27 @@ export async function analyzeWordAI(params: {
   }
 
   try {
-    const text = await runRemote(provider.id, model, WORD_PROMPT(params.wordText, params.root || '---', params.context));
-    return { text, provider: provider.id, model, usedFallback };
+    // 1. Real internet search to ground the agent's analysis
+    const query = `${params.wordText} ${params.root && params.root !== '---' ? params.root : ''} جذر الكلمة معجم لسان العرب مقاييس اللغة`;
+    const searchResults = await searchWeb(query, 5);
+
+    // 2. Ask the linguistic agent (finds the root itself + verified info)
+    const raw = await runRemote(
+      provider.id,
+      model,
+      WORD_PROMPT(params.wordText, params.root || '', params.context, searchResults),
+      3000
+    );
+
+    // 3. Parse + validate the structured result
+    const wordAnalysis = parseWordAnalysis(raw);
+    return {
+      text: formatWordAnalysisText(wordAnalysis),
+      provider: provider.id,
+      model,
+      usedFallback,
+      wordAnalysis,
+    };
   } catch (err) {
     console.error(`[ai] ${provider.id}/${model} failed, falling back to local analyzer:`, (err as Error).message);
     return localAnalyzeWordResult(params, model, true);

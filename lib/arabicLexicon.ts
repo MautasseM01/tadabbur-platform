@@ -337,52 +337,29 @@ const FIXED_ROOTS: Record<string, string> = {
 };
 
 /**
- * Derives an Arabic root algorithmically from raw word text (with or without
- * diacritics) when the word is not in the static lexicon.
+ * Minimal fallback root derivation used only for instant display before the
+ * linguistic AI agent responds (and when it is unavailable). The AI agent is
+ * the authoritative source for roots — see lib/ai.ts.
  */
 export function deriveArabicRoot(rawText: string): string {
   if (!rawText || rawText.length === 0) return "---";
 
-  // 1. Strip diacritics (tashkeel, shadda...) and tatweel so we count real letters only
   const text = stripArabicDiacritics(rawText);
   if (!text || text.length === 0) return "---";
 
-  // 2. Known irregular roots override the algorithm
+  // Known irregular roots (data table, no algorithm needed)
   if (FIXED_ROOTS[text]) return FIXED_ROOTS[text];
 
-  // 3. Strip definite article + conjunction/preposition prefixes (longest first)
-  const PREFIXES = ['وال', 'فال', 'بال', 'كال', 'لل', 'ال'];
+  // Strip definite article / conjunction prefixes
   let core = text;
-  for (const p of PREFIXES) {
+  for (const p of ['وال', 'فال', 'بال', 'كال', 'لل', 'ال']) {
     if (core.startsWith(p) && core.length > p.length) {
       core = core.slice(p.length);
       break;
     }
   }
 
-  // 4. Strip common suffixes, but never leave fewer than 3 letters —
-  //    this protects weak roots like دين (د-ي-ن) from being eaten by the "ين" rule.
-  const SUFFIXES = ['كما', 'هم', 'كم', 'نا', 'ها', 'هن', 'ين', 'ون', 'ان', 'ات', 'ة'];
-  for (const s of SUFFIXES) {
-    if (core.endsWith(s) && core.length - s.length >= 3) {
-      core = core.slice(0, core.length - s.length);
-      break;
-    }
-  }
-
-  // 5. Keep only Arabic letters
-  let letters = core.replace(/[^\u0621-\u064A]/g, '');
-
-  // 6. Words with 4+ letters usually carry weak pattern letters (فعال/فعيل/مفعول
-  //    like كتاب→كتب، رحيم→رحم). Drop weak letters to surface the triliteral root —
-  //    but only for long words, so genuine weak roots (دين، قوم، يوم) stay intact.
-  if (letters.length >= 4) {
-    const weakStripped = letters.replace(/[اأإآوىي]/g, '');
-    if (weakStripped.length >= 3) {
-      return weakStripped.slice(0, 3);
-    }
-  }
-
+  const letters = core.replace(/[^\u0621-\u064A]/g, '');
   if (letters.length >= 3) return letters.slice(0, 3);
   if (letters.length > 0) return letters;
   return text.slice(0, Math.min(3, text.length));

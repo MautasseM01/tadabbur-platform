@@ -11,7 +11,13 @@ export async function POST(req: NextRequest) {
     }
 
     const result = await analyzeWordAI({ wordText, root, context, provider, model });
-    return NextResponse.json(result);
+    return NextResponse.json({
+      text: result.text,
+      provider: result.provider,
+      model: result.model,
+      usedFallback: result.usedFallback,
+      wordAnalysis: result.wordAnalysis || null,
+    });
   } catch (error: any) {
     console.error('Analyze Word API Error:', error);
     return NextResponse.json(
