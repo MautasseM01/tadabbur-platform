@@ -309,40 +309,83 @@ const LEXICON_DATABASE: Record<string, WordLexiconEntry> = {
 };
 
 /**
- * Derives an Arabic root algorithmically from clean text when word is not in static lexicon
+ * Known words whose algorithmic root derivation fails (weak/defective roots,
+ * two-letter roots, unusual patterns). Looked up before algorithmic derivation.
  */
-export function deriveArabicRoot(cleanText: string): string {
-  if (!cleanText || cleanText.length === 0) return "---";
-  
-  // Remove common Arabic prefixes
-  let core = cleanText
-    .replace(/^(وال|فال|بال|كال|لكم|لهم|لنا|ال|لل|و|ف|ب|ل|ك|س|ي|ت|ن|م)/g, '')
-    .trim();
-    
-  if (core.length < 3) {
-    core = cleanText.replace(/^(ال|و|ف|ب|ل)/g, '').trim();
-  }
-  
-  // Remove common Arabic suffixes
-  core = core
-    .replace(/(هم|كم|نا|ها|هن|ين|ون|ان|ات|ة|ه|ي|ك)$/g, '')
-    .trim();
-    
-  if (core.length < 3 && cleanText.length >= 3) {
-    // Take middle consonants
-    const consonants = cleanText.replace(/[اأإآوىي]/g, '');
-    if (consonants.length >= 3) {
-      return consonants.slice(0, 3);
+const FIXED_ROOTS: Record<string, string> = {
+  'الدين': 'دين',
+  'دين': 'دين',
+  'مالك': 'ملك',
+  'الصراط': 'صرط',
+  'صراط': 'صرط',
+  'المستقيم': 'قوم',
+  'أنعمت': 'نعم',
+  'المغضوب': 'غضب',
+  'الضالين': 'ضلل',
+  'القيوم': 'قوم',
+  'يقوم': 'قوم',
+  'قوم': 'قوم',
+  'الصوم': 'صوم',
+  'صوم': 'صوم',
+  'النوم': 'نوم',
+  'القيامة': 'قوم',
+  'الزيد': 'زيد',
+  'بين': 'بين',
+  'البيت': 'بيت',
+  'عيسى': 'عيسى',
+  'موسى': 'موسى',
+};
+
+/**
+ * Derives an Arabic root algorithmically from raw word text (with or without
+ * diacritics) when the word is not in the static lexicon.
+ */
+export function deriveArabicRoot(rawText: string): string {
+  if (!rawText || rawText.length === 0) return "---";
+
+  // 1. Strip diacritics (tashkeel, shadda...) and tatweel so we count real letters only
+  const text = stripArabicDiacritics(rawText);
+  if (!text || text.length === 0) return "---";
+
+  // 2. Known irregular roots override the algorithm
+  if (FIXED_ROOTS[text]) return FIXED_ROOTS[text];
+
+  // 3. Strip definite article + conjunction/preposition prefixes (longest first)
+  const PREFIXES = ['وال', 'فال', 'بال', 'كال', 'لل', 'ال'];
+  let core = text;
+  for (const p of PREFIXES) {
+    if (core.startsWith(p) && core.length > p.length) {
+      core = core.slice(p.length);
+      break;
     }
-    return cleanText.slice(0, Math.min(3, cleanText.length));
   }
-  
-  const consonantsOnly = core.replace(/[اأإآة]/g, '');
-  if (consonantsOnly.length >= 3) {
-    return consonantsOnly.slice(0, 3);
+
+  // 4. Strip common suffixes, but never leave fewer than 3 letters —
+  //    this protects weak roots like دين (د-ي-ن) from being eaten by the "ين" rule.
+  const SUFFIXES = ['كما', 'هم', 'كم', 'نا', 'ها', 'هن', 'ين', 'ون', 'ان', 'ات', 'ة'];
+  for (const s of SUFFIXES) {
+    if (core.endsWith(s) && core.length - s.length >= 3) {
+      core = core.slice(0, core.length - s.length);
+      break;
+    }
   }
-  
-  return core.length >= 2 ? core : cleanText;
+
+  // 5. Keep only Arabic letters
+  let letters = core.replace(/[^\u0621-\u064A]/g, '');
+
+  // 6. Words with 4+ letters usually carry weak pattern letters (فعال/فعيل/مفعول
+  //    like كتاب→كتب، رحيم→رحم). Drop weak letters to surface the triliteral root —
+  //    but only for long words, so genuine weak roots (دين، قوم، يوم) stay intact.
+  if (letters.length >= 4) {
+    const weakStripped = letters.replace(/[اأإآوىي]/g, '');
+    if (weakStripped.length >= 3) {
+      return weakStripped.slice(0, 3);
+    }
+  }
+
+  if (letters.length >= 3) return letters.slice(0, 3);
+  if (letters.length > 0) return letters;
+  return text.slice(0, Math.min(3, text.length));
 }
 
 /**
@@ -367,8 +410,13 @@ export function getWordLexiconEntry(wordText: string, existingRoot?: string): Wo
     }
   }
 
-  // 3. Fallback derivation
-  let root = existingRoot && existingRoot !== "---" ? existingRoot : deriveArabicRoot(clean);
+  // 3. Fallback derivation — sanitize any pre-computed root (strip diacritics,
+  //    keep letters only) and re-derive if it is not a clean 2-4 letter root.
+  let root = (() => {
+    if (!existingRoot || existingRoot === "---") return deriveArabicRoot(clean);
+    const letters = stripArabicDiacritics(existingRoot).replace(/[^\u0621-\u064A]/g, '');
+    return letters.length >= 2 && letters.length <= 4 ? letters : deriveArabicRoot(clean);
+  })();
   if (!root || root === "---") {
     root = clean.length >= 3 ? clean.slice(0, 3) : clean;
   }
