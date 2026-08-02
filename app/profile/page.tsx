@@ -47,17 +47,11 @@ export default function ProfileDashboardPage() {
 
   return (
     <main className="min-h-screen bg-natural-50 pb-24 font-sans" dir="rtl">
-      {/* Top Banner & Navigation */}
+      {/* Top Banner */}
       <div className="bg-white border-b border-natural-200 py-8 px-4 mb-8">
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 text-sm font-medium text-natural-600 hover:text-natural-900 bg-natural-100 hover:bg-natural-200 px-3.5 py-2 rounded-xl transition cursor-pointer"
-            >
-              <ArrowRight className="w-4 h-4" />
-              <span>العودة إلى فهرس السور</span>
-            </Link>
+            <h1 className="text-2xl font-bold text-natural-900">تقدمي وملاحظاتي</h1>
 
             <div className="flex items-center gap-3">
               <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">

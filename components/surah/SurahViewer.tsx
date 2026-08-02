@@ -1,16 +1,17 @@
 'use client';
 
 import { useState, useMemo, useRef, useEffect } from 'react';
+import Link from 'next/link';
 import { Ayah, Word, VideoExplanation } from '@/lib/mock-data';
+import { SURAH_NAMES } from '@/lib/surahs';
 import WordRootModal from './WordRootModal';
 import WordComparisonModal from './WordComparisonModal';
 import PinnedPlayer from './PinnedPlayer';
-import AuthHeader from '@/components/AuthHeader';
 import ModelSelector from '@/components/ai/ModelSelector';
 import { saveAyahNoteToFirestore, syncSurahProgressToFirestore, fetchUserNotesFromFirestore, syncDashboardProgressToFirestore, onAuthChange } from '@/lib/firebaseSync';
-import { Play, Video, ArrowRight, Sun, Moon, BookOpen, FileText, StickyNote, X, Save, Trash2, CheckCircle2, SkipForward, Eye, EyeOff, Sparkles, ArrowLeftRight, Clock, Pause, RotateCcw } from 'lucide-react';
+import { Play, Video, ArrowRight, ArrowLeft, Sun, Moon, BookOpen, FileText, StickyNote, X, Save, Trash2, CheckCircle2, SkipForward, Eye, EyeOff, Sparkles, ArrowLeftRight, Clock, Pause, RotateCcw, ChevronLeft, ChevronRight, Home } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 export type ReadingTheme = 'light' | 'sepia' | 'dark';
 
@@ -107,8 +108,8 @@ interface SurahViewerProps {
 }
 
 export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, highlightAyah }: SurahViewerProps) {
-  const router = useRouter();
   const searchParams = useSearchParams();
+  const surahId = ayahs[0]?.surahId ?? 1;
   const [currentTime, setCurrentTime] = useState(0);
   const [selectedWord, setSelectedWord] = useState<{word: Word, ayahText: string} | null>(null);
   const [activeVideo, setActiveVideo] = useState<VideoExplanation | null>(null);
@@ -432,15 +433,52 @@ export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, 
 
       <div className="max-w-4xl mx-auto px-4 py-8 pb-32">
         {/* Navigation & Theme Switcher Bar */}
-        <div className="mb-8 flex items-center justify-between gap-4 flex-wrap">
+        <div className="mb-8">
+          {/* Breadcrumb + Prev/Next Surah Navigation */}
+          <div className="flex items-center justify-between gap-4 flex-wrap mb-6">
+            <nav className="flex items-center gap-1.5 text-sm font-sans font-medium text-natural-500" aria-label="مسار التنقل">
+              <Link href="/" className="flex items-center gap-1.5 hover:text-natural-900 transition-colors">
+                <Home className="w-4 h-4" />
+                <span>الرئيسية</span>
+              </Link>
+              <ChevronLeft className="w-4 h-4 text-natural-300" />
+              <Link href="/#fihris" className="hover:text-natural-900 transition-colors">
+                فهرس السور
+              </Link>
+              <ChevronLeft className="w-4 h-4 text-natural-300" />
+              <span className="text-natural-900 font-semibold">سورة {surahName}</span>
+            </nav>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  const prev = surahId - 1;
+                  if (prev >= 1) window.location.href = `/surah/${prev}`;
+                }}
+                disabled={surahId <= 1}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl transition font-sans font-medium text-sm cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${st.backBtn}`}
+                title={surahId > 1 ? `السورة السابقة: ${SURAH_NAMES[surahId - 2]}` : 'لا توجد سورة سابقة'}
+              >
+                <ChevronRight className="w-4 h-4" />
+                <span className="hidden sm:inline">السابقة</span>
+              </button>
+              <button
+                onClick={() => {
+                  const next = surahId + 1;
+                  if (next <= 114) window.location.href = `/surah/${next}`;
+                }}
+                disabled={surahId >= 114}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl transition font-sans font-medium text-sm cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${st.backBtn}`}
+                title={surahId < 114 ? `السورة التالية: ${SURAH_NAMES[surahId]}` : 'لا توجد سورة تالية'}
+              >
+                <span className="hidden sm:inline">التالية</span>
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-2 flex-wrap">
-            <button 
-              onClick={() => router.back()} 
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl transition font-sans font-medium text-sm ${st.backBtn}`}
-            >
-              <ArrowRight className="w-4 h-4" />
-              <span>رجوع</span>
-            </button>
 
             {/* Session Timer Widget */}
             <div 
@@ -528,10 +566,8 @@ export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, 
             )}
           </div>
 
-          {/* Right Action Bar (Firebase Auth & Theme Selector) */}
+          {/* Right Action Bar (Theme Selector) */}
           <div className="flex items-center gap-3">
-            <AuthHeader />
-
             {/* Theme Selector Pill Controls */}
             <div className={`inline-flex items-center p-1 rounded-2xl border transition-colors duration-300 ${st.themeToggleBg}`}>
             <button
@@ -567,7 +603,8 @@ export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, 
               <span>ليلي (داكن)</span>
             </button>
           </div>
-        </div>
+          </div>
+          </div>
         </div>
         
         {/* Header */}

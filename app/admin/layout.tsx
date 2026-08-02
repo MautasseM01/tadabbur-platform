@@ -36,9 +36,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
         <div className="space-y-2 pt-4 border-t border-natural-300">
           <p className="text-[11px] uppercase tracking-widest text-natural-600 font-sans font-semibold mb-3">Navigation</p>
-          <Link href="/surah/21" className="flex items-center px-3 py-2 text-sm text-natural-700 hover:bg-natural-200 transition-colors rounded-lg font-medium opacity-70">
+          <Link href="/" className="flex items-center px-3 py-2 text-sm text-natural-700 hover:bg-natural-200 transition-colors rounded-lg font-medium opacity-70">
             <Globe className="w-4 h-4 ml-3" />
-            <span>العودة للمنصة (التجربة)</span>
+            <span>العودة إلى منصة التدبر</span>
           </Link>
         </div>
       </aside>

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, Amiri } from 'next/font/google';
 import './globals.css';
+import SiteHeader from '@/components/SiteHeader';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 const amiri = Amiri({ 
@@ -22,6 +23,7 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" className={`${inter.variable} ${amiri.variable}`}>
       <body className="font-sans min-h-screen anti-aliased" suppressHydrationWarning>
+        <SiteHeader />
         {children}
       </body>
     </html>

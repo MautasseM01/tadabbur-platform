@@ -3,8 +3,6 @@ import { BookOpen, Sparkles, Clock, PlayCircle, BarChart2 } from 'lucide-react';
 import { SURAH_NAMES } from '@/lib/surahs';
 import { AUDIO_YOUTUBE_IDS } from '@/lib/mock-data';
 import TadabburProgressWidget from '@/components/TadabburProgressWidget';
-import AuthHeader from '@/components/AuthHeader';
-import DataBackup from '@/components/DataBackup';
 
 import { getDb } from '@/lib/db';
 
@@ -33,7 +31,6 @@ export default function Home() {
             <span className="text-xs font-sans font-bold text-natural-500 bg-natural-100 px-3 py-1 rounded-full">
               تبيان واستبصار • الإصدار التفاعلي 2026
             </span>
-            <AuthHeader />
           </div>
 
           <div className="flex flex-col md:flex-row items-center gap-10">
@@ -67,13 +64,10 @@ export default function Home() {
       {/* Tadabbur Progress Visual Widget Section */}
       <div className="max-w-5xl mx-auto px-4 mb-14">
         <TadabburProgressWidget />
-        <div className="mt-4">
-          <DataBackup />
-        </div>
       </div>
 
       {/* Surahs Grid */}
-      <div className="max-w-5xl mx-auto px-4">
+      <div id="fihris" className="max-w-5xl mx-auto px-4">
         <div className="flex justify-between items-end mb-6 font-sans">
           <h2 className="text-xl font-bold text-natural-900">فهرس السور</h2>
           <span className="text-xs text-natural-500">{SURAH_NAMES.length} سورة</span>
