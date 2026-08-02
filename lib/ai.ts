@@ -74,24 +74,19 @@ export const AI_PROVIDERS: AIProviderOption[] = [
     signupUrl: 'https://openrouter.ai',
     models: [
       {
+        id: 'google/gemma-4-26b-a4b-it:free',
+        label: 'Gemma 4 26B (مجاني)',
+        description: 'الأسرع والأكثر استقراراً لتحليل الكلمات (موصى به)',
+      },
+      {
         id: 'openai/gpt-oss-20b:free',
         label: 'GPT-OSS 20B (مجاني)',
-        description: 'الأكثر استقراراً لتحليل الكلمات (موصى به)',
+        description: 'دقيق لكنه أبطأ قليلاً',
       },
       {
         id: 'google/gemma-4-31b-it:free',
         label: 'Gemma 4 31B (مجاني)',
         description: 'متعدد اللغات (140+ لغة) من جوجل',
-      },
-      {
-        id: 'nvidia/nemotron-3-nano-30b-a3b:free',
-        label: 'Nemotron 3 Nano 30B (مجاني)',
-        description: 'من NVIDIA بسياق 256K',
-      },
-      {
-        id: 'openrouter/free',
-        label: 'الموجه المجاني (openrouter/free)',
-        description: 'يختار تلقائياً نموذجاً متاحاً — قد يكون أقل استقراراً للتحليل',
       },
     ],
   },
@@ -425,9 +420,9 @@ async function runRemote(
  * models that leak chain-of-thought, temporarily unavailable slugs).
  */
 const WORD_ANALYSIS_FALLBACK_MODELS = [
+  'google/gemma-4-26b-a4b-it:free',
   'openai/gpt-oss-20b:free',
   'google/gemma-4-31b-it:free',
-  'nvidia/nemotron-3-nano-30b-a3b:free',
 ];
 
 function buildAttemptModels(provider: AIProviderOption, requestedModel: string): string[] {
@@ -498,7 +493,7 @@ export async function analyzeWordAI(params: {
             provider.id,
             attemptModel,
             WORD_PROMPT(params.wordText, params.root || '', params.context, searchResults),
-            4500,
+            3000,
             100000
           );
           let parsed = parseWordAnalysis(raw);
