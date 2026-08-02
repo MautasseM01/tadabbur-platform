@@ -1,6 +1,7 @@
 import { GoogleGenAI } from '@google/genai';
-import { getWordLexiconEntry, stripArabicDiacritics, WordLexiconEntry } from './arabicLexicon';
+import { getKnownRoot, getWordLexiconEntry, stripArabicDiacritics, WordLexiconEntry } from './arabicLexicon';
 import { searchWeb } from './webSearch';
+import { cacheKeyFor, getCachedWordAnalysis, setCachedWordAnalysis } from './wordAnalysisCache';
 
 export type AIProviderId = 'local' | 'gemini' | 'groq' | 'openrouter';
 
@@ -25,6 +26,7 @@ export interface AIResult {
   model: string;
   usedFallback: boolean;
   wordAnalysis?: AIWordAnalysis;
+  cached?: boolean;
 }
 
 export interface LexiconReferenceAI {
@@ -72,9 +74,9 @@ export const AI_PROVIDERS: AIProviderOption[] = [
     signupUrl: 'https://openrouter.ai',
     models: [
       {
-        id: 'openrouter/free',
-        label: 'الموجه المجاني (openrouter/free)',
-        description: 'يختار تلقائياً أفضل نموذج مجاني متاح حالياً',
+        id: 'openai/gpt-oss-20b:free',
+        label: 'GPT-OSS 20B (مجاني)',
+        description: 'الأكثر استقراراً لتحليل الكلمات (موصى به)',
       },
       {
         id: 'google/gemma-4-31b-it:free',
@@ -82,19 +84,14 @@ export const AI_PROVIDERS: AIProviderOption[] = [
         description: 'متعدد اللغات (140+ لغة) من جوجل',
       },
       {
-        id: 'openai/gpt-oss-20b:free',
-        label: 'GPT-OSS 20B (مجاني)',
-        description: 'سريع وقوي من OpenAI',
-      },
-      {
         id: 'nvidia/nemotron-3-nano-30b-a3b:free',
         label: 'Nemotron 3 Nano 30B (مجاني)',
         description: 'من NVIDIA بسياق 256K',
       },
       {
-        id: 'qwen/qwen3-next-80b-a3b-instruct:free',
-        label: 'Qwen3 Next 80B (مجاني)',
-        description: 'متعدد اللغات بسياق 262K',
+        id: 'openrouter/free',
+        label: 'الموجه المجاني (openrouter/free)',
+        description: 'يختار تلقائياً نموذجاً متاحاً — قد يكون أقل استقراراً للتحليل',
       },
     ],
   },
@@ -148,7 +145,7 @@ const WORD_PROMPT = (
 3. بيّن المعنى اللغوي المحوري للجذر.
 4. اشرح أصل الاشتقاق ودلالة صيغة الكلمة (وزنها).
 5. اذكر مشتقات أخرى من الجذر نفسه وردت في القرآن الكريم.
-6. اذكر 2-4 شواهد من المعاجم العربية المعتمدة (لسان العرب، مقاييس اللغة، مفردات ألفاظ القرآن للراغب الأصفهاني، المعجم الوسيط، الصحاح...). انقل الشاهد نصًا أو لخّصه بأمانة دون تحريف، واكتب اسم المعجم ومؤلفه. إن لم تتيقن من نص معجمي بعينه فلا تخترعه أبدًا — ما تعرفه بأمانة خير من نص مُلفّق.
+6. اذكر 2-4 شواهد من المعاجم العربية المعتمدة (لسان العرب لابن منظور، مقاييس اللغة لابن فارس، مفردات ألفاظ القرآن للراغب الأصفهاني، المعجم الوسيط لمجمع اللغة العربية، الصحاح للجوهري...). انقل الشاهد نصًا أو لخّصه بأمانة دون تحريف، وانسُب كل شاهد لمؤلفه الصحيح بالضبط (ابن منظور لسان العرب، ابن فارس المقاييس، الراغب المفردات، مجمع اللغة العربية المعجم الوسيط). إن لم تتيقن من نص معجمي بعينه فلا تخترعه أبدًا — ما تعرفه بأمانة خير من نص مُلفّق.
 7. اكتب تحليلًا بيانيًا وجيزًا (3-5 جمل) لدلالة الكلمة في موقعها من الآية.
 
 نتائج بحث واقعي من الإنترنت أُجري للتو لتأصيل الجذر (قد تكون دقيقة أو لا، فراجعها وتثبت منها قبل الاعتماد عليها):
@@ -168,6 +165,16 @@ ${searchResults.length > 0
   "analysis": "التحليل البياني للكلمة في الآية"
 }
 القاعدة الذهبية: بيانات حقيقية موثوقة فقط — لا كذب ولا اختلاق ولا تعميم وهمي.
+`;
+
+const CORRECT_ROOT_PROMPT = (wordText: string, knownRoot: string) => `
+في إجابتك السابقة عن الكلمة القرآنية «${wordText}» حددت جذرًا غير دقيق.
+المعاجم العربية المعتمدة متفق عليها على أن الجذر الصحيح لهذه الكلمة هو: «${knownRoot}».
+
+أعد إخراج نفس بنية JSON السابقة حرفيًا (نفس الحقول الخمسة تمامًا: root، rootLetters، simpleDefinition، quranicUsageNote، etymology، derivatives، lexiconReferences، analysis) مع:
+- وضع root = «${knownRoot}» و rootLetters مطابقة لحروفه بالترتيب.
+- الإبقاء على بقية المحتوى كما هو (لا تُعد كتابة المعاني والشواهد من الصفر، وإنما أصلح الحقول المتعلقة بالجذر فقط).
+- لا تُخرج أي نص خارج الترميز JSON.
 `;
 
 const COMPARE_PROMPT = (word1: { text: string; root: string }, word2: { text: string; root: string }, contextAyah: string) => `
@@ -348,7 +355,8 @@ async function callOpenAICompatible(
   apiKey: string,
   model: string,
   prompt: string,
-  maxTokens = 1200
+  maxTokens = 1200,
+  timeoutMs = 45000
 ): Promise<string> {
   const res = await fetch(endpoint, {
     method: 'POST',
@@ -362,6 +370,7 @@ async function callOpenAICompatible(
       temperature: 0.3,
       max_tokens: maxTokens,
     }),
+    signal: AbortSignal.timeout(timeoutMs),
   });
 
   if (!res.ok) {
@@ -377,7 +386,13 @@ async function callOpenAICompatible(
   return text.trim();
 }
 
-async function runRemote(providerId: string, model: string, prompt: string, maxTokens = 1200): Promise<string> {
+async function runRemote(
+  providerId: string,
+  model: string,
+  prompt: string,
+  maxTokens = 1200,
+  timeoutMs = 45000
+): Promise<string> {
   switch (providerId) {
     case 'gemini':
       return callGemini(prompt, model);
@@ -387,7 +402,8 @@ async function runRemote(providerId: string, model: string, prompt: string, maxT
         process.env.GROQ_API_KEY || '',
         model,
         prompt,
-        maxTokens
+        maxTokens,
+        timeoutMs
       );
     case 'openrouter':
       return callOpenAICompatible(
@@ -395,7 +411,8 @@ async function runRemote(providerId: string, model: string, prompt: string, maxT
         process.env.OPENROUTER_API_KEY || '',
         model,
         prompt,
-        maxTokens
+        maxTokens,
+        timeoutMs
       );
     default:
       throw new Error(`Unsupported provider: ${providerId}`);
@@ -403,9 +420,30 @@ async function runRemote(providerId: string, model: string, prompt: string, maxT
 }
 
 /**
+ * Verified-stable instruct models tried automatically when the user-selected
+ * model fails to produce a valid structured analysis (rate limits, reasoning
+ * models that leak chain-of-thought, temporarily unavailable slugs).
+ */
+const WORD_ANALYSIS_FALLBACK_MODELS = [
+  'openai/gpt-oss-20b:free',
+  'google/gemma-4-31b-it:free',
+  'nvidia/nemotron-3-nano-30b-a3b:free',
+];
+
+function buildAttemptModels(provider: AIProviderOption, requestedModel: string): string[] {
+  const ids: string[] = [];
+  if (requestedModel && provider.models.some((m) => m.id === requestedModel)) ids.push(requestedModel);
+  for (const fb of WORD_ANALYSIS_FALLBACK_MODELS) {
+    if (!ids.includes(fb) && provider.models.some((m) => m.id === fb)) ids.push(fb);
+  }
+  return ids;
+}
+
+/**
  * Analyzes a single Quranic word using the linguistic AI agent: it verifies the
  * true root, grounds itself with a real internet search, and returns structured
- * verified data. Falls back to the local offline analyzer when unavailable.
+ * verified data. Tries stable fallback models automatically, then the local
+ * offline analyzer when all remote attempts fail.
  */
 export async function analyzeWordAI(params: {
   wordText: string;
@@ -424,25 +462,103 @@ export async function analyzeWordAI(params: {
     return localAnalyzeWordResult(params, model, usedFallback);
   }
 
+  const cacheKey = cacheKeyFor(params.wordText, params.root || '');
+  const cached = getCachedWordAnalysis(cacheKey);
+  if (cached) {
+    return {
+      text: formatWordAnalysisText(cached.analysis),
+      provider: provider.id,
+      model: cached.model,
+      usedFallback: false,
+      cached: true,
+      wordAnalysis: cached.analysis,
+    };
+  }
+
   try {
     // 1. Real internet search to ground the agent's analysis
     const query = `${params.wordText} ${params.root && params.root !== '---' ? params.root : ''} جذر الكلمة معجم لسان العرب مقاييس اللغة`;
     const searchResults = await searchWeb(query, 5);
 
-    // 2. Ask the linguistic agent (finds the root itself + verified info)
-    const raw = await runRemote(
-      provider.id,
-      model,
-      WORD_PROMPT(params.wordText, params.root || '', params.context, searchResults),
-      3000
-    );
+    // 2. Ask the linguistic agent, trying stable models in order
+    let wordAnalysis: AIWordAnalysis | null = null;
+    let lastError: unknown = null;
+    let usedModel = model;
+    const attempts = buildAttemptModels(provider, model);
 
-    // 3. Parse + validate the structured result
-    const wordAnalysis = parseWordAnalysis(raw);
+    for (let i = 0; i < attempts.length && !wordAnalysis; i++) {
+      const attemptModel = attempts[i];
+      // The primary (user-selected) model gets one automatic retry, since free
+      // providers intermittently return empty responses or leak chain-of-thought.
+      const maxTries = i === 0 ? 2 : 1;
+
+      for (let attempt = 0; attempt < maxTries; attempt++) {
+        try {
+          const raw = await runRemote(
+            provider.id,
+            attemptModel,
+            WORD_PROMPT(params.wordText, params.root || '', params.context, searchResults),
+            4500,
+            100000
+          );
+          let parsed = parseWordAnalysis(raw);
+
+          // 3. Verify against curated known roots; correct the agent if it erred
+          //    (e.g. letter order on weak roots) with a single corrective retry.
+          const knownRoot = getKnownRoot(params.wordText);
+          if (knownRoot && sanitizeRoot(parsed.root) !== knownRoot) {
+            try {
+              const retryRaw = await runRemote(
+                provider.id,
+                attemptModel,
+                CORRECT_ROOT_PROMPT(params.wordText, knownRoot),
+                2500,
+                60000
+              );
+              const corrected = parseWordAnalysis(retryRaw);
+              parsed = sanitizeRoot(corrected.root) === knownRoot
+                ? corrected
+                : { ...parsed, root: knownRoot, rootLetters: knownRoot.split('') };
+            } catch {
+              parsed = { ...parsed, root: knownRoot, rootLetters: knownRoot.split('') };
+            }
+          }
+
+          // 4. Quality gate: refuse thin responses (no meaning + no references
+          //    + no analysis) so the next model gets a chance.
+          if (
+            !parsed.simpleDefinition ||
+            (parsed.lexiconReferences.length === 0 && !parsed.analysis)
+          ) {
+            throw new Error('Linguistic agent response too thin.');
+          }
+
+          wordAnalysis = parsed;
+          usedModel = attemptModel;
+          break;
+        } catch (err) {
+          lastError = err;
+          console.error(
+            `[ai] ${provider.id}/${attemptModel} attempt ${attempt + 1}/${maxTries} failed:`,
+            (err as Error).message
+          );
+        }
+      }
+    }
+
+    if (!wordAnalysis) throw lastError || new Error('All linguistic agent models failed.');
+
+    setCachedWordAnalysis(cacheKey, {
+      word: params.wordText,
+      root: params.root || '',
+      analysis: wordAnalysis,
+      model: usedModel,
+    });
+
     return {
       text: formatWordAnalysisText(wordAnalysis),
       provider: provider.id,
-      model,
+      model: usedModel,
       usedFallback,
       wordAnalysis,
     };

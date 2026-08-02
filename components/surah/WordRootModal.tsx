@@ -105,7 +105,7 @@ export default function WordRootModal({
       if (data.text) {
         setAiWordAnalysis(data.wordAnalysis || null);
         setAiAnalysis(data.wordAnalysis?.analysis || data.text);
-        setAiSource(data.model || '');
+        setAiSource(`${data.model || ''}${data.cached ? ' • تحليل محفوظ' : ''}`);
         try {
           const saved = localStorage.getItem('tadabbur_progress_data_v1');
           if (saved) {

@@ -16,6 +16,7 @@ export async function POST(req: NextRequest) {
       provider: result.provider,
       model: result.model,
       usedFallback: result.usedFallback,
+      cached: result.cached || false,
       wordAnalysis: result.wordAnalysis || null,
     });
   } catch (error: any) {

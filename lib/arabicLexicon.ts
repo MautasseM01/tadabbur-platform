@@ -366,6 +366,24 @@ export function deriveArabicRoot(rawText: string): string {
 }
 
 /**
+ * Returns a curated, known-good root for a word when it exists in the static
+ * lexicon or the fixed-roots table (authoritative data), otherwise null.
+ * Used to verify and correct the linguistic AI agent's output.
+ */
+export function getKnownRoot(wordText: string): string | null {
+  const clean = stripArabicDiacritics(wordText);
+  let root = '';
+  if (LEXICON_DATABASE[clean]) {
+    root = LEXICON_DATABASE[clean].root;
+  } else if (FIXED_ROOTS[clean]) {
+    root = FIXED_ROOTS[clean];
+  }
+  if (!root) return null;
+  const letters = root.replace(/[^\u0621-\u064A]/g, '');
+  return letters.length >= 2 && letters.length <= 4 ? letters : null;
+}
+
+/**
  * Gets or derives the complete lexicon entry for any Quranic word
  */
 export function getWordLexiconEntry(wordText: string, existingRoot?: string): WordLexiconEntry {

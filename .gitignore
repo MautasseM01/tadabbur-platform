@@ -7,3 +7,5 @@ coverage/
 !.env.example
 
 .vercel
+
+data/word-analysis-cache.json
