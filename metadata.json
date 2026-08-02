@@ -1,0 +1,6 @@
+{
+  "name": "Tadabbur Platform",
+  "description": "Interactive Quranic Web Application with Video Sync and Word Analysis",
+  "requestFramePermissions": ["camera", "microphone", "geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

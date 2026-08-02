@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme {
+  --color-natural-50: #FAF9F6;
+  --color-natural-100: #F1EDE4;
+  --color-natural-200: #E6E1D3;
+  --color-natural-300: #E5E0D5;
+  --color-natural-400: #DED9CF;
+  --color-natural-500: #A8A398;
+  --color-natural-600: #8C887E;
+  --color-natural-700: #5A5A40;
+  --color-natural-800: #3D3B38;
+  --color-natural-900: #2C2A26;
+  --color-natural-950: #1A1917;
+}
+
+@layer base {
+  body {
+    @apply bg-natural-50 text-natural-800 selection:bg-natural-200 dark:bg-natural-950 dark:text-natural-50 dark:selection:bg-natural-800;
+  }
+}

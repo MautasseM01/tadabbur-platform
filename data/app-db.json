@@ -1,0 +1,3093 @@
+{
+  "videos": [
+    {
+      "id": "v_anbiya_0",
+      "surahId": 21,
+      "ayahNumber": 36,
+      "youtubeId": "czVY9nWVUZQ",
+      "startTime": 0,
+      "title": "الفرق بين { وَإِذَا رَأَوْكَ } و { وَإِذَا رَآكَ }",
+      "scholar": "د. فاضل السامرائي"
+    },
+    {
+      "id": "v_anbiya_1",
+      "surahId": 21,
+      "ayahNumber": 87,
+      "youtubeId": "PCZHKiuhGUo",
+      "startTime": 0,
+      "title": "وذا النون إذ ذهب مغاضبا...",
+      "scholar": "د. فاضل السامرائي"
+    },
+    {
+      "id": "v_anbiya_2",
+      "surahId": 21,
+      "ayahNumber": 47,
+      "youtubeId": "zsTqY9Iz7dg",
+      "startTime": 0,
+      "title": "لمسات بيانية :: فلا تُظلم نفس شيئا",
+      "scholar": "د. فاضل السامرائي"
+    },
+    {
+      "id": "v_anbiya_3",
+      "surahId": 21,
+      "ayahNumber": 72,
+      "youtubeId": "HZ9jOxvB76s",
+      "startTime": 0,
+      "title": "{ ووهبنا له اسحق ويعقوب نافلة }",
+      "scholar": "د. فاضل السامرائي"
+    },
+    {
+      "id": "v_anbiya_4",
+      "surahId": 21,
+      "ayahNumber": 70,
+      "youtubeId": "e-V37caSoaY",
+      "startTime": 0,
+      "title": "فأرادوا به كيدا فجعلناهم الأخسرين",
+      "scholar": "د. فاضل السامرائي"
+    },
+    {
+      "id": "v_anbiya_5",
+      "surahId": 21,
+      "ayahNumber": 87,
+      "youtubeId": "AboZeBa04fY",
+      "startTime": 0,
+      "title": "إذ ذهب مغاضبا",
+      "scholar": "د. فاضل السامرائي"
+    },
+    {
+      "id": "v_anbiya_6",
+      "surahId": 21,
+      "ayahNumber": 33,
+      "youtubeId": "2aqpExptw1g",
+      "startTime": 0,
+      "title": "{ كل في فلك يسبحون }",
+      "scholar": "د. فاضل السامرائي"
+    },
+    {
+      "id": "v_anbiya_8",
+      "surahId": 21,
+      "ayahNumber": 84,
+      "youtubeId": "gTxWOHoGiUg",
+      "startTime": 0,
+      "title": "رحمة من عندنا للأنبياء",
+      "scholar": "د. فاضل السامرائي"
+    },
+    {
+      "id": "v_anbiya_10",
+      "surahId": 21,
+      "ayahNumber": 107,
+      "youtubeId": "AlkYkGrz1zE",
+      "startTime": 0,
+      "title": "وما أرسلناك إلا رحمة للعالمين",
+      "scholar": "د. فاضل السامرائي"
+    },
+    {
+      "id": "v_anbiya_13",
+      "surahId": 21,
+      "ayahNumber": 83,
+      "youtubeId": "me1Vwk4zLAE",
+      "startTime": 0,
+      "title": "قصة أيوب عليه السلام",
+      "scholar": "د. فاضل السامرائي"
+    },
+    {
+      "id": "v_anbiya_14",
+      "surahId": 21,
+      "ayahNumber": 3,
+      "youtubeId": "kHlYUp-bjYc",
+      "startTime": 0,
+      "title": "وأسروا النجوى الذين ظلموا",
+      "scholar": "د. فاضل السامرائي"
+    },
+    {
+      "id": "v_jinn_recitation",
+      "surahId": 72,
+      "ayahNumber": 1,
+      "youtubeId": "zv4QZvoC6cw",
+      "startTime": 0,
+      "title": "تلاوة مرئية جميلة جداً للشيخ عبدالرحمن العوسي (سورة الجن كاملة 1436)",
+      "scholar": "الشيخ عبدالرحمن العوسي"
+    }
+  ],
+  "surahAudioIds": {
+    "72": "zv4QZvoC6cw",
+    "81": "eXfpo56IRPc"
+  },
+  "surahSyncs": {
+    "72": [
+      {
+        "id": 0,
+        "surahId": 72,
+        "ayahNumber": 0,
+        "text": "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
+        "words": [
+          {
+            "id": "0-0",
+            "text": "بِسْمِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 1,
+            "endTime": 1.7817142857142856
+          },
+          {
+            "id": "0-1",
+            "text": "اللَّهِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 1.7817142857142856,
+            "endTime": 2.6937142857142855
+          },
+          {
+            "id": "0-2",
+            "text": "الرَّحْمَٰنِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 2.6937142857142855,
+            "endTime": 4.257142857142857
+          },
+          {
+            "id": "0-3",
+            "text": "الرَّحِيمِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 4.257142857142857,
+            "endTime": 5.56
+          }
+        ],
+        "startTime": 1,
+        "endTime": 5.56,
+        "isBismillah": true
+      },
+      {
+        "id": 1,
+        "surahId": 72,
+        "ayahNumber": 1,
+        "text": "قُلْ أُوحِيَ إِلَيَّ أَنَّهُ اسْتَمَعَ نَفَرٌ مِنَ الْجِنِّ فَقَالُوا إِنَّا سَمِعْنَا قُرْآنًا عَجَبًا",
+        "words": [
+          {
+            "id": "1-0",
+            "text": "قُلْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 6.36,
+            "endTime": 6.903296703296704
+          },
+          {
+            "id": "1-1",
+            "text": "أُوحِيَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 6.903296703296704,
+            "endTime": 7.854065934065934
+          },
+          {
+            "id": "1-2",
+            "text": "إِلَيَّ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 7.854065934065934,
+            "endTime": 8.804835164835165
+          },
+          {
+            "id": "1-3",
+            "text": "أَنَّهُ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 8.804835164835165,
+            "endTime": 9.755604395604395
+          },
+          {
+            "id": "1-4",
+            "text": "اسْتَمَعَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 9.755604395604395,
+            "endTime": 10.978021978021978
+          },
+          {
+            "id": "1-5",
+            "text": "نَفَرٌ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 10.978021978021978,
+            "endTime": 11.792967032967033
+          },
+          {
+            "id": "1-6",
+            "text": "مِنَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 11.792967032967033,
+            "endTime": 12.336263736263735
+          },
+          {
+            "id": "1-7",
+            "text": "الْجِنِّ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 12.336263736263735,
+            "endTime": 13.422857142857142
+          },
+          {
+            "id": "1-8",
+            "text": "فَقَالُوا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 13.422857142857142,
+            "endTime": 14.645274725274724
+          },
+          {
+            "id": "1-9",
+            "text": "إِنَّا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 14.645274725274724,
+            "endTime": 15.460219780219779
+          },
+          {
+            "id": "1-10",
+            "text": "سَمِعْنَا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 15.460219780219779,
+            "endTime": 16.68263736263736
+          },
+          {
+            "id": "1-11",
+            "text": "قُرْآنًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 16.68263736263736,
+            "endTime": 17.769230769230766
+          },
+          {
+            "id": "1-12",
+            "text": "عَجَبًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 17.769230769230766,
+            "endTime": 18.72
+          }
+        ],
+        "startTime": 6.36,
+        "endTime": 18.72
+      },
+      {
+        "id": 2,
+        "surahId": 72,
+        "ayahNumber": 2,
+        "text": "يَهْدِي إِلَى الرُّشْدِ فَآمَنَّا بِهِ ۖ وَلَنْ نُشْرِكَ بِرَبِّنَا أَحَدًا",
+        "words": [
+          {
+            "id": "2-0",
+            "text": "يَهْدِي",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 19.52,
+            "endTime": 20.474545454545453
+          },
+          {
+            "id": "2-1",
+            "text": "إِلَى",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 20.474545454545453,
+            "endTime": 21.156363636363636
+          },
+          {
+            "id": "2-2",
+            "text": "الرُّشْدِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 21.156363636363636,
+            "endTime": 22.383636363636363
+          },
+          {
+            "id": "2-3",
+            "text": "فَآمَنَّا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 22.383636363636363,
+            "endTime": 23.61090909090909
+          },
+          {
+            "id": "2-4",
+            "text": "بِهِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 23.61090909090909,
+            "endTime": 24.156363636363636
+          },
+          {
+            "id": "2-5",
+            "text": "ۖ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 24.156363636363636,
+            "endTime": 24.292727272727273
+          },
+          {
+            "id": "2-6",
+            "text": "وَلَنْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 24.292727272727273,
+            "endTime": 25.11090909090909
+          },
+          {
+            "id": "2-7",
+            "text": "نُشْرِكَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 25.11090909090909,
+            "endTime": 26.20181818181818
+          },
+          {
+            "id": "2-8",
+            "text": "بِرَبِّنَا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 26.20181818181818,
+            "endTime": 27.565454545454543
+          },
+          {
+            "id": "2-9",
+            "text": "أَحَدًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 27.565454545454543,
+            "endTime": 28.519999999999996
+          }
+        ],
+        "startTime": 19.52,
+        "endTime": 28.52
+      },
+      {
+        "id": 3,
+        "surahId": 72,
+        "ayahNumber": 3,
+        "text": "وَأَنَّهُ تَعَالَىٰ جَدُّ رَبِّنَا مَا اتَّخَذَ صَاحِبَةً وَلَا وَلَدًا",
+        "words": [
+          {
+            "id": "3-0",
+            "text": "وَأَنَّهُ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 29.32,
+            "endTime": 30.537142857142857
+          },
+          {
+            "id": "3-1",
+            "text": "تَعَالَىٰ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 30.537142857142857,
+            "endTime": 31.754285714285714
+          },
+          {
+            "id": "3-2",
+            "text": "جَدُّ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 31.754285714285714,
+            "endTime": 32.43047619047619
+          },
+          {
+            "id": "3-3",
+            "text": "رَبِّنَا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 32.43047619047619,
+            "endTime": 33.51238095238095
+          },
+          {
+            "id": "3-4",
+            "text": "مَا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 33.51238095238095,
+            "endTime": 33.91809523809524
+          },
+          {
+            "id": "3-5",
+            "text": "اتَّخَذَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 33.91809523809524,
+            "endTime": 35
+          },
+          {
+            "id": "3-6",
+            "text": "صَاحِبَةً",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 35,
+            "endTime": 36.21714285714286
+          },
+          {
+            "id": "3-7",
+            "text": "وَلَا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 36.21714285714286,
+            "endTime": 36.89333333333334
+          },
+          {
+            "id": "3-8",
+            "text": "وَلَدًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 36.89333333333334,
+            "endTime": 37.84
+          }
+        ],
+        "startTime": 29.32,
+        "endTime": 37.84
+      },
+      {
+        "id": 4,
+        "surahId": 72,
+        "ayahNumber": 4,
+        "text": "وَأَنَّهُ كَانَ يَقُولُ سَفِيهُنَا عَلَى اللَّهِ شَطَطًا",
+        "words": [
+          {
+            "id": "4-0",
+            "text": "وَأَنَّهُ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 38.64,
+            "endTime": 39.8496
+          },
+          {
+            "id": "4-1",
+            "text": "كَانَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 39.8496,
+            "endTime": 40.5216
+          },
+          {
+            "id": "4-2",
+            "text": "يَقُولُ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 40.5216,
+            "endTime": 41.4624
+          },
+          {
+            "id": "4-3",
+            "text": "سَفِيهُنَا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 41.4624,
+            "endTime": 42.806400000000004
+          },
+          {
+            "id": "4-4",
+            "text": "عَلَى",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 42.806400000000004,
+            "endTime": 43.4784
+          },
+          {
+            "id": "4-5",
+            "text": "اللَّهِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 43.4784,
+            "endTime": 44.419200000000004
+          },
+          {
+            "id": "4-6",
+            "text": "شَطَطًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 44.419200000000004,
+            "endTime": 45.36000000000001
+          }
+        ],
+        "startTime": 38.64,
+        "endTime": 45.36
+      },
+      {
+        "id": 5,
+        "surahId": 72,
+        "ayahNumber": 5,
+        "text": "وَأَنَّا ظَنَنَّا أَنْ لَنْ تَقُولَ الْإِنْسُ وَالْجِنُّ عَلَى اللَّهِ كَذِبًا",
+        "words": [
+          {
+            "id": "5-0",
+            "text": "وَأَنَّا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 46.16,
+            "endTime": 47.245217391304344
+          },
+          {
+            "id": "5-1",
+            "text": "ظَنَنَّا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 47.245217391304344,
+            "endTime": 48.33043478260869
+          },
+          {
+            "id": "5-2",
+            "text": "أَنْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 48.33043478260869,
+            "endTime": 48.87304347826087
+          },
+          {
+            "id": "5-3",
+            "text": "لَنْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 48.87304347826087,
+            "endTime": 49.415652173913045
+          },
+          {
+            "id": "5-4",
+            "text": "تَقُولَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 49.415652173913045,
+            "endTime": 50.36521739130435
+          },
+          {
+            "id": "5-5",
+            "text": "الْإِنْسُ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 50.36521739130435,
+            "endTime": 51.58608695652174
+          },
+          {
+            "id": "5-6",
+            "text": "وَالْجِنُّ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 51.58608695652174,
+            "endTime": 52.942608695652176
+          },
+          {
+            "id": "5-7",
+            "text": "عَلَى",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 52.942608695652176,
+            "endTime": 53.62086956521739
+          },
+          {
+            "id": "5-8",
+            "text": "اللَّهِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 53.62086956521739,
+            "endTime": 54.57043478260869
+          },
+          {
+            "id": "5-9",
+            "text": "كَذِبًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 54.57043478260869,
+            "endTime": 55.519999999999996
+          }
+        ],
+        "startTime": 46.16,
+        "endTime": 55.52
+      },
+      {
+        "id": 6,
+        "surahId": 72,
+        "ayahNumber": 6,
+        "text": "وَأَنَّهُ كَانَ رِجَالٌ مِنَ الْإِنْسِ يَعُوذُونَ بِرِجَالٍ مِنَ الْجِنِّ فَزَادُوهُمْ رَهَقًا",
+        "words": [
+          {
+            "id": "6-0",
+            "text": "وَأَنَّهُ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 56.32,
+            "endTime": 57.528571428571425
+          },
+          {
+            "id": "6-1",
+            "text": "كَانَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 57.528571428571425,
+            "endTime": 58.199999999999996
+          },
+          {
+            "id": "6-2",
+            "text": "رِجَالٌ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 58.199999999999996,
+            "endTime": 59.13999999999999
+          },
+          {
+            "id": "6-3",
+            "text": "مِنَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 59.13999999999999,
+            "endTime": 59.67714285714285
+          },
+          {
+            "id": "6-4",
+            "text": "الْإِنْسِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 59.67714285714285,
+            "endTime": 60.88571428571427
+          },
+          {
+            "id": "6-5",
+            "text": "يَعُوذُونَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 60.88571428571427,
+            "endTime": 62.22857142857141
+          },
+          {
+            "id": "6-6",
+            "text": "بِرِجَالٍ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 62.22857142857141,
+            "endTime": 63.43714285714284
+          },
+          {
+            "id": "6-7",
+            "text": "مِنَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 63.43714285714284,
+            "endTime": 63.97428571428569
+          },
+          {
+            "id": "6-8",
+            "text": "الْجِنِّ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 63.97428571428569,
+            "endTime": 65.0485714285714
+          },
+          {
+            "id": "6-9",
+            "text": "فَزَادُوهُمْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 65.0485714285714,
+            "endTime": 66.65999999999998
+          },
+          {
+            "id": "6-10",
+            "text": "رَهَقًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 66.65999999999998,
+            "endTime": 67.59999999999998
+          }
+        ],
+        "startTime": 56.32,
+        "endTime": 67.6
+      },
+      {
+        "id": 7,
+        "surahId": 72,
+        "ayahNumber": 7,
+        "text": "وَأَنَّهُمْ ظَنُّوا كَمَا ظَنَنْتُمْ أَنْ لَنْ يَبْعَثَ اللَّهُ أَحَدًا",
+        "words": [
+          {
+            "id": "7-0",
+            "text": "وَأَنَّهُمْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 68.4,
+            "endTime": 69.88761904761905
+          },
+          {
+            "id": "7-1",
+            "text": "ظَنُّوا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 69.88761904761905,
+            "endTime": 70.83428571428573
+          },
+          {
+            "id": "7-2",
+            "text": "كَمَا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 70.83428571428573,
+            "endTime": 71.5104761904762
+          },
+          {
+            "id": "7-3",
+            "text": "ظَنَنْتُمْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 71.5104761904762,
+            "endTime": 72.86285714285715
+          },
+          {
+            "id": "7-4",
+            "text": "أَنْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 72.86285714285715,
+            "endTime": 73.40380952380953
+          },
+          {
+            "id": "7-5",
+            "text": "لَنْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 73.40380952380953,
+            "endTime": 73.9447619047619
+          },
+          {
+            "id": "7-6",
+            "text": "يَبْعَثَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 73.9447619047619,
+            "endTime": 75.02666666666667
+          },
+          {
+            "id": "7-7",
+            "text": "اللَّهُ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 75.02666666666667,
+            "endTime": 75.97333333333334
+          },
+          {
+            "id": "7-8",
+            "text": "أَحَدًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 75.97333333333334,
+            "endTime": 76.92000000000002
+          }
+        ],
+        "startTime": 68.4,
+        "endTime": 76.92
+      },
+      {
+        "id": 8,
+        "surahId": 72,
+        "ayahNumber": 8,
+        "text": "وَأَنَّا لَمَسْنَا السَّمَاءَ فَوَجَدْنَاهَا مُلِئَتْ حَرَسًا شَدِيدًا وَشُهُبًا",
+        "words": [
+          {
+            "id": "8-0",
+            "text": "وَأَنَّا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 77.72,
+            "endTime": 78.77205479452054
+          },
+          {
+            "id": "8-1",
+            "text": "لَمَسْنَا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 78.77205479452054,
+            "endTime": 79.95561643835616
+          },
+          {
+            "id": "8-2",
+            "text": "السَّمَاءَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 79.95561643835616,
+            "endTime": 81.27068493150685
+          },
+          {
+            "id": "8-3",
+            "text": "فَوَجَدْنَاهَا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 81.27068493150685,
+            "endTime": 83.1117808219178
+          },
+          {
+            "id": "8-4",
+            "text": "مُلِئَتْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 83.1117808219178,
+            "endTime": 84.16383561643835
+          },
+          {
+            "id": "8-5",
+            "text": "حَرَسًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 84.16383561643835,
+            "endTime": 85.08438356164383
+          },
+          {
+            "id": "8-6",
+            "text": "شَدِيدًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 85.08438356164383,
+            "endTime": 86.13643835616438
+          },
+          {
+            "id": "8-7",
+            "text": "وَشُهُبًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 86.13643835616438,
+            "endTime": 87.32
+          }
+        ],
+        "startTime": 77.72,
+        "endTime": 87.32
+      },
+      {
+        "id": 9,
+        "surahId": 72,
+        "ayahNumber": 9,
+        "text": "وَأَنَّا كُنَّا نَقْعُدُ مِنْهَا مَقَاعِدَ لِلسَّمْعِ ۖ فَمَنْ يَسْتَمِعِ الْآنَ يَجِدْ لَهُ شِهَابًا رَصَدًا",
+        "words": [
+          {
+            "id": "9-0",
+            "text": "وَأَنَّا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 88.12,
+            "endTime": 89.21000000000001
+          },
+          {
+            "id": "9-1",
+            "text": "كُنَّا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 89.21000000000001,
+            "endTime": 90.0275
+          },
+          {
+            "id": "9-2",
+            "text": "نَقْعُدُ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 90.0275,
+            "endTime": 91.1175
+          },
+          {
+            "id": "9-3",
+            "text": "مِنْهَا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 91.1175,
+            "endTime": 92.07125
+          },
+          {
+            "id": "9-4",
+            "text": "مَقَاعِدَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 92.07125,
+            "endTime": 93.2975
+          },
+          {
+            "id": "9-5",
+            "text": "لِلسَّمْعِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 93.2975,
+            "endTime": 94.66
+          },
+          {
+            "id": "9-6",
+            "text": "ۖ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 94.66,
+            "endTime": 94.79625
+          },
+          {
+            "id": "9-7",
+            "text": "فَمَنْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 94.79625,
+            "endTime": 95.61375
+          },
+          {
+            "id": "9-8",
+            "text": "يَسْتَمِعِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 95.61375,
+            "endTime": 96.97625
+          },
+          {
+            "id": "9-9",
+            "text": "الْآنَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 96.97625,
+            "endTime": 97.79374999999999
+          },
+          {
+            "id": "9-10",
+            "text": "يَجِدْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 97.79374999999999,
+            "endTime": 98.61124999999998
+          },
+          {
+            "id": "9-11",
+            "text": "لَهُ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 98.61124999999998,
+            "endTime": 99.15624999999999
+          },
+          {
+            "id": "9-12",
+            "text": "شِهَابًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 99.15624999999999,
+            "endTime": 100.24624999999999
+          },
+          {
+            "id": "9-13",
+            "text": "رَصَدًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 100.24624999999999,
+            "endTime": 101.19999999999999
+          }
+        ],
+        "startTime": 88.12,
+        "endTime": 101.2
+      },
+      {
+        "id": 10,
+        "surahId": 72,
+        "ayahNumber": 10,
+        "text": "وَأَنَّا لَا نَدْرِي أَشَرٌّ أُرِيدَ بِمَنْ فِي الْأَرْضِ أَمْ أَرَادَ بِهِمْ رَبُّهُمْ رَشَدًا",
+        "words": [
+          {
+            "id": "10-0",
+            "text": "وَأَنَّا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 102,
+            "endTime": 103.09879518072289
+          },
+          {
+            "id": "10-1",
+            "text": "لَا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 103.09879518072289,
+            "endTime": 103.51084337349397
+          },
+          {
+            "id": "10-2",
+            "text": "نَدْرِي",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 103.51084337349397,
+            "endTime": 104.4722891566265
+          },
+          {
+            "id": "10-3",
+            "text": "أَشَرٌّ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 104.4722891566265,
+            "endTime": 105.43373493975903
+          },
+          {
+            "id": "10-4",
+            "text": "أُرِيدَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 105.43373493975903,
+            "endTime": 106.39518072289157
+          },
+          {
+            "id": "10-5",
+            "text": "بِمَنْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 106.39518072289157,
+            "endTime": 107.21927710843373
+          },
+          {
+            "id": "10-6",
+            "text": "فِي",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 107.21927710843373,
+            "endTime": 107.63132530120481
+          },
+          {
+            "id": "10-7",
+            "text": "الْأَرْضِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 107.63132530120481,
+            "endTime": 108.86746987951807
+          },
+          {
+            "id": "10-8",
+            "text": "أَمْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 108.86746987951807,
+            "endTime": 109.41686746987952
+          },
+          {
+            "id": "10-9",
+            "text": "أَرَادَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 109.41686746987952,
+            "endTime": 110.37831325301205
+          },
+          {
+            "id": "10-10",
+            "text": "بِهِمْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 110.37831325301205,
+            "endTime": 111.20240963855422
+          },
+          {
+            "id": "10-11",
+            "text": "رَبُّهُمْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 111.20240963855422,
+            "endTime": 112.43855421686747
+          },
+          {
+            "id": "10-12",
+            "text": "رَشَدًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 112.43855421686747,
+            "endTime": 113.4
+          }
+        ],
+        "startTime": 102,
+        "endTime": 113.4
+      },
+      {
+        "id": 11,
+        "surahId": 72,
+        "ayahNumber": 11,
+        "text": "وَأَنَّا مِنَّا الصَّالِحُونَ وَمِنَّا دُونَ ذَٰلِكَ ۖ كُنَّا طَرَائِقَ قِدَدًا",
+        "words": [
+          {
+            "id": "11-0",
+            "text": "وَأَنَّا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 114.2,
+            "endTime": 115.28342857142857
+          },
+          {
+            "id": "11-1",
+            "text": "مِنَّا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 115.28342857142857,
+            "endTime": 116.096
+          },
+          {
+            "id": "11-2",
+            "text": "الصَّالِحُونَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 116.096,
+            "endTime": 117.85657142857143
+          },
+          {
+            "id": "11-3",
+            "text": "وَمِنَّا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 117.85657142857143,
+            "endTime": 118.94
+          },
+          {
+            "id": "11-4",
+            "text": "دُونَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 118.94,
+            "endTime": 119.61714285714285
+          },
+          {
+            "id": "11-5",
+            "text": "ذَٰلِكَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 119.61714285714285,
+            "endTime": 120.56514285714286
+          },
+          {
+            "id": "11-6",
+            "text": "ۖ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 120.56514285714286,
+            "endTime": 120.70057142857144
+          },
+          {
+            "id": "11-7",
+            "text": "كُنَّا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 120.70057142857144,
+            "endTime": 121.51314285714287
+          },
+          {
+            "id": "11-8",
+            "text": "طَرَائِقَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 121.51314285714287,
+            "endTime": 122.73200000000001
+          },
+          {
+            "id": "11-9",
+            "text": "قِدَدًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 122.73200000000001,
+            "endTime": 123.68
+          }
+        ],
+        "startTime": 114.2,
+        "endTime": 123.68
+      },
+      {
+        "id": 12,
+        "surahId": 72,
+        "ayahNumber": 12,
+        "text": "وَأَنَّا ظَنَنَّا أَنْ لَنْ نُعْجِزَ اللَّهَ فِي الْأَرْضِ وَلَنْ نُعْجِزَهُ هَرَبًا",
+        "words": [
+          {
+            "id": "12-0",
+            "text": "وَأَنَّا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 124.48,
+            "endTime": 125.56972972972973
+          },
+          {
+            "id": "12-1",
+            "text": "ظَنَنَّا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 125.56972972972973,
+            "endTime": 126.65945945945946
+          },
+          {
+            "id": "12-2",
+            "text": "أَنْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 126.65945945945946,
+            "endTime": 127.20432432432432
+          },
+          {
+            "id": "12-3",
+            "text": "لَنْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 127.20432432432432,
+            "endTime": 127.74918918918918
+          },
+          {
+            "id": "12-4",
+            "text": "نُعْجِزَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 127.74918918918918,
+            "endTime": 128.83891891891892
+          },
+          {
+            "id": "12-5",
+            "text": "اللَّهَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 128.83891891891892,
+            "endTime": 129.79243243243243
+          },
+          {
+            "id": "12-6",
+            "text": "فِي",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 129.79243243243243,
+            "endTime": 130.20108108108107
+          },
+          {
+            "id": "12-7",
+            "text": "الْأَرْضِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 130.20108108108107,
+            "endTime": 131.427027027027
+          },
+          {
+            "id": "12-8",
+            "text": "وَلَنْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 131.427027027027,
+            "endTime": 132.2443243243243
+          },
+          {
+            "id": "12-9",
+            "text": "نُعْجِزَهُ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 132.2443243243243,
+            "endTime": 133.60648648648646
+          },
+          {
+            "id": "12-10",
+            "text": "هَرَبًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 133.60648648648646,
+            "endTime": 134.55999999999997
+          }
+        ],
+        "startTime": 124.48,
+        "endTime": 134.56
+      },
+      {
+        "id": 13,
+        "surahId": 72,
+        "ayahNumber": 13,
+        "text": "وَأَنَّا لَمَّا سَمِعْنَا الْهُدَىٰ آمَنَّا بِهِ ۖ فَمَنْ يُؤْمِنْ بِرَبِّهِ فَلَا يَخَافُ بَخْسًا وَلَا رَهَقًا",
+        "words": [
+          {
+            "id": "13-0",
+            "text": "وَأَنَّا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 135.36,
+            "endTime": 136.45714285714288
+          },
+          {
+            "id": "13-1",
+            "text": "لَمَّا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 136.45714285714288,
+            "endTime": 137.28000000000003
+          },
+          {
+            "id": "13-2",
+            "text": "سَمِعْنَا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 137.28000000000003,
+            "endTime": 138.51428571428573
+          },
+          {
+            "id": "13-3",
+            "text": "الْهُدَىٰ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 138.51428571428573,
+            "endTime": 139.74857142857144
+          },
+          {
+            "id": "13-4",
+            "text": "آمَنَّا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 139.74857142857144,
+            "endTime": 140.70857142857145
+          },
+          {
+            "id": "13-5",
+            "text": "بِهِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 140.70857142857145,
+            "endTime": 141.25714285714287
+          },
+          {
+            "id": "13-6",
+            "text": "ۖ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 141.25714285714287,
+            "endTime": 141.39428571428573
+          },
+          {
+            "id": "13-7",
+            "text": "فَمَنْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 141.39428571428573,
+            "endTime": 142.21714285714287
+          },
+          {
+            "id": "13-8",
+            "text": "يُؤْمِنْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 142.21714285714287,
+            "endTime": 143.31428571428575
+          },
+          {
+            "id": "13-9",
+            "text": "بِرَبِّهِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 143.31428571428575,
+            "endTime": 144.54857142857145
+          },
+          {
+            "id": "13-10",
+            "text": "فَلَا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 144.54857142857145,
+            "endTime": 145.23428571428573
+          },
+          {
+            "id": "13-11",
+            "text": "يَخَافُ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 145.23428571428573,
+            "endTime": 146.19428571428574
+          },
+          {
+            "id": "13-12",
+            "text": "بَخْسًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 146.19428571428574,
+            "endTime": 147.15428571428575
+          },
+          {
+            "id": "13-13",
+            "text": "وَلَا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 147.15428571428575,
+            "endTime": 147.84000000000003
+          },
+          {
+            "id": "13-14",
+            "text": "رَهَقًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 147.84000000000003,
+            "endTime": 148.80000000000004
+          }
+        ],
+        "startTime": 135.36,
+        "endTime": 148.8
+      },
+      {
+        "id": 14,
+        "surahId": 72,
+        "ayahNumber": 14,
+        "text": "وَأَنَّا مِنَّا الْمُسْلِمُونَ وَمِنَّا الْقَاسِطُونَ ۖ فَمَنْ أَسْلَمَ فَأُولَٰئِكَ تَحَرَّوْا رَشَدًا",
+        "words": [
+          {
+            "id": "14-0",
+            "text": "وَأَنَّا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 149.6,
+            "endTime": 150.6632258064516
+          },
+          {
+            "id": "14-1",
+            "text": "مِنَّا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 150.6632258064516,
+            "endTime": 151.46064516129033
+          },
+          {
+            "id": "14-2",
+            "text": "الْمُسْلِمُونَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 151.46064516129033,
+            "endTime": 153.32129032258067
+          },
+          {
+            "id": "14-3",
+            "text": "وَمِنَّا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 153.32129032258067,
+            "endTime": 154.38451612903228
+          },
+          {
+            "id": "14-4",
+            "text": "الْقَاسِطُونَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 154.38451612903228,
+            "endTime": 156.11225806451614
+          },
+          {
+            "id": "14-5",
+            "text": "ۖ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 156.11225806451614,
+            "endTime": 156.24516129032259
+          },
+          {
+            "id": "14-6",
+            "text": "فَمَنْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 156.24516129032259,
+            "endTime": 157.0425806451613
+          },
+          {
+            "id": "14-7",
+            "text": "أَسْلَمَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 157.0425806451613,
+            "endTime": 158.10580645161292
+          },
+          {
+            "id": "14-8",
+            "text": "فَأُولَٰئِكَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 158.10580645161292,
+            "endTime": 159.70064516129034
+          },
+          {
+            "id": "14-9",
+            "text": "تَحَرَّوْا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 159.70064516129034,
+            "endTime": 161.02967741935487
+          },
+          {
+            "id": "14-10",
+            "text": "رَشَدًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 161.02967741935487,
+            "endTime": 161.96000000000004
+          }
+        ],
+        "startTime": 149.6,
+        "endTime": 161.96
+      },
+      {
+        "id": 15,
+        "surahId": 72,
+        "ayahNumber": 15,
+        "text": "وَأَمَّا الْقَاسِطُونَ فَكَانُوا لِجَهَنَّمَ حَطَبًا",
+        "words": [
+          {
+            "id": "15-0",
+            "text": "وَأَمَّا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 162.76,
+            "endTime": 163.79999999999998
+          },
+          {
+            "id": "15-1",
+            "text": "الْقَاسِطُونَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 163.79999999999998,
+            "endTime": 165.48999999999998
+          },
+          {
+            "id": "15-2",
+            "text": "فَكَانُوا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 165.48999999999998,
+            "endTime": 166.65999999999997
+          },
+          {
+            "id": "15-3",
+            "text": "لِجَهَنَّمَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 166.65999999999997,
+            "endTime": 168.08999999999997
+          },
+          {
+            "id": "15-4",
+            "text": "حَطَبًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 168.08999999999997,
+            "endTime": 168.99999999999997
+          }
+        ],
+        "startTime": 162.76,
+        "endTime": 169
+      },
+      {
+        "id": 16,
+        "surahId": 72,
+        "ayahNumber": 16,
+        "text": "وَأَنْ لَوِ اسْتَقَامُوا عَلَى الطَّرِيقَةِ لَأَسْقَيْنَاهُمْ مَاءً غَدَقًا",
+        "words": [
+          {
+            "id": "16-0",
+            "text": "وَأَنْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 169.8,
+            "endTime": 170.59411764705882
+          },
+          {
+            "id": "16-1",
+            "text": "لَوِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 170.59411764705882,
+            "endTime": 171.1235294117647
+          },
+          {
+            "id": "16-2",
+            "text": "اسْتَقَامُوا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 171.1235294117647,
+            "endTime": 172.71176470588236
+          },
+          {
+            "id": "16-3",
+            "text": "عَلَى",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 172.71176470588236,
+            "endTime": 173.3735294117647
+          },
+          {
+            "id": "16-4",
+            "text": "الطَّرِيقَةِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 173.3735294117647,
+            "endTime": 174.96176470588236
+          },
+          {
+            "id": "16-5",
+            "text": "لَأَسْقَيْنَاهُمْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 174.96176470588236,
+            "endTime": 177.21176470588236
+          },
+          {
+            "id": "16-6",
+            "text": "مَاءً",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 177.21176470588236,
+            "endTime": 177.8735294117647
+          },
+          {
+            "id": "16-7",
+            "text": "غَدَقًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 177.8735294117647,
+            "endTime": 178.8
+          }
+        ],
+        "startTime": 169.8,
+        "endTime": 178.8
+      },
+      {
+        "id": 17,
+        "surahId": 72,
+        "ayahNumber": 17,
+        "text": "لِنَفْتِنَهُمْ فِيهِ ۚ وَمَنْ يُعْرِضْ عَنْ ذِكْرِ رَبِّهِ يَسْلُكْهُ عَذَابًا صَعَدًا",
+        "words": [
+          {
+            "id": "17-0",
+            "text": "لِنَفْتِنَهُمْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 179.6,
+            "endTime": 181.50105263157894
+          },
+          {
+            "id": "17-1",
+            "text": "فِيهِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 181.50105263157894,
+            "endTime": 182.18
+          },
+          {
+            "id": "17-2",
+            "text": "ۚ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 182.18,
+            "endTime": 182.31578947368422
+          },
+          {
+            "id": "17-3",
+            "text": "وَمَنْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 182.31578947368422,
+            "endTime": 183.1305263157895
+          },
+          {
+            "id": "17-4",
+            "text": "يُعْرِضْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 183.1305263157895,
+            "endTime": 184.21684210526317
+          },
+          {
+            "id": "17-5",
+            "text": "عَنْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 184.21684210526317,
+            "endTime": 184.76000000000002
+          },
+          {
+            "id": "17-6",
+            "text": "ذِكْرِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 184.76000000000002,
+            "endTime": 185.5747368421053
+          },
+          {
+            "id": "17-7",
+            "text": "رَبِّهِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 185.5747368421053,
+            "endTime": 186.52526315789476
+          },
+          {
+            "id": "17-8",
+            "text": "يَسْلُكْهُ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 186.52526315789476,
+            "endTime": 187.88315789473685
+          },
+          {
+            "id": "17-9",
+            "text": "عَذَابًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 187.88315789473685,
+            "endTime": 188.96947368421053
+          },
+          {
+            "id": "17-10",
+            "text": "صَعَدًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 188.96947368421053,
+            "endTime": 189.92
+          }
+        ],
+        "startTime": 179.6,
+        "endTime": 189.92
+      },
+      {
+        "id": 18,
+        "surahId": 72,
+        "ayahNumber": 18,
+        "text": "وَأَنَّ الْمَسَاجِدَ لِلَّهِ فَلَا تَدْعُوا مَعَ اللَّهِ أَحَدًا",
+        "words": [
+          {
+            "id": "18-0",
+            "text": "وَأَنَّ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 190.72,
+            "endTime": 191.66315789473686
+          },
+          {
+            "id": "18-1",
+            "text": "الْمَسَاجِدَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 191.66315789473686,
+            "endTime": 193.28
+          },
+          {
+            "id": "18-2",
+            "text": "لِلَّهِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 193.28,
+            "endTime": 194.22315789473686
+          },
+          {
+            "id": "18-3",
+            "text": "فَلَا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 194.22315789473686,
+            "endTime": 194.89684210526318
+          },
+          {
+            "id": "18-4",
+            "text": "تَدْعُوا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 194.89684210526318,
+            "endTime": 195.97473684210527
+          },
+          {
+            "id": "18-5",
+            "text": "مَعَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 195.97473684210527,
+            "endTime": 196.51368421052632
+          },
+          {
+            "id": "18-6",
+            "text": "اللَّهِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 196.51368421052632,
+            "endTime": 197.45684210526318
+          },
+          {
+            "id": "18-7",
+            "text": "أَحَدًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 197.45684210526318,
+            "endTime": 198.40000000000003
+          }
+        ],
+        "startTime": 190.72,
+        "endTime": 198.4
+      },
+      {
+        "id": 19,
+        "surahId": 72,
+        "ayahNumber": 19,
+        "text": "وَأَنَّهُ لَمَّا قَامَ عَبْدُ اللَّهِ يَدْعُوهُ كَادُوا يَكُونُونَ عَلَيْهِ لِبَدًا",
+        "words": [
+          {
+            "id": "19-0",
+            "text": "وَأَنَّهُ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 199.2,
+            "endTime": 200.41135135135133
+          },
+          {
+            "id": "19-1",
+            "text": "لَمَّا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 200.41135135135133,
+            "endTime": 201.2189189189189
+          },
+          {
+            "id": "19-2",
+            "text": "قَامَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 201.2189189189189,
+            "endTime": 201.89189189189187
+          },
+          {
+            "id": "19-3",
+            "text": "عَبْدُ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 201.89189189189187,
+            "endTime": 202.69945945945943
+          },
+          {
+            "id": "19-4",
+            "text": "اللَّهِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 202.69945945945943,
+            "endTime": 203.6416216216216
+          },
+          {
+            "id": "19-5",
+            "text": "يَدْعُوهُ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 203.6416216216216,
+            "endTime": 204.85297297297294
+          },
+          {
+            "id": "19-6",
+            "text": "كَادُوا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 204.85297297297294,
+            "endTime": 205.7951351351351
+          },
+          {
+            "id": "19-7",
+            "text": "يَكُونُونَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 205.7951351351351,
+            "endTime": 207.14108108108104
+          },
+          {
+            "id": "19-8",
+            "text": "عَلَيْهِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 207.14108108108104,
+            "endTime": 208.2178378378378
+          },
+          {
+            "id": "19-9",
+            "text": "لِبَدًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 208.2178378378378,
+            "endTime": 209.15999999999997
+          }
+        ],
+        "startTime": 199.2,
+        "endTime": 209.16
+      },
+      {
+        "id": 20,
+        "surahId": 72,
+        "ayahNumber": 20,
+        "text": "قُلْ إِنَّمَا أَدْعُو رَبِّي وَلَا أُشْرِكُ بِهِ أَحَدًا",
+        "words": [
+          {
+            "id": "20-0",
+            "text": "قُلْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 209.96,
+            "endTime": 210.50857142857143
+          },
+          {
+            "id": "20-1",
+            "text": "إِنَّمَا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 210.50857142857143,
+            "endTime": 211.6057142857143
+          },
+          {
+            "id": "20-2",
+            "text": "أَدْعُو",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 211.6057142857143,
+            "endTime": 212.5657142857143
+          },
+          {
+            "id": "20-3",
+            "text": "رَبِّي",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 212.5657142857143,
+            "endTime": 213.38857142857145
+          },
+          {
+            "id": "20-4",
+            "text": "وَلَا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 213.38857142857145,
+            "endTime": 214.07428571428574
+          },
+          {
+            "id": "20-5",
+            "text": "أُشْرِكُ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 214.07428571428574,
+            "endTime": 215.1714285714286
+          },
+          {
+            "id": "20-6",
+            "text": "بِهِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 215.1714285714286,
+            "endTime": 215.72000000000003
+          },
+          {
+            "id": "20-7",
+            "text": "أَحَدًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 215.72000000000003,
+            "endTime": 216.68000000000004
+          }
+        ],
+        "startTime": 209.96,
+        "endTime": 216.68
+      },
+      {
+        "id": 21,
+        "surahId": 72,
+        "ayahNumber": 21,
+        "text": "قُلْ إِنِّي لَا أَمْلِكُ لَكُمْ ضَرًّا وَلَا رَشَدًا",
+        "words": [
+          {
+            "id": "21-0",
+            "text": "قُلْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 217.48,
+            "endTime": 218.03466666666665
+          },
+          {
+            "id": "21-1",
+            "text": "إِنِّي",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 218.03466666666665,
+            "endTime": 218.86666666666665
+          },
+          {
+            "id": "21-2",
+            "text": "لَا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 218.86666666666665,
+            "endTime": 219.28266666666664
+          },
+          {
+            "id": "21-3",
+            "text": "أَمْلِكُ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 219.28266666666664,
+            "endTime": 220.39199999999997
+          },
+          {
+            "id": "21-4",
+            "text": "لَكُمْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 220.39199999999997,
+            "endTime": 221.22399999999996
+          },
+          {
+            "id": "21-5",
+            "text": "ضَرًّا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 221.22399999999996,
+            "endTime": 222.05599999999995
+          },
+          {
+            "id": "21-6",
+            "text": "وَلَا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 222.05599999999995,
+            "endTime": 222.74933333333328
+          },
+          {
+            "id": "21-7",
+            "text": "رَشَدًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 222.74933333333328,
+            "endTime": 223.71999999999994
+          }
+        ],
+        "startTime": 217.48,
+        "endTime": 223.72
+      },
+      {
+        "id": 22,
+        "surahId": 72,
+        "ayahNumber": 22,
+        "text": "قُلْ إِنِّي لَنْ يُجِيرَنِي مِنَ اللَّهِ أَحَدٌ وَلَنْ أَجِدَ مِنْ دُونِهِ مُلْتَحَدًا",
+        "words": [
+          {
+            "id": "22-0",
+            "text": "قُلْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 224.52,
+            "endTime": 225.0704
+          },
+          {
+            "id": "22-1",
+            "text": "إِنِّي",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 225.0704,
+            "endTime": 225.89600000000002
+          },
+          {
+            "id": "22-2",
+            "text": "لَنْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 225.89600000000002,
+            "endTime": 226.4464
+          },
+          {
+            "id": "22-3",
+            "text": "يُجِيرَنِي",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 226.4464,
+            "endTime": 227.82240000000002
+          },
+          {
+            "id": "22-4",
+            "text": "مِنَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 227.82240000000002,
+            "endTime": 228.3728
+          },
+          {
+            "id": "22-5",
+            "text": "اللَّهِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 228.3728,
+            "endTime": 229.336
+          },
+          {
+            "id": "22-6",
+            "text": "أَحَدٌ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 229.336,
+            "endTime": 230.16160000000002
+          },
+          {
+            "id": "22-7",
+            "text": "وَلَنْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 230.16160000000002,
+            "endTime": 230.98720000000003
+          },
+          {
+            "id": "22-8",
+            "text": "أَجِدَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 230.98720000000003,
+            "endTime": 231.81280000000004
+          },
+          {
+            "id": "22-9",
+            "text": "مِنْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 231.81280000000004,
+            "endTime": 232.36320000000003
+          },
+          {
+            "id": "22-10",
+            "text": "دُونِهِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 232.36320000000003,
+            "endTime": 233.32640000000004
+          },
+          {
+            "id": "22-11",
+            "text": "مُلْتَحَدًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 233.32640000000004,
+            "endTime": 234.84000000000003
+          }
+        ],
+        "startTime": 224.52,
+        "endTime": 234.84
+      },
+      {
+        "id": 23,
+        "surahId": 72,
+        "ayahNumber": 23,
+        "text": "إِلَّا بَلَاغًا مِنَ اللَّهِ وَرِسَالَاتِهِ ۚ وَمَنْ يَعْصِ اللَّهَ وَرَسُولَهُ فَإِنَّ لَهُ نَارَ جَهَنَّمَ خَالِدِينَ فِيهَا أَبَدًا",
+        "words": [
+          {
+            "id": "23-0",
+            "text": "إِلَّا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 235.64,
+            "endTime": 236.45762711864404
+          },
+          {
+            "id": "23-1",
+            "text": "بَلَاغًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 236.45762711864404,
+            "endTime": 237.54779661016946
+          },
+          {
+            "id": "23-2",
+            "text": "مِنَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 237.54779661016946,
+            "endTime": 238.09288135593218
+          },
+          {
+            "id": "23-3",
+            "text": "اللَّهِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 238.09288135593218,
+            "endTime": 239.04677966101693
+          },
+          {
+            "id": "23-4",
+            "text": "وَرِسَالَاتِهِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 239.04677966101693,
+            "endTime": 240.95457627118643
+          },
+          {
+            "id": "23-5",
+            "text": "ۚ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 240.95457627118643,
+            "endTime": 241.0908474576271
+          },
+          {
+            "id": "23-6",
+            "text": "وَمَنْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 241.0908474576271,
+            "endTime": 241.90847457627115
+          },
+          {
+            "id": "23-7",
+            "text": "يَعْصِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 241.90847457627115,
+            "endTime": 242.7261016949152
+          },
+          {
+            "id": "23-8",
+            "text": "اللَّهَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 242.7261016949152,
+            "endTime": 243.67999999999995
+          },
+          {
+            "id": "23-9",
+            "text": "وَرَسُولَهُ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 243.67999999999995,
+            "endTime": 245.17898305084742
+          },
+          {
+            "id": "23-10",
+            "text": "فَإِنَّ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 245.17898305084742,
+            "endTime": 246.13288135593217
+          },
+          {
+            "id": "23-11",
+            "text": "لَهُ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 246.13288135593217,
+            "endTime": 246.6779661016949
+          },
+          {
+            "id": "23-12",
+            "text": "نَارَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 246.6779661016949,
+            "endTime": 247.35932203389828
+          },
+          {
+            "id": "23-13",
+            "text": "جَهَنَّمَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 247.35932203389828,
+            "endTime": 248.5857627118644
+          },
+          {
+            "id": "23-14",
+            "text": "خَالِدِينَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 248.5857627118644,
+            "endTime": 249.94847457627117
+          },
+          {
+            "id": "23-15",
+            "text": "فِيهَا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 249.94847457627117,
+            "endTime": 250.76610169491522
+          },
+          {
+            "id": "23-16",
+            "text": "أَبَدًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 250.76610169491522,
+            "endTime": 251.71999999999997
+          }
+        ],
+        "startTime": 235.64,
+        "endTime": 251.72
+      },
+      {
+        "id": 24,
+        "surahId": 72,
+        "ayahNumber": 24,
+        "text": "حَتَّىٰ إِذَا رَأَوْا مَا يُوعَدُونَ فَسَيَعْلَمُونَ مَنْ أَضْعَفُ نَاصِرًا وَأَقَلُّ عَدَدًا",
+        "words": [
+          {
+            "id": "24-0",
+            "text": "حَتَّىٰ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 252.52,
+            "endTime": 253.46120481927713
+          },
+          {
+            "id": "24-1",
+            "text": "إِذَا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 253.46120481927713,
+            "endTime": 254.13349397590363
+          },
+          {
+            "id": "24-2",
+            "text": "رَأَوْا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 254.13349397590363,
+            "endTime": 255.07469879518075
+          },
+          {
+            "id": "24-3",
+            "text": "مَا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 255.07469879518075,
+            "endTime": 255.47807228915664
+          },
+          {
+            "id": "24-4",
+            "text": "يُوعَدُونَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 255.47807228915664,
+            "endTime": 256.8226506024097
+          },
+          {
+            "id": "24-5",
+            "text": "فَسَيَعْلَمُونَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 256.8226506024097,
+            "endTime": 258.8395180722892
+          },
+          {
+            "id": "24-6",
+            "text": "مَنْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 258.8395180722892,
+            "endTime": 259.3773493975904
+          },
+          {
+            "id": "24-7",
+            "text": "أَضْعَفُ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 259.3773493975904,
+            "endTime": 260.4530120481928
+          },
+          {
+            "id": "24-8",
+            "text": "نَاصِرًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 260.4530120481928,
+            "endTime": 261.5286746987952
+          },
+          {
+            "id": "24-9",
+            "text": "وَأَقَلُّ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 261.5286746987952,
+            "endTime": 262.73879518072295
+          },
+          {
+            "id": "24-10",
+            "text": "عَدَدًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 262.73879518072295,
+            "endTime": 263.68000000000006
+          }
+        ],
+        "startTime": 252.52,
+        "endTime": 263.68
+      },
+      {
+        "id": 25,
+        "surahId": 72,
+        "ayahNumber": 25,
+        "text": "قُلْ إِنْ أَدْرِي أَقَرِيبٌ مَا تُوعَدُونَ أَمْ يَجْعَلُ لَهُ رَبِّي أَمَدًا",
+        "words": [
+          {
+            "id": "25-0",
+            "text": "قُلْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 264.48,
+            "endTime": 265.0327272727273
+          },
+          {
+            "id": "25-1",
+            "text": "إِنْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 265.0327272727273,
+            "endTime": 265.5854545454546
+          },
+          {
+            "id": "25-2",
+            "text": "أَدْرِي",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 265.5854545454546,
+            "endTime": 266.5527272727273
+          },
+          {
+            "id": "25-3",
+            "text": "أَقَرِيبٌ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 266.5527272727273,
+            "endTime": 267.79636363636365
+          },
+          {
+            "id": "25-4",
+            "text": "مَا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 267.79636363636365,
+            "endTime": 268.2109090909091
+          },
+          {
+            "id": "25-5",
+            "text": "تُوعَدُونَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 268.2109090909091,
+            "endTime": 269.5927272727273
+          },
+          {
+            "id": "25-6",
+            "text": "أَمْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 269.5927272727273,
+            "endTime": 270.1454545454546
+          },
+          {
+            "id": "25-7",
+            "text": "يَجْعَلُ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 270.1454545454546,
+            "endTime": 271.25090909090915
+          },
+          {
+            "id": "25-8",
+            "text": "لَهُ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 271.25090909090915,
+            "endTime": 271.80363636363643
+          },
+          {
+            "id": "25-9",
+            "text": "رَبِّي",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 271.80363636363643,
+            "endTime": 272.6327272727273
+          },
+          {
+            "id": "25-10",
+            "text": "أَمَدًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 272.6327272727273,
+            "endTime": 273.6
+          }
+        ],
+        "startTime": 264.48,
+        "endTime": 273.6
+      },
+      {
+        "id": 26,
+        "surahId": 72,
+        "ayahNumber": 26,
+        "text": "عَالِمُ الْغَيْبِ فَلَا يُظْهِرُ عَلَىٰ غَيْبِهِ أَحَدًا",
+        "words": [
+          {
+            "id": "26-0",
+            "text": "عَالِمُ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 274.4,
+            "endTime": 275.3408
+          },
+          {
+            "id": "26-1",
+            "text": "الْغَيْبِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 275.3408,
+            "endTime": 276.5504
+          },
+          {
+            "id": "26-2",
+            "text": "فَلَا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 276.5504,
+            "endTime": 277.22240000000005
+          },
+          {
+            "id": "26-3",
+            "text": "يُظْهِرُ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 277.22240000000005,
+            "endTime": 278.29760000000005
+          },
+          {
+            "id": "26-4",
+            "text": "عَلَىٰ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 278.29760000000005,
+            "endTime": 279.10400000000004
+          },
+          {
+            "id": "26-5",
+            "text": "غَيْبِهِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 279.10400000000004,
+            "endTime": 280.17920000000004
+          },
+          {
+            "id": "26-6",
+            "text": "أَحَدًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 280.17920000000004,
+            "endTime": 281.12000000000006
+          }
+        ],
+        "startTime": 274.4,
+        "endTime": 281.12
+      },
+      {
+        "id": 27,
+        "surahId": 72,
+        "ayahNumber": 27,
+        "text": "إِلَّا مَنِ ارْتَضَىٰ مِنْ رَسُولٍ فَإِنَّهُ يَسْلُكُ مِنْ بَيْنِ يَدَيْهِ وَمِنْ خَلْفِهِ رَصَدًا",
+        "words": [
+          {
+            "id": "27-0",
+            "text": "إِلَّا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 281.92,
+            "endTime": 282.7404651162791
+          },
+          {
+            "id": "27-1",
+            "text": "مَنِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 282.7404651162791,
+            "endTime": 283.28744186046515
+          },
+          {
+            "id": "27-2",
+            "text": "ارْتَضَىٰ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 283.28744186046515,
+            "endTime": 284.51813953488374
+          },
+          {
+            "id": "27-3",
+            "text": "مِنْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 284.51813953488374,
+            "endTime": 285.0651162790698
+          },
+          {
+            "id": "27-4",
+            "text": "رَسُولٍ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 285.0651162790698,
+            "endTime": 286.02232558139536
+          },
+          {
+            "id": "27-5",
+            "text": "فَإِنَّهُ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 286.02232558139536,
+            "endTime": 287.25302325581396
+          },
+          {
+            "id": "27-6",
+            "text": "يَسْلُكُ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 287.25302325581396,
+            "endTime": 288.34697674418607
+          },
+          {
+            "id": "27-7",
+            "text": "مِنْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 288.34697674418607,
+            "endTime": 288.8939534883721
+          },
+          {
+            "id": "27-8",
+            "text": "بَيْنِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 288.8939534883721,
+            "endTime": 289.7144186046512
+          },
+          {
+            "id": "27-9",
+            "text": "يَدَيْهِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 289.7144186046512,
+            "endTime": 290.8083720930233
+          },
+          {
+            "id": "27-10",
+            "text": "وَمِنْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 290.8083720930233,
+            "endTime": 291.6288372093024
+          },
+          {
+            "id": "27-11",
+            "text": "خَلْفِهِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 291.6288372093024,
+            "endTime": 292.7227906976745
+          },
+          {
+            "id": "27-12",
+            "text": "رَصَدًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 292.7227906976745,
+            "endTime": 293.68000000000006
+          }
+        ],
+        "startTime": 281.92,
+        "endTime": 293.68
+      },
+      {
+        "id": 28,
+        "surahId": 72,
+        "ayahNumber": 28,
+        "text": "لِيَعْلَمَ أَنْ قَدْ أَبْلَغُوا رِسَالَاتِ رَبِّهِمْ وَأَحَاطَ بِمَا لَدَيْهِمْ وَأَحْصَىٰ كُلَّ شَيْءٍ عَدَدًا",
+        "words": [
+          {
+            "id": "28-0",
+            "text": "لِيَعْلَمَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 294.48,
+            "endTime": 295.8254545454546
+          },
+          {
+            "id": "28-1",
+            "text": "أَنْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 295.8254545454546,
+            "endTime": 296.36363636363643
+          },
+          {
+            "id": "28-2",
+            "text": "قَدْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 296.36363636363643,
+            "endTime": 296.90181818181827
+          },
+          {
+            "id": "28-3",
+            "text": "أَبْلَغُوا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 296.90181818181827,
+            "endTime": 298.24727272727284
+          },
+          {
+            "id": "28-4",
+            "text": "رِسَالَاتِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 298.24727272727284,
+            "endTime": 299.5927272727274
+          },
+          {
+            "id": "28-5",
+            "text": "رَبِّهِمْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 299.5927272727274,
+            "endTime": 300.8036363636365
+          },
+          {
+            "id": "28-6",
+            "text": "وَأَحَاطَ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 300.8036363636365,
+            "endTime": 302.01454545454556
+          },
+          {
+            "id": "28-7",
+            "text": "بِمَا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 302.01454545454556,
+            "endTime": 302.68727272727284
+          },
+          {
+            "id": "28-8",
+            "text": "لَدَيْهِمْ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 302.68727272727284,
+            "endTime": 304.0327272727274
+          },
+          {
+            "id": "28-9",
+            "text": "وَأَحْصَىٰ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 304.0327272727274,
+            "endTime": 305.378181818182
+          },
+          {
+            "id": "28-10",
+            "text": "كُلَّ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 305.378181818182,
+            "endTime": 306.0509090909093
+          },
+          {
+            "id": "28-11",
+            "text": "شَيْءٍ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 306.0509090909093,
+            "endTime": 306.858181818182
+          },
+          {
+            "id": "28-12",
+            "text": "عَدَدًا",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 306.858181818182,
+            "endTime": 307.8000000000002
+          }
+        ],
+        "startTime": 294.48,
+        "endTime": 307.8
+      }
+    ],
+    "81": [
+      {
+        "id": 0,
+        "surahId": 81,
+        "ayahNumber": 0,
+        "text": "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
+        "words": [
+          {
+            "id": "0-0",
+            "text": "بِسْمِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 0,
+            "endTime": 0.8571428571428572
+          },
+          {
+            "id": "0-1",
+            "text": "اللَّهِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 0.8571428571428572,
+            "endTime": 1.8571428571428572
+          },
+          {
+            "id": "0-2",
+            "text": "الرَّحْمَٰنِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 1.8571428571428572,
+            "endTime": 3.5714285714285716
+          },
+          {
+            "id": "0-3",
+            "text": "الرَّحِيمِ",
+            "root": "---",
+            "occurrences": 1,
+            "startTime": 3.5714285714285716,
+            "endTime": 5
+          }
+        ],
+        "startTime": 0,
+        "endTime": 5,
+        "isBismillah": true
+      },
+      {
+        "id": 1,
+        "surahId": 81,
+        "ayahNumber": 1,
+        "text": "إِذَا الشَّمْسُ كُوِّرَتْ",
+        "words": [],
+        "startTime": 6,
+        "endTime": 9
+      },
+      {
+        "id": 2,
+        "surahId": 81,
+        "ayahNumber": 2,
+        "text": "وَإِذَا النُّجُومُ انْكَدَرَتْ",
+        "words": [],
+        "startTime": 10,
+        "endTime": 13.6
+      },
+      {
+        "id": 3,
+        "surahId": 81,
+        "ayahNumber": 3,
+        "text": "وَإِذَا الْجِبَالُ سُيِّرَتْ",
+        "words": [],
+        "startTime": 14.6,
+        "endTime": 17.96
+      },
+      {
+        "id": 4,
+        "surahId": 81,
+        "ayahNumber": 4,
+        "text": "وَإِذَا الْعِشَارُ عُطِّلَتْ",
+        "words": [],
+        "startTime": 18.96,
+        "endTime": 22.32
+      },
+      {
+        "id": 5,
+        "surahId": 81,
+        "ayahNumber": 5,
+        "text": "وَإِذَا الْوُحُوشُ حُشِرَتْ",
+        "words": [],
+        "startTime": 23.32,
+        "endTime": 26.56
+      },
+      {
+        "id": 6,
+        "surahId": 81,
+        "ayahNumber": 6,
+        "text": "وَإِذَا الْبِحَارُ سُجِّرَتْ",
+        "words": [],
+        "startTime": 27.56,
+        "endTime": 30.919999999999998
+      },
+      {
+        "id": 7,
+        "surahId": 81,
+        "ayahNumber": 7,
+        "text": "وَإِذَا النُّفُوسُ زُوِّجَتْ",
+        "words": [],
+        "startTime": 31.919999999999998,
+        "endTime": 35.28
+      },
+      {
+        "id": 8,
+        "surahId": 81,
+        "ayahNumber": 8,
+        "text": "وَإِذَا الْمَوْءُودَةُ سُئِلَتْ",
+        "words": [],
+        "startTime": 36.28,
+        "endTime": 40
+      },
+      {
+        "id": 9,
+        "surahId": 81,
+        "ayahNumber": 9,
+        "text": "بِأَيِّ ذَنْبٍ قُتِلَتْ",
+        "words": [],
+        "startTime": 41,
+        "endTime": 43.76
+      },
+      {
+        "id": 10,
+        "surahId": 81,
+        "ayahNumber": 10,
+        "text": "وَإِذَا الصُّحُفُ نُشِرَتْ",
+        "words": [],
+        "startTime": 44.76,
+        "endTime": 47.879999999999995
+      },
+      {
+        "id": 11,
+        "surahId": 81,
+        "ayahNumber": 11,
+        "text": "وَإِذَا السَّمَاءُ كُشِطَتْ",
+        "words": [],
+        "startTime": 48.879999999999995,
+        "endTime": 52.12
+      },
+      {
+        "id": 12,
+        "surahId": 81,
+        "ayahNumber": 12,
+        "text": "وَإِذَا الْجَحِيمُ سُعِّرَتْ",
+        "words": [],
+        "startTime": 53.12,
+        "endTime": 56.48
+      },
+      {
+        "id": 13,
+        "surahId": 81,
+        "ayahNumber": 13,
+        "text": "وَإِذَا الْجَنَّةُ أُزْلِفَتْ",
+        "words": [],
+        "startTime": 57.48,
+        "endTime": 60.959999999999994
+      },
+      {
+        "id": 14,
+        "surahId": 81,
+        "ayahNumber": 14,
+        "text": "عَلِمَتْ نَفْسٌ مَا أَحْضَرَتْ",
+        "words": [],
+        "startTime": 61.959999999999994,
+        "endTime": 65.55999999999999
+      },
+      {
+        "id": 15,
+        "surahId": 81,
+        "ayahNumber": 15,
+        "text": "فَلَا أُقْسِمُ بِالْخُنَّسِ",
+        "words": [],
+        "startTime": 66.55999999999999,
+        "endTime": 69.79999999999998
+      },
+      {
+        "id": 16,
+        "surahId": 81,
+        "ayahNumber": 16,
+        "text": "الْجَوَارِ الْكُنَّسِ",
+        "words": [],
+        "startTime": 70.79999999999998,
+        "endTime": 73.31999999999998
+      },
+      {
+        "id": 17,
+        "surahId": 81,
+        "ayahNumber": 17,
+        "text": "وَاللَّيْلِ إِذَا عَسْعَسَ",
+        "words": [],
+        "startTime": 74.31999999999998,
+        "endTime": 77.43999999999998
+      },
+      {
+        "id": 18,
+        "surahId": 81,
+        "ayahNumber": 18,
+        "text": "وَالصُّبْحِ إِذَا تَنَفَّسَ",
+        "words": [],
+        "startTime": 78.43999999999998,
+        "endTime": 81.67999999999998
+      },
+      {
+        "id": 19,
+        "surahId": 81,
+        "ayahNumber": 19,
+        "text": "إِنَّهُ لَقَوْلُ رَسُولٍ كَرِيمٍ",
+        "words": [],
+        "startTime": 82.67999999999998,
+        "endTime": 86.51999999999998
+      },
+      {
+        "id": 20,
+        "surahId": 81,
+        "ayahNumber": 20,
+        "text": "ذِي قُوَّةٍ عِنْدَ ذِي الْعَرْشِ مَكِينٍ",
+        "words": [],
+        "startTime": 87.51999999999998,
+        "endTime": 92.31999999999998
+      },
+      {
+        "id": 21,
+        "surahId": 81,
+        "ayahNumber": 21,
+        "text": "مُطَاعٍ ثَمَّ أَمِينٍ",
+        "words": [],
+        "startTime": 93.31999999999998,
+        "endTime": 95.83999999999997
+      },
+      {
+        "id": 22,
+        "surahId": 81,
+        "ayahNumber": 22,
+        "text": "وَمَا صَاحِبُكُمْ بِمَجْنُونٍ",
+        "words": [],
+        "startTime": 96.83999999999997,
+        "endTime": 100.31999999999998
+      },
+      {
+        "id": 23,
+        "surahId": 81,
+        "ayahNumber": 23,
+        "text": "وَلَقَدْ رَآهُ بِالْأُفُقِ الْمُبِينِ",
+        "words": [],
+        "startTime": 101.31999999999998,
+        "endTime": 105.75999999999998
+      },
+      {
+        "id": 24,
+        "surahId": 81,
+        "ayahNumber": 24,
+        "text": "وَمَا هُوَ عَلَى الْغَيْبِ بِضَنِينٍ",
+        "words": [],
+        "startTime": 106.75999999999998,
+        "endTime": 111.07999999999998
+      },
+      {
+        "id": 25,
+        "surahId": 81,
+        "ayahNumber": 25,
+        "text": "وَمَا هُوَ بِقَوْلِ شَيْطَانٍ رَجِيمٍ",
+        "words": [],
+        "startTime": 112.07999999999998,
+        "endTime": 116.51999999999998
+      },
+      {
+        "id": 26,
+        "surahId": 81,
+        "ayahNumber": 26,
+        "text": "فَأَيْنَ تَذْهَبُونَ",
+        "words": [],
+        "startTime": 117.51999999999998,
+        "endTime": 119.91999999999999
+      },
+      {
+        "id": 27,
+        "surahId": 81,
+        "ayahNumber": 27,
+        "text": "إِنْ هُوَ إِلَّا ذِكْرٌ لِلْعَالَمِينَ",
+        "words": [],
+        "startTime": 120.91999999999999,
+        "endTime": 125.47999999999999
+      },
+      {
+        "id": 28,
+        "surahId": 81,
+        "ayahNumber": 28,
+        "text": "لِمَنْ شَاءَ مِنْكُمْ أَنْ يَسْتَقِيمَ",
+        "words": [],
+        "startTime": 126.47999999999999,
+        "endTime": 131.04
+      },
+      {
+        "id": 29,
+        "surahId": 81,
+        "ayahNumber": 29,
+        "text": "وَمَا تَشَاءُونَ إِلَّا أَنْ يَشَاءَ اللَّهُ رَبُّ الْعَالَمِينَ",
+        "words": [],
+        "startTime": 132.04,
+        "endTime": 139.72
+      }
+    ]
+  }
+}
