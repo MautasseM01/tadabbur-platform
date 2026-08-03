@@ -123,6 +123,14 @@ async function verifyAnalyze() {
     { word: 'الدِّينِ', root: 'دِّ', expect: 'دين', seeded: true },
     { word: 'مَالِكِ', root: 'ملك', expect: 'ملك', seeded: true },
     { word: 'الضَّالِّينَ', root: 'ضلل', expect: 'ضلل', seeded: true },
+    { word: 'أُوحِيَ', root: 'وحي', expect: 'وحي', seeded: true },
+    { word: 'اسْتَمَعَ', root: 'سمع', expect: 'سمع', seeded: true },
+    { word: 'الْجِنِّ', root: 'جنن', expect: 'جنن', seeded: true },
+    { word: 'قُرْآنًا', root: 'قرا', expect: 'قرأ', seeded: true },
+    { word: 'عَجَبًا', root: 'عجب', expect: 'عجب', seeded: true },
+    { word: 'الرُّشْدِ', root: 'رشد', expect: 'رشد', seeded: true },
+    { word: 'نُشْرِكَ', root: 'شرك', expect: 'شرك', seeded: true },
+    { word: 'أَحَدًا', root: 'احد', expect: 'أحد', seeded: true },
   ];
   for (const c of cases) {
     const started = Date.now();
