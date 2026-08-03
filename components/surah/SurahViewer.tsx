@@ -8,10 +8,10 @@ import WordRootModal from './WordRootModal';
 import WordComparisonModal from './WordComparisonModal';
 import PinnedPlayer from './PinnedPlayer';
 import ModelSelector from '@/components/ai/ModelSelector';
-import { saveAyahNoteToFirestore, syncSurahProgressToFirestore, fetchUserNotesFromFirestore, syncDashboardProgressToFirestore, onAuthChange } from '@/lib/firebaseSync';
+import { saveAyahNoteToFirestore, syncSurahProgressToFirestore, fetchUserNotesFromFirestore, syncDashboardProgressToFirestore, onAuthChange, getSurahSyncsFirestore, getVideosFirestore, getSurahAudioIdFirestore } from '@/lib/firebaseSync';
 import { Play, Video, ArrowRight, ArrowLeft, Sun, Moon, BookOpen, FileText, StickyNote, X, Save, Trash2, CheckCircle2, SkipForward, Eye, EyeOff, Sparkles, ArrowLeftRight, Clock, Pause, RotateCcw, ChevronLeft, ChevronRight, Home } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 export type ReadingTheme = 'light' | 'sepia' | 'dark';
 
@@ -109,6 +109,7 @@ interface SurahViewerProps {
 
 export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, highlightAyah }: SurahViewerProps) {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const surahId = ayahs[0]?.surahId ?? 1;
   const [currentTime, setCurrentTime] = useState(0);
   const [selectedWord, setSelectedWord] = useState<{word: Word, ayahText: string} | null>(null);
@@ -145,13 +146,65 @@ export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, 
   const [showSavedToast, setShowSavedToast] = useState(false);
   const [showAllNotesModal, setShowAllNotesModal] = useState(false);
 
+  // Cloud data merged asynchronously (never blocks first paint)
+  const [cloudSyncs, setCloudSyncs] = useState<Ayah[] | null>(null);
+  const [cloudVideos, setCloudVideos] = useState<VideoExplanation[] | null>(null);
+  const [cloudAudioId, setCloudAudioId] = useState<string | null>(null);
+
+  const effectiveAyahs = useMemo(() => {
+    if (!cloudSyncs || cloudSyncs.length === 0) return ayahs;
+    return ayahs.map((ayah) => {
+      if (ayah.isBismillah) return ayah;
+      const sync = cloudSyncs.find((s) => s.ayahNumber === ayah.ayahNumber && !s.isBismillah);
+      if (!sync) return ayah;
+      const words =
+        sync.words && sync.words.length === ayah.words.length
+          ? sync.words.map((w) => ({ ...w, occurrences: w.occurrences || 0 }))
+          : ayah.words;
+      return { ...ayah, startTime: sync.startTime, endTime: sync.endTime, words };
+    });
+  }, [ayahs, cloudSyncs]);
+
+  const allVideos = useMemo(() => {
+    if (!cloudVideos || cloudVideos.length === 0) return videos;
+    return Array.from(new Map([...videos, ...cloudVideos].map((v) => [v.id, v])).values());
+  }, [videos, cloudVideos]);
+
+  const effectiveAudioId = cloudAudioId || youtubeAudioId;
+
+  useEffect(() => {
+    let cancelled = false;
+    const guard = setTimeout(() => {
+      cancelled = true;
+    }, 10000);
+    (async () => {
+      try {
+        const [syncs, vids, aud] = await Promise.all([
+          getSurahSyncsFirestore(surahId),
+          getVideosFirestore(),
+          getSurahAudioIdFirestore(surahId),
+        ]);
+        if (cancelled) return;
+        if (syncs && syncs.length > 0) setCloudSyncs(syncs);
+        if (vids && vids.length > 0) setCloudVideos(vids);
+        if (aud) setCloudAudioId(aud);
+      } catch (err) {
+        console.warn('Firestore merge skipped:', err);
+      }
+    })();
+    return () => {
+      cancelled = true;
+      clearTimeout(guard);
+    };
+  }, [surahId]);
+
   // Comparison View state
   const [comparisonAyah, setComparisonAyah] = useState<Ayah | null>(null);
   const [comparisonWord1, setComparisonWord1] = useState<Word | null>(null);
   const [comparisonWord2, setComparisonWord2] = useState<Word | null>(null);
 
   const handleOpenComparison = (targetAyah?: Ayah | null, initialW1?: Word | null) => {
-    const ay = targetAyah || activeAyah || ayahs[0] || null;
+    const ay = targetAyah || activeAyah || effectiveAyahs[0] || null;
     setComparisonAyah(ay);
     setComparisonWord1(initialW1 || (ay && ay.words.length > 0 ? ay.words[0] : null));
     setComparisonWord2(ay && ay.words.length > 1 ? ay.words[1] : null);
@@ -358,10 +411,10 @@ export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, 
   const ayahRefs = useRef<Record<number, HTMLSpanElement | null>>({});
 
   // Derive the active ayah based on current time
-  const activeAyah = ayahs.find(a => currentTime >= a.startTime && currentTime <= a.endTime) || null;
+  const activeAyah = effectiveAyahs.find(a => currentTime >= a.startTime && currentTime <= a.endTime) || null;
 
   // Derived suggested videos for the active ayah
-  const suggestedVideos = activeAyah ? videos.filter(v => v.ayahNumber === activeAyah.ayahNumber) : [];
+  const suggestedVideos = activeAyah ? allVideos.filter(v => v.ayahNumber === activeAyah.ayahNumber) : [];
 
   useEffect(() => {
     if (autoPlayNext && activeAyah && ayahRefs.current[activeAyah.id] && !activeVideo) {
@@ -418,7 +471,7 @@ export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, 
 
       {!focusMode && (activeVideo || youtubeAudioId) && (
         <PinnedPlayer 
-          videoId={activeVideo ? activeVideo.youtubeId : (youtubeAudioId || '')}
+          videoId={activeVideo ? activeVideo.youtubeId : (effectiveAudioId || '')}
           startTime={activeVideo ? activeVideo.startTime : undefined}
           seekTime={requestedSeekTime}
           title={activeVideo ? activeVideo.title : `تلاوة سورة ${surahName}`}
@@ -453,7 +506,7 @@ export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, 
               <button
                 onClick={() => {
                   const prev = surahId - 1;
-                  if (prev >= 1) window.location.href = `/surah/${prev}`;
+                  if (prev >= 1) router.push(`/surah/${prev}`);
                 }}
                 disabled={surahId <= 1}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-xl transition font-sans font-medium text-sm cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${st.backBtn}`}
@@ -465,7 +518,7 @@ export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, 
               <button
                 onClick={() => {
                   const next = surahId + 1;
-                  if (next <= 114) window.location.href = `/surah/${next}`;
+                  if (next <= 114) router.push(`/surah/${next}`);
                 }}
                 disabled={surahId >= 114}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-xl transition font-sans font-medium text-sm cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${st.backBtn}`}
@@ -619,7 +672,7 @@ export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, 
 
         {/* Surah Text */}
         <div className={`rounded-3xl p-8 md:p-12 border leading-[2.2] text-center text-4xl md:text-5xl font-amiri mb-12 transition-colors duration-300 ${st.mainCard}`} dir="rtl">
-          {ayahs.map((ayah) => {
+          {effectiveAyahs.map((ayah) => {
             const isActive = activeAyah?.id === ayah.id;
             const isHighlighted = highlightedAyah === ayah.ayahNumber && !ayah.isBismillah;
             
@@ -799,14 +852,14 @@ export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, 
           contextAyah={selectedWord?.ayahText || ""} 
           onClose={() => setSelectedWord(null)}
           onOpenCompare={(wordToCompare) => {
-            const currentAyahObj = ayahs.find(a => a.text === selectedWord?.ayahText) || activeAyah || ayahs[0];
+            const currentAyahObj = effectiveAyahs.find(a => a.text === selectedWord?.ayahText) || activeAyah || effectiveAyahs[0];
             setSelectedWord(null);
             handleOpenComparison(currentAyahObj, wordToCompare);
           }}
-          surahAyahs={ayahs}
+          surahAyahs={effectiveAyahs}
           surahName={surahName}
           onSelectAyah={(ayahNum) => {
-            const target = ayahs.find(a => a.ayahNumber === ayahNum);
+            const target = effectiveAyahs.find(a => a.ayahNumber === ayahNum);
             if (target) {
               handlePlayAyah(target);
               if (ayahRefs.current[target.id]) {
@@ -951,7 +1004,7 @@ export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, 
                 <div className="overflow-y-auto space-y-4 pr-1 flex-1 my-2">
                   {Object.entries(notes).map(([ayahNumStr, noteContent]) => {
                     const ayahNum = Number(ayahNumStr);
-                    const matchingAyah = ayahs.find(a => a.ayahNumber === ayahNum);
+                    const matchingAyah = effectiveAyahs.find(a => a.ayahNumber === ayahNum);
                     return (
                       <div
                         key={ayahNum}

@@ -41,7 +41,8 @@ export default function PinnedPlayer({
   const [isReady, setIsReady] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(true);
+  // Collapsed by default (compact audio bar); expanded only for tafsir videos.
+  const [isExpanded, setIsExpanded] = useState<boolean>(() => !!onClose);
 
   // Handle external seek requests
   useEffect(() => {

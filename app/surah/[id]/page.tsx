@@ -1,11 +1,6 @@
 import SurahViewer from '@/components/surah/SurahViewer';
-import { AUDIO_YOUTUBE_IDS, MOCK_VIDEOS, Ayah, VideoExplanation } from '@/lib/mock-data';
+import { AUDIO_YOUTUBE_IDS, MOCK_VIDEOS, Ayah } from '@/lib/mock-data';
 import { getDb } from '@/lib/db';
-import {
-  getSurahSyncsFirestore,
-  getVideosFirestore,
-  getSurahAudioIdFirestore,
-} from '@/lib/firebaseSync';
 import { deriveArabicRoot } from '@/lib/arabicLexicon';
 
 // Helper to format fetched ayahs
@@ -163,39 +158,15 @@ export default async function SurahPage({
     return <div className="text-center p-20 text-xl font-sans">حدث خطأ أثناء جلب السورة.</div>;
   }
 
-  // Merge sources so nothing disappears in production:
-  // - Surah audio/videos come from Firestore when available
-  // - Local JSON DB + mock lists are ALWAYS unioned so admin-added data survives.
+  // Render INSTANTLY from embedded/local data — Firestore sync is merged
+  // client-side by SurahViewer so network latency never blocks the page.
   const db = getDb();
 
-  let savedSyncs: Ayah[] = [];
-  let allVideos: VideoExplanation[] = [];
-  let audioId = AUDIO_YOUTUBE_IDS[surahId] || "";
-
-  const union = (a: VideoExplanation[], b: VideoExplanation[]) =>
-    Array.from(new Map([...a, ...b].map(v => [v.id, v])).values());
-
-  try {
-    const [firestoreSyncs, firestoreVideos, firestoreAudioId] = await Promise.all([
-      getSurahSyncsFirestore(surahId),
-      getVideosFirestore(),
-      getSurahAudioIdFirestore(surahId)
-    ]);
-    savedSyncs = firestoreSyncs && firestoreSyncs.length > 0 ? firestoreSyncs : (db.surahSyncs[surahId] || []);
-    allVideos = firestoreVideos && firestoreVideos.length > 0
-      ? union(db.videos, firestoreVideos)
-      : union([], [...MOCK_VIDEOS, ...db.videos]);
-    const dbAudio = (db.surahAudioIds && db.surahAudioIds[surahId] !== undefined)
-      ? db.surahAudioIds[surahId] : "";
-    audioId = firestoreAudioId || dbAudio || AUDIO_YOUTUBE_IDS[surahId] || "";
-  } catch (err) {
-    console.warn('Fallback to local DB:', err);
-    savedSyncs = db.surahSyncs[surahId] || [];
-    allVideos = [...MOCK_VIDEOS, ...db.videos];
-    audioId = (db.surahAudioIds && db.surahAudioIds[surahId] !== undefined)
-      ? db.surahAudioIds[surahId]
-      : (AUDIO_YOUTUBE_IDS[surahId] || "");
-  }
+  const savedSyncs: Ayah[] = db.surahSyncs[surahId] || [];
+  const allVideos = [...MOCK_VIDEOS, ...db.videos];
+  const dbAudio = (db.surahAudioIds && db.surahAudioIds[surahId] !== undefined)
+    ? db.surahAudioIds[surahId] : "";
+  const audioId = dbAudio || AUDIO_YOUTUBE_IDS[surahId] || "";
 
   const ayahs = processSurahData(surahData, savedSyncs);
   const surahVideos = allVideos.filter(v => v.surahId === surahId);
