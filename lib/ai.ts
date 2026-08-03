@@ -563,8 +563,156 @@ export async function analyzeWordAI(params: {
   }
 }
 
-async function localAnalyzeWordResult(params: { wordText: string; root?: string; context: string }, model: string, usedFallback: boolean): Promise<AIResult> {
-  return {
+/**
+ * Streams an OpenRouter chat completion (SSE), yielding text deltas.
+ */
+async function* callOpenRouterStream(
+  model: string,
+  prompt: string,
+  maxTokens = 3000,
+  timeoutMs = 120000
+): AsyncGenerator<string> {
+  const apiKey = process.env.OPENROUTER_API_KEY || '';
+  if (!apiKey) throw new Error('OPENROUTER_API_KEY is not configured.');
+
+  const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model,
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.3,
+      max_tokens: maxTokens,
+      stream: true,
+    }),
+    signal: AbortSignal.timeout(timeoutMs),
+  });
+
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`AI provider error (${res.status}): ${body.slice(0, 300)}`);
+  }
+  if (!res.body) throw new Error('AI provider returned no stream.');
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder('utf-8');
+  let buffer = '';
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed.startsWith('data:')) continue;
+        const payload = trimmed.slice(5).trim();
+        if (payload === '[DONE]') return;
+        try {
+          const json = JSON.parse(payload);
+          const delta = json?.choices?.[0]?.delta?.content;
+          if (typeof delta === 'string' && delta.length > 0) yield delta;
+        } catch {
+          // skip malformed keep-alive lines
+        }
+      }
+    }
+  } finally {
+    reader.releaseLock();
+  }
+}
+
+/**
+ * Same linguistic-agent pipeline as analyzeWordAI but streams the primary
+ * model's raw output token-by-token so users see progress instead of a blank
+ * wait. Falls back to the standard (non-streaming) chain on failure.
+ */
+export async function* streamAnalyzeWordAI(params: {
+  wordText: string;
+  root?: string;
+  context: string;
+  provider?: string;
+  model?: string;
+}): AsyncGenerator<{ type: 'token'; text: string } | { type: 'done'; result: AIResult }> {
+  const { provider: requestedProvider, model: requestedModel } = params;
+  const { provider } = resolveProvider(requestedProvider);
+  const model = requestedModel && provider.models.some((m) => m.id === requestedModel)
+    ? requestedModel
+    : provider.models[0].id;
+
+  if (provider.id === 'local') {
+    yield { type: 'done', result: await analyzeWordAI(params) };
+    return;
+  }
+
+  const cacheKey = cacheKeyFor(params.wordText);
+  const cached = getCachedWordAnalysis(cacheKey);
+  if (cached) {
+    yield {
+      type: 'done',
+      result: {
+        text: formatWordAnalysisText(cached.analysis),
+        provider: provider.id,
+        model: cached.model,
+        usedFallback: false,
+        cached: true,
+        wordAnalysis: cached.analysis,
+      },
+    };
+    return;
+  }
+
+  let accumulated = '';
+  try {
+    const query = `${params.wordText} ${params.root && params.root !== '---' ? params.root : ''} جذر الكلمة معجم لسان العرب مقاييس اللغة`;
+    const searchResults = await searchWeb(query, 5);
+    for await (const chunk of callOpenRouterStream(
+      model,
+      WORD_PROMPT(params.wordText, params.root || '', params.context, searchResults),
+      3000,
+      120000
+    )) {
+      accumulated += chunk;
+      yield { type: 'token', text: chunk };
+    }
+
+    let parsed = parseWordAnalysis(accumulated);
+    const knownRoot = getKnownRoot(params.wordText);
+    if (knownRoot && sanitizeRoot(parsed.root) !== knownRoot) {
+      parsed = { ...parsed, root: knownRoot, rootLetters: knownRoot.split('') };
+    }
+    if (!parsed.simpleDefinition || (parsed.lexiconReferences.length === 0 && !parsed.analysis)) {
+      throw new Error('Linguistic agent response too thin.');
+    }
+
+    setCachedWordAnalysis(cacheKey, {
+      word: params.wordText,
+      root: parsed.root,
+      analysis: parsed,
+      model,
+    });
+    yield {
+      type: 'done',
+      result: {
+        text: formatWordAnalysisText(parsed),
+        provider: provider.id,
+        model,
+        usedFallback: false,
+        wordAnalysis: parsed,
+      },
+    };
+    return;
+  } catch (err) {
+    console.warn('[ai] streaming attempt failed, using standard chain:', (err as Error).message);
+    yield { type: 'done', result: await analyzeWordAI(params) };
+  }
+}
+
+async function localAnalyzeWordResult(params: { wordText: string; root?: string; context: string }, model: string, usedFallback: boolean): Promise<AIResult> {  return {
     text: localWordAnalysis(params.wordText, params.root || '---', params.context),
     provider: 'local',
     model,

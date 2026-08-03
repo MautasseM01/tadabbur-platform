@@ -48,6 +48,7 @@ export default function WordRootModal({
   const [aiSource, setAiSource] = useState<string>('');
   const [aiWordAnalysis, setAiWordAnalysis] = useState<AIWordAnalysis | null>(null);
   const [loadingAi, setLoadingAi] = useState(false);
+  const [streamPreview, setStreamPreview] = useState('');
   const [showOccurrences, setShowOccurrences] = useState(false);
   const [copiedLabel, setCopiedLabel] = useState<string | null>(null);
   const askedFor = useRef<string | null>(null);
@@ -101,6 +102,7 @@ export default function WordRootModal({
     if (!word || !lexiconEntry) return;
     setLoadingAi(true);
     setAiAnalysis(null);
+    setStreamPreview('');
     setAiSource('');
     try {
       const selected = getSelectedAIModel();
@@ -113,13 +115,55 @@ export default function WordRootModal({
           context: contextAyah,
           provider: selected.provider,
           model: selected.model,
+          stream: true,
         }),
       });
-      const data = await res.json();
-      if (data.text) {
-        setAiWordAnalysis(data.wordAnalysis || null);
-        setAiAnalysis(data.wordAnalysis?.analysis || data.text);
-        setAiSource(`${data.model || ''}${data.cached ? ' • تحليل محفوظ' : ''}`);
+      if (!res.ok) {
+        setAiAnalysis("عذراً، حدث خطأ أثناء التحليل بالذكاء الاصطناعي.");
+        return;
+      }
+      if (!res.body) {
+        setAiAnalysis("عذراً، حدث خطأ أثناء الاتصال بالخادم.");
+        return;
+      }
+
+      // Read the SSE stream: tokens appear live, a final 'done' event carries
+      // the structured analysis.
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder('utf-8');
+      let buffer = '';
+      let finalData: any = null;
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const parts = buffer.split('\n\n');
+          buffer = parts.pop() || '';
+          for (const part of parts) {
+            const line = part.trim();
+            if (!line.startsWith('data:')) continue;
+            let evt: any;
+            try {
+              evt = JSON.parse(line.slice(5).trim());
+            } catch {
+              continue;
+            }
+            if (evt.type === 'token' && typeof evt.text === 'string') {
+              setStreamPreview((prev) => (prev + evt.text).slice(-12000));
+            } else if (evt.type === 'done') {
+              finalData = evt.result;
+            }
+          }
+        }
+      } finally {
+        reader.releaseLock();
+      }
+
+      if (finalData && finalData.text) {
+        setAiWordAnalysis(finalData.wordAnalysis || null);
+        setAiAnalysis(finalData.wordAnalysis?.analysis || finalData.text);
+        setAiSource(`${finalData.model || ''}${finalData.cached ? ' • تحليل محفوظ' : ''}`);
         try {
           const saved = localStorage.getItem('tadabbur_progress_data_v1');
           if (saved) {
@@ -458,6 +502,17 @@ export default function WordRootModal({
                 <div className="mt-3 flex items-center justify-center gap-2 text-[11px] font-sans text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 animate-pulse">
                   <Loader2 className="w-3 h-3 animate-spin" />
                   <span>الوكيل اللغوي يبحث الآن في معاجم (لسان العرب، مقاييس اللغة، المفردات، الوسيط) عبر الإنترنت...</span>
+                </div>
+              )}
+
+              {loadingAi && streamPreview && (
+                <div className="mt-3 p-4 rounded-2xl bg-white/80 border border-amber-200 text-natural-700 text-xs sm:text-sm font-sans leading-relaxed text-justify whitespace-pre-wrap max-h-56 overflow-y-auto">
+                  <div className="flex items-center gap-1.5 font-bold text-amber-900 mb-2">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
+                    <span>الوكيل اللغوي يكتب التحليل الآن...</span>
+                  </div>
+                  {streamPreview}
+                  <span className="inline-block w-2 h-4 bg-amber-500 animate-pulse rounded-sm ml-0.5" />
                 </div>
               )}
 
