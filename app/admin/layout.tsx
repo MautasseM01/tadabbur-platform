@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { LayoutDashboard, Clock, Video as VideoIcon, Globe, Bot } from 'lucide-react';
+import { LayoutDashboard, Clock, Video as VideoIcon, Globe, Bot, Music } from 'lucide-react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -24,6 +24,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link href="/admin/sync" className="flex items-center px-3 py-2 text-sm text-natural-700 hover:bg-natural-200 transition-colors rounded-lg font-medium opacity-70">
             <Clock className="w-4 h-4 ml-3" />
             <span>إدارة المزامنة (Surah Sync)</span>
+          </Link>
+          <Link href="/admin/audio" className="flex items-center px-3 py-2 text-sm text-natural-700 hover:bg-natural-200 transition-colors rounded-lg font-medium opacity-70">
+            <Music className="w-4 h-4 ml-3" />
+            <span>روابط التلاوة (YouTube)</span>
           </Link>
           <Link href="/admin/videos" className="flex items-center px-3 py-2 text-sm text-natural-700 hover:bg-natural-200 transition-colors rounded-lg font-medium opacity-70">
             <VideoIcon className="w-4 h-4 ml-3" />
