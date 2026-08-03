@@ -18,6 +18,13 @@ function extractYouTubeId(value: string): string {
   return /^[\w-]{6,}$/.test(trimmed) ? trimmed : '';
 }
 
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => setTimeout(() => reject(new Error('timeout')), ms)),
+  ]);
+}
+
 export async function GET() {
   const db = getDb();
   const merged: Record<number, string> = {};
@@ -26,6 +33,16 @@ export async function GET() {
       ? db.surahAudioIds[id]
       : (AUDIO_YOUTUBE_IDS[id] || '');
     if (value) merged[id] = value;
+  }
+  // Overlay Firestore as the durable layer for serverless (ephemeral local file)
+  try {
+    const { getAllSurahAudioIdsFirestore } = await import('@/lib/firebaseSync');
+    const cloud = await withTimeout(getAllSurahAudioIdsFirestore(), 8000);
+    for (const [k, v] of Object.entries(cloud)) {
+      if (v) merged[Number(k)] = v;
+    }
+  } catch (err) {
+    console.warn('Firestore audio GET skipped:', err);
   }
   return NextResponse.json({ surahAudioIds: merged });
 }
