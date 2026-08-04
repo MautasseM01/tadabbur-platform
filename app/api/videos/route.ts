@@ -2,9 +2,26 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDb, saveDb } from '@/lib/db';
 import { MOCK_VIDEOS, VideoExplanation } from '@/lib/mock-data';
 
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => setTimeout(() => reject(new Error('timeout')), ms)),
+  ]);
+}
+
 export async function GET() {
   const db = getDb();
   const merged = [...MOCK_VIDEOS, ...db.videos];
+  // Overlay Firestore as the durable layer for serverless (ephemeral local file)
+  try {
+    const { getVideosFirestore } = await import('@/lib/firebaseSync');
+    const cloud = await withTimeout(getVideosFirestore(), 8000);
+    if (Array.isArray(cloud) && cloud.length > 0) {
+      merged.push(...cloud);
+    }
+  } catch (err) {
+    console.warn('Firestore videos GET skipped:', err);
+  }
   const unique = Array.from(new Map(merged.map(v => [v.id, v])).values());
   return NextResponse.json({ videos: unique });
 }
