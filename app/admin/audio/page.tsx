@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { SURAH_NAMES } from '@/lib/surahs';
-import { CheckCircle2, AlertTriangle, Loader2, Save, Search, Music, ExternalLink, RefreshCw } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, Loader2, Save, Search, Music, ExternalLink, RefreshCw, FileDown } from 'lucide-react';
 
 function extractYouTubeId(value: string): string {
   const trimmed = value.trim();
@@ -175,14 +175,25 @@ export default function SurahAudioTable() {
             الصق رابط يوتيوب أو المعرّف المختصر (ID) لكل سورة — يظهر المشغل تلقائيًا في صفحة السورة ويُحفظ محليًا وسحابيًا.
           </p>
         </div>
-        <button
-          onClick={handleSave}
-          disabled={saving || dirtyIds.length === 0}
-          className="flex items-center gap-2 bg-natural-800 hover:bg-natural-900 text-white px-6 py-3 rounded-xl font-medium transition shadow-sm text-sm cursor-pointer disabled:opacity-50"
-        >
-          {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-          <span>{saving ? 'جاري الحفظ...' : `حفظ التغييرات (${dirtyIds.length})`}</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <a
+            href="/api/export-links"
+            download="links.md"
+            className="flex items-center gap-2 bg-white border border-natural-300 hover:bg-natural-100 text-natural-800 px-5 py-3 rounded-xl font-medium transition shadow-sm text-sm"
+            title="تنزيل ملف ذاكرة الروابط (Markdown)"
+          >
+            <FileDown className="w-4 h-4" />
+            <span>تنزيل فهرس الروابط (MD)</span>
+          </a>
+          <button
+            onClick={handleSave}
+            disabled={saving || dirtyIds.length === 0}
+            className="flex items-center gap-2 bg-natural-800 hover:bg-natural-900 text-white px-6 py-3 rounded-xl font-medium transition shadow-sm text-sm cursor-pointer disabled:opacity-50"
+          >
+            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            <span>{saving ? 'جاري الحفظ...' : `حفظ التغييرات (${dirtyIds.length})`}</span>
+          </button>
+        </div>
       </div>
 
       {message && (
