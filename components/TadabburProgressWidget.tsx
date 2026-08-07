@@ -1,12 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useSyncExternalStore } from 'react';
-import { 
-  fetchDashboardProgressFromFirestore, 
-  syncDashboardProgressToFirestore, 
-  onAuthChange 
-} from '@/lib/firebaseSync';
-import { Cloud, CloudCheck, Loader2 } from 'lucide-react';
+import { HardDrive } from 'lucide-react';
 import { 
   ResponsiveContainer, 
   BarChart, 
@@ -200,34 +195,6 @@ export default function TadabburProgressWidget() {
     }
   };
 
-  const [isCloudSynced, setIsCloudSynced] = useState(false);
-
-  useEffect(() => {
-    const unsubscribe = onAuthChange(async (user) => {
-      if (user) {
-        try {
-          const cloudData = await fetchDashboardProgressFromFirestore();
-          if (cloudData && typeof cloudData.totalAyahsAnalyzed === 'number') {
-            setData((prev) => ({
-              ...prev,
-              ...cloudData,
-              frequentLinguisticRoots: cloudData.frequentLinguisticRoots || prev.frequentLinguisticRoots
-            }));
-          } else {
-            // Initial sync to Firestore if user has no cloud summary yet
-            await syncDashboardProgressToFirestore(data);
-          }
-          setIsCloudSynced(true);
-        } catch (err) {
-          console.warn('Failed to sync progress with Firestore:', err);
-        }
-      } else {
-        setIsCloudSynced(false);
-      }
-    });
-    return () => unsubscribe();
-  }, []);
-
   const saveProgressData = (newData: TadabburProgressData) => {
     setData(newData);
     try {
@@ -235,10 +202,6 @@ export default function TadabburProgressWidget() {
     } catch (err) {
       console.error('Failed to save Tadabbur progress to localStorage', err);
     }
-    // Async sync to Firebase Firestore
-    syncDashboardProgressToFirestore(newData).catch((err) => {
-      console.warn('Firestore progress sync background warning:', err);
-    });
   };
 
   const handleLogSession = () => {
@@ -384,16 +347,9 @@ export default function TadabburProgressWidget() {
               <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                 <Sparkles className="w-3 h-3" /> إحصائيات حية
               </span>
-              {isCloudSynced ? (
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
-                  <CloudCheck className="w-3.5 h-3.5 text-emerald-600" /> مزامَن بالسحاب
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-natural-100 text-natural-600 border border-natural-200">
-                  <Cloud className="w-3.5 h-3.5 text-amber-500" /> تخزين محلي
-                </span>
-              )}
-            </div>
+              <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-natural-100 text-natural-600 border border-natural-200">
+                <HardDrive className="w-3.5 h-3.5 text-amber-500" /> تخزين محلي
+              </span>            </div>
             <p className="text-sm text-natural-600 font-sans mt-0.5">
               متابعة الآيات المتدبرة، السور الأكثر دراسةً، ومتوسط وقت التفاعل اليومي
             </p>

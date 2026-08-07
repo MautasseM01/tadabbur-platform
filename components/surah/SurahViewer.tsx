@@ -8,7 +8,7 @@ import WordRootModal from './WordRootModal';
 import WordComparisonModal from './WordComparisonModal';
 import PinnedPlayer from './PinnedPlayer';
 import ModelSelector from '@/components/ai/ModelSelector';
-import { saveAyahNoteToFirestore, syncSurahProgressToFirestore, fetchUserNotesFromFirestore, syncDashboardProgressToFirestore, onAuthChange, getSurahSyncsFirestore, getVideosFirestore, getSurahAudioIdFirestore } from '@/lib/firebaseSync';
+import { saveAyahNoteToFirestore, syncSurahProgressToFirestore, fetchUserNotesFromFirestore, syncDashboardProgressToFirestore, getSurahSyncsFirestore, getVideosFirestore, getSurahAudioIdFirestore } from '@/lib/firebaseSync';
 import { Play, Video, ArrowRight, ArrowLeft, Sun, Moon, BookOpen, FileText, StickyNote, X, Save, Trash2, CheckCircle2, SkipForward, Eye, EyeOff, Sparkles, ArrowLeftRight, Clock, Pause, RotateCcw, ChevronLeft, ChevronRight, Home } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -230,32 +230,29 @@ export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, 
 
   const totalSurahSeconds = initialSurahSeconds + sessionSeconds;
 
-  // Load cloud notes from Firestore when the user signs in (merge with local notes)
+  // Load notes from local storage (merged with local notes)
   useEffect(() => {
     let cancelled = false;
-    const unsubscribe = onAuthChange(async (user) => {
-      if (user && !cancelled) {
-        try {
-          const cloudNotes = await fetchUserNotesFromFirestore(surahName);
-          if (!cancelled && Object.keys(cloudNotes).length > 0) {
-            setNotes((prev) => {
-              const merged = { ...prev, ...cloudNotes };
-              try {
-                localStorage.setItem(`surah_notes_${surahName}`, JSON.stringify(merged));
-              } catch {
-                // ignore
-              }
-              return merged;
-            });
-          }
-        } catch (err) {
-          console.warn('Failed to load cloud notes:', err);
+    (async () => {
+      try {
+        const localNotes = await fetchUserNotesFromFirestore(surahName);
+        if (!cancelled && Object.keys(localNotes).length > 0) {
+          setNotes((prev) => {
+            const merged = { ...prev, ...localNotes };
+            try {
+              localStorage.setItem(`surah_notes_${surahName}`, JSON.stringify(merged));
+            } catch {
+              // ignore
+            }
+            return merged;
+          });
         }
+      } catch (err) {
+        console.warn('Failed to load notes:', err);
       }
-    });
+    })();
     return () => {
       cancelled = true;
-      unsubscribe();
     };
   }, [surahName]);
 
@@ -281,7 +278,7 @@ export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, 
         const newTotalSec = prevTotalSec + 10;
         localStorage.setItem(key, newTotalSec.toString());
 
-        // Sync to Firebase
+        // Sync to local progress
         syncSurahProgressToFirestore(surahName, newTotalSec);
 
         // Update main dashboard stats (tadabbur_progress_data_v1)
@@ -300,7 +297,7 @@ export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, 
           }
           localStorage.setItem('tadabbur_progress_data_v1', JSON.stringify(parsed));
 
-          // Sync dashboard summary to Firestore too (free tier, requires sign-in)
+          // Persist dashboard summary to localStorage
           syncDashboardProgressToFirestore(parsed).catch(() => {});
         }
       } catch {

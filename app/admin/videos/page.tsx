@@ -133,7 +133,7 @@ export default function VideoManagement() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-natural-900">إدارة التفسير المرئي</h1>
-          <p className="text-natural-600 text-sm">ربط مقاطع يوتيوب التحليلية بآيات محددة وحفظها محلياً أولاً ثم بالمزامنة السحابية.</p>
+          <p className="text-natural-600 text-sm">ربط مقاطع يوتيوب التحليلية بآيات محددة وحفظها في قاعدة البيانات الثابتة.</p>
         </div>
       </div>
 

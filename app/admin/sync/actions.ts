@@ -1,6 +1,6 @@
 'use server';
 
-import { getDb } from '@/lib/db';
+import { getDb, saveDb } from '@/lib/db';
 import { Ayah, AUDIO_YOUTUBE_IDS } from '@/lib/mock-data';
 import {
   getSurahAudioIdFirestore,
@@ -10,12 +10,8 @@ import {
 } from '@/lib/firebaseSync';
 
 export async function fetchSurahAudioId(surahId: number) {
-  try {
-    const audioId = await getSurahAudioIdFirestore(surahId);
-    if (audioId) return audioId;
-  } catch (err) {
-    console.warn('Firestore fetch audio error, falling back to local DB:', err);
-  }
+  const audioId = await getSurahAudioIdFirestore(surahId);
+  if (audioId) return audioId;
 
   const db = getDb();
   if (db.surahAudioIds && db.surahAudioIds[surahId] !== undefined) {
@@ -25,11 +21,7 @@ export async function fetchSurahAudioId(surahId: number) {
 }
 
 export async function saveSurahAudioId(surahId: number, audioId: string) {
-  try {
-    await saveSurahAudioIdFirestore(surahId, audioId);
-  } catch (err) {
-    console.error('Failed to save audio ID to Firestore:', err);
-  }
+  await saveSurahAudioIdFirestore(surahId, audioId);
   return { success: true };
 }
 
@@ -84,13 +76,7 @@ export async function runAIAutoSync(surahId: number, ayahs: Ayah[]) {
 
 export async function fetchSurahSyncs(surahId: number) {
   let existing: Ayah[] = [];
-  try {
-    existing = await getSurahSyncsFirestore(surahId);
-  } catch (err) {
-    console.warn('Firestore fetch syncs error, fallback to local DB:', err);
-    const db = getDb();
-    existing = db.surahSyncs[surahId] || [];
-  }
+  existing = await getSurahSyncsFirestore(surahId);
   
   const BISMILLAH = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ";
   
@@ -190,10 +176,6 @@ export async function fetchSurahSyncs(surahId: number) {
 }
 
 export async function saveSurahSyncs(surahId: number, ayahs: Ayah[]) {
-  try {
-    await saveSurahSyncsFirestore(surahId, ayahs);
-  } catch (err) {
-    console.error('Failed to save surah syncs to Firestore:', err);
-  }
+  await saveSurahSyncsFirestore(surahId, ayahs);
   return { success: true };
 }

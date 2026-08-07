@@ -128,7 +128,7 @@ export default function SurahAudioTable() {
       });
       const data = await res.json();
       if (data.success) {
-        setMessage({ type: 'success', text: `تم حفظ ${data.saved} روابط بنجاح (محليًا + سحابيًا).` });
+        setMessage({ type: 'success', text: `تم حفظ ${data.saved} روابط بنجاح.` });
         setEntries((prev) => {
           const next = { ...prev };
           for (const u of updates) next[u.surahId] = u.youtubeId;
@@ -172,7 +172,7 @@ export default function SurahAudioTable() {
             روابط تلاوة السور (YouTube)
           </h1>
           <p className="text-natural-600 text-sm mt-1">
-            الصق رابط يوتيوب أو المعرّف المختصر (ID) لكل سورة — يظهر المشغل تلقائيًا في صفحة السورة ويُحفظ محليًا وسحابيًا.
+            الصق رابط يوتيوب أو المعرّف المختصر (ID) لكل سورة — يظهر المشغل تلقائيًا في صفحة السورة ويُحفظ في قاعدة البيانات الثابتة.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -356,7 +356,7 @@ export default function SurahAudioTable() {
 function InfoBanner() {
   return (
     <span>
-      <span className="font-bold text-natural-700">ملاحظة:</span> يفضل أن تكون التلاوة بصوت واحد وبدون مقدمات طويلة (التلاوة تبدأ من الصفر تقريبًا) حتى تتطابق التزامن مع الآيات. الحفظ يتم محليًا ويرسل نسخة إلى Firestore لتبقى بعد إعادة النشر.
+      <span className="font-bold text-natural-700">ملاحظة:</span> يفضل أن تكون التلاوة بصوت واحد وبدون مقدمات طويلة (التلاوة تبدأ من الصفر تقريبًا) حتى تتطابق التزامن مع الآيات. الحفظ يتم في قاعدة البيانات الثابتة المدمجة بالمشروع.
     </span>
   );
 }
