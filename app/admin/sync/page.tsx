@@ -5,6 +5,7 @@ import { Ayah } from '@/lib/mock-data';
 import { Save, CheckCircle, Clock, Wand2, Youtube } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import { fetchSurahSyncs, saveSurahSyncs, fetchSurahAudioId, saveSurahAudioId, runAIAutoSync } from './actions';
+import { saveSurahAudioIdFirestore, saveSurahSyncsFirestore, readLocalOverlay } from '@/lib/firebaseSync';
 import PinnedPlayer from '@/components/surah/PinnedPlayer';
 
 function SyncManagementContent() {
@@ -31,8 +32,12 @@ function SyncManagementContent() {
       fetchSurahSyncs(surahId),
       fetchSurahAudioId(surahId)
     ]).then(([syncData, idData]) => {
-      setAyahs(syncData);
-      setAudioId(idData);
+      // Runtime overlay (browser memory) wins over the server/embedded data
+      const overlay = readLocalOverlay();
+      const overlaySyncs = overlay?.surahSyncs?.[surahId];
+      const overlayAudio = overlay?.surahAudioIds?.[surahId];
+      setAyahs(overlaySyncs && overlaySyncs.length > 0 ? overlaySyncs : syncData);
+      setAudioId(overlayAudio || idData);
       setLoading(false);
     });
   }, [surahId]);
@@ -84,8 +89,16 @@ function SyncManagementContent() {
 
   const handleSave = () => {
     startTransition(async () => {
-      await saveSurahAudioId(surahId, audioId);
-      await saveSurahSyncs(surahId, ayahs);
+      // Durable: browser overlay (works on any deployment)
+      await saveSurahAudioIdFirestore(surahId, audioId);
+      await saveSurahSyncsFirestore(surahId, ayahs);
+      // Best-effort: server file (dev only)
+      try {
+        await saveSurahAudioId(surahId, audioId);
+        await saveSurahSyncs(surahId, ayahs);
+      } catch {
+        // serverless read-only filesystem — overlay already covers it
+      }
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     });

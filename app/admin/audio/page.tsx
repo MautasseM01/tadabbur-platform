@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { SURAH_NAMES, orderSurahIds, SurahSort } from '@/lib/surahs';
 import SurahSortSelect from '@/components/SurahSortSelect';
+import { getAllSurahAudioIdsFirestore, saveSurahAudioIdFirestore } from '@/lib/firebaseSync';
 import { CheckCircle2, AlertTriangle, Loader2, Save, Search, Music, ExternalLink, RefreshCw, FileDown } from 'lucide-react';
 
 function extractYouTubeId(value: string): string {
@@ -41,9 +42,7 @@ export default function SurahAudioTable() {
 
   const load = useCallback(async () => {
     try {
-      const res = await fetch('/api/surah-audio');
-      const data = await res.json();
-      const map = (data.surahAudioIds || {}) as Record<number, string>;
+      const map = await getAllSurahAudioIdsFirestore();
       setEntries(map);
       setInputs((prev) => {
         const next: Record<number, string> = {};
@@ -123,26 +122,31 @@ export default function SurahAudioTable() {
     setSaving(true);
     setMessage(null);
     try {
-      const res = await fetch('/api/surah-audio', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ updates }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setMessage({ type: 'success', text: `تم حفظ ${data.saved} روابط بنجاح.` });
-        setEntries((prev) => {
-          const next = { ...prev };
-          for (const u of updates) next[u.surahId] = u.youtubeId;
-          return next;
-        });
-        setRowState({});
-        await load();
-      } else {
-        setMessage({ type: 'error', text: data.error || 'تعذر الحفظ.' });
+      // Durable save: browser overlay (works on any deployment)
+      for (const u of updates) {
+        await saveSurahAudioIdFirestore(u.surahId, u.youtubeId);
       }
+      // Best-effort server persistence (dev only)
+      try {
+        await fetch('/api/surah-audio', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ updates }),
+        });
+      } catch {
+        // serverless read-only filesystem — overlay already covers it
+      }
+      setMessage({ type: 'success', text: `تم حفظ ${updates.length} روابط بنجاح.` });
+      setEntries((prev) => {
+        const next = { ...prev };
+        for (const u of updates) next[u.surahId] = u.youtubeId;
+        return next;
+      });
+      setRowState({});
+      await load();
     } catch (err) {
-      setMessage({ type: 'error', text: 'تعذر الاتصال بالخادم للحفظ.' });
+      console.error('Failed to save audio ids:', err);
+      setMessage({ type: 'error', text: 'تعذر حفظ الروابط.' });
     } finally {
       setSaving(false);
     }

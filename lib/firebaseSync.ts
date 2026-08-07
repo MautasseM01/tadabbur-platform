@@ -1,4 +1,4 @@
-import { MOCK_VIDEOS, AUDIO_YOUTUBE_IDS, VideoExplanation, Ayah } from './mock-data';
+import { AUDIO_YOUTUBE_IDS, VideoExplanation, Ayah } from './mock-data';
 import { getDb, saveDb } from './db';
 
 /**
@@ -28,6 +28,53 @@ export interface ProgressDoc {
 }
 
 const PROGRESS_STORAGE_KEY = 'tadabbur_progress_data_v1';
+
+/**
+ * Runtime overlay (browser localStorage).
+ *
+ * The static file data/app-db.json cannot be written at runtime on serverless
+ * deployments (read-only filesystem), so all admin saves are persisted here in
+ * the browser and merged on top of the embedded data everywhere the app reads.
+ */
+const LOCAL_OVERLAY_KEY = 'tadabbur_db_overlay_v1';
+
+export interface LocalOverlay {
+  videos: VideoExplanation[];
+  surahAudioIds: Record<number, string>;
+  surahSyncs: Record<number, Ayah[]>;
+}
+
+const EMPTY_OVERLAY: LocalOverlay = { videos: [], surahAudioIds: {}, surahSyncs: {} };
+
+export function readLocalOverlay(): LocalOverlay | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem(LOCAL_OVERLAY_KEY);
+    return raw ? (JSON.parse(raw) as LocalOverlay) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function writeLocalOverlay(data: LocalOverlay): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(LOCAL_OVERLAY_KEY, JSON.stringify(data));
+  } catch {
+    // ignore storage errors (private mode, full quota, ...)
+  }
+}
+
+function mergeOverlay(base: LocalOverlay, overlay: LocalOverlay | null): LocalOverlay {
+  if (!overlay) return base;
+  return {
+    videos: Array.from(
+      new Map([...base.videos, ...(overlay.videos || [])].map((v) => [v.id, v])).values()
+    ),
+    surahAudioIds: { ...base.surahAudioIds, ...(overlay.surahAudioIds || {}) },
+    surahSyncs: { ...base.surahSyncs, ...(overlay.surahSyncs || {}) },
+  };
+}
 
 /**
  * Auth Functions (local mode: no account system, always signed out)
@@ -107,41 +154,61 @@ export async function fetchDashboardProgressFromFirestore(): Promise<any | null>
 }
 
 /**
- * Video Explanations (local JSON DB)
+ * Video Explanations (local JSON DB + runtime overlay)
  */
 export async function getVideosFirestore(): Promise<VideoExplanation[]> {
   const localDb = getDb();
-  const merged = [...MOCK_VIDEOS, ...localDb.videos];
-  return Array.from(new Map(merged.map((v) => [v.id, v])).values());
+  return mergeOverlay({ ...EMPTY_OVERLAY, videos: localDb.videos }, readLocalOverlay()).videos;
 }
 
 export async function addVideoFirestore(video: VideoExplanation): Promise<void> {
-  try {
-    const localDb = getDb();
-    const exists = localDb.videos.some((v) => v.id === video.id);
-    localDb.videos = exists
-      ? localDb.videos.map((v) => (v.id === video.id ? video : v))
-      : [...localDb.videos, video];
-    saveDb(localDb);
-  } catch (err) {
-    console.warn('Failed to save video to local DB:', err);
+  // 1) Browser overlay — the durable runtime memory on any deployment
+  const overlay = readLocalOverlay() || { ...EMPTY_OVERLAY };
+  const exists = overlay.videos.some((v) => v.id === video.id);
+  overlay.videos = exists
+    ? overlay.videos.map((v) => (v.id === video.id ? video : v))
+    : [...overlay.videos, video];
+  writeLocalOverlay(overlay);
+  // 2) Server file (dev only — read-only on serverless)
+  if (typeof window === 'undefined') {
+    try {
+      const localDb = getDb();
+      const fileExists = localDb.videos.some((v) => v.id === video.id);
+      localDb.videos = fileExists
+        ? localDb.videos.map((v) => (v.id === video.id ? video : v))
+        : [...localDb.videos, video];
+      saveDb(localDb);
+    } catch (err) {
+      console.warn('Failed to save video to local DB:', err);
+    }
   }
 }
 
 export async function deleteVideoFirestore(videoId: string): Promise<void> {
-  try {
-    const localDb = getDb();
-    localDb.videos = localDb.videos.filter((v) => v.id !== videoId);
-    saveDb(localDb);
-  } catch (err) {
-    console.warn('Failed to delete video from local DB:', err);
+  // 1) Browser overlay
+  const overlay = readLocalOverlay() || { ...EMPTY_OVERLAY };
+  overlay.videos = overlay.videos.filter((v) => v.id !== videoId);
+  writeLocalOverlay(overlay);
+  // 2) Server file (dev only)
+  if (typeof window === 'undefined') {
+    try {
+      const localDb = getDb();
+      localDb.videos = localDb.videos.filter((v) => v.id !== videoId);
+      saveDb(localDb);
+    } catch (err) {
+      console.warn('Failed to delete video from local DB:', err);
+    }
   }
 }
 
 /**
- * Surah Audio IDs (local JSON DB)
+ * Surah Audio IDs (local JSON DB + runtime overlay)
  */
 export async function getSurahAudioIdFirestore(surahId: number): Promise<string> {
+  const overlay = readLocalOverlay();
+  if (overlay && overlay.surahAudioIds && overlay.surahAudioIds[surahId] !== undefined) {
+    return overlay.surahAudioIds[surahId];
+  }
   const localDb = getDb();
   if (localDb.surahAudioIds && localDb.surahAudioIds[surahId] !== undefined) {
     return localDb.surahAudioIds[surahId];
@@ -151,40 +218,64 @@ export async function getSurahAudioIdFirestore(surahId: number): Promise<string>
 
 export async function getAllSurahAudioIdsFirestore(): Promise<Record<number, string>> {
   const localDb = getDb();
-  const map: Record<number, string> = { ...AUDIO_YOUTUBE_IDS };
+  const merged: Record<number, string> = { ...AUDIO_YOUTUBE_IDS };
   for (const [k, v] of Object.entries(localDb.surahAudioIds || {})) {
-    if (v) map[Number(k)] = v;
+    if (v) merged[Number(k)] = v;
   }
-  return map;
+  const overlay = readLocalOverlay();
+  for (const [k, v] of Object.entries(overlay?.surahAudioIds || {})) {
+    if (v) merged[Number(k)] = v;
+  }
+  return merged;
 }
 
 export async function saveSurahAudioIdFirestore(surahId: number, youtubeId: string): Promise<void> {
-  try {
-    const localDb = getDb();
-    if (!localDb.surahAudioIds) localDb.surahAudioIds = {};
-    localDb.surahAudioIds[surahId] = youtubeId.trim();
-    saveDb(localDb);
-  } catch (err) {
-    console.warn('Failed to save audio ID to local DB:', err);
+  // 1) Browser overlay — the durable runtime memory on any deployment
+  const overlay = readLocalOverlay() || { ...EMPTY_OVERLAY };
+  if (!overlay.surahAudioIds) overlay.surahAudioIds = {};
+  overlay.surahAudioIds[surahId] = youtubeId.trim();
+  writeLocalOverlay(overlay);
+  // 2) Server file (dev only)
+  if (typeof window === 'undefined') {
+    try {
+      const localDb = getDb();
+      if (!localDb.surahAudioIds) localDb.surahAudioIds = {};
+      localDb.surahAudioIds[surahId] = youtubeId.trim();
+      saveDb(localDb);
+    } catch (err) {
+      console.warn('Failed to save audio ID to local DB:', err);
+    }
   }
 }
 
 /**
- * Surah Syncs (local JSON DB)
+ * Surah Syncs (local JSON DB + runtime overlay)
  */
 export async function getSurahSyncsFirestore(surahId: number): Promise<Ayah[]> {
+  const overlay = readLocalOverlay();
+  if (overlay && overlay.surahSyncs && overlay.surahSyncs[surahId] && overlay.surahSyncs[surahId].length > 0) {
+    return overlay.surahSyncs[surahId];
+  }
   const localDb = getDb();
   return localDb.surahSyncs?.[surahId] || [];
 }
 
 export async function saveSurahSyncsFirestore(surahId: number, ayahs: Ayah[]): Promise<void> {
-  try {
-    const localDb = getDb();
-    if (!localDb.surahSyncs) localDb.surahSyncs = {};
-    localDb.surahSyncs[surahId] = ayahs;
-    saveDb(localDb);
-  } catch (err) {
-    console.warn('Failed to save surah syncs to local DB:', err);
+  // 1) Browser overlay — the durable runtime memory on any deployment
+  const overlay = readLocalOverlay() || { ...EMPTY_OVERLAY };
+  if (!overlay.surahSyncs) overlay.surahSyncs = {};
+  overlay.surahSyncs[surahId] = ayahs;
+  writeLocalOverlay(overlay);
+  // 2) Server file (dev only)
+  if (typeof window === 'undefined') {
+    try {
+      const localDb = getDb();
+      if (!localDb.surahSyncs) localDb.surahSyncs = {};
+      localDb.surahSyncs[surahId] = ayahs;
+      saveDb(localDb);
+    } catch (err) {
+      console.warn('Failed to save surah syncs to local DB:', err);
+    }
   }
 }
 

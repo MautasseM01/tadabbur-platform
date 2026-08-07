@@ -9,7 +9,7 @@ import WordComparisonModal from './WordComparisonModal';
 import PinnedPlayer from './PinnedPlayer';
 import ModelSelector from '@/components/ai/ModelSelector';
 import { saveAyahNoteToFirestore, syncSurahProgressToFirestore, fetchUserNotesFromFirestore, syncDashboardProgressToFirestore, getSurahSyncsFirestore, getVideosFirestore, getSurahAudioIdFirestore } from '@/lib/firebaseSync';
-import { Play, Video, ArrowRight, ArrowLeft, Sun, Moon, BookOpen, FileText, StickyNote, X, Save, Trash2, CheckCircle2, SkipForward, Eye, EyeOff, Sparkles, ArrowLeftRight, Clock, Pause, RotateCcw, ChevronLeft, ChevronRight, Home } from 'lucide-react';
+import { Play, Video, ArrowRight, ArrowLeft, Sun, Moon, BookOpen, FileText, StickyNote, X, Save, Trash2, CheckCircle2, SkipForward, Eye, EyeOff, Sparkles, ArrowLeftRight, Clock, Pause, RotateCcw, ChevronLeft, ChevronRight, Home, Music, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useSearchParams, useRouter } from 'next/navigation';
 
@@ -114,6 +114,7 @@ export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, 
   const [currentTime, setCurrentTime] = useState(0);
   const [selectedWord, setSelectedWord] = useState<{word: Word, ayahText: string} | null>(null);
   const [activeVideo, setActiveVideo] = useState<VideoExplanation | null>(null);
+  const [audioOpened, setAudioOpened] = useState(false);
   
   const [theme, setTheme] = useState<ReadingTheme>(() => {
     if (typeof window !== 'undefined') {
@@ -340,6 +341,7 @@ export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, 
 
   const handlePlayAyah = (ayah: Ayah) => {
     if (ayah.startTime !== undefined) {
+      setAudioOpened(true);
       setRequestedSeekTime(ayah.startTime);
     }
   };
@@ -466,7 +468,7 @@ export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, 
         )}
       </AnimatePresence>
 
-      {!focusMode && (activeVideo || youtubeAudioId) && (
+      {!focusMode && (activeVideo || audioOpened) && (activeVideo ? activeVideo.youtubeId : effectiveAudioId) && (
         <PinnedPlayer 
           videoId={activeVideo ? activeVideo.youtubeId : (effectiveAudioId || '')}
           startTime={activeVideo ? activeVideo.startTime : undefined}
@@ -667,6 +669,65 @@ export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, 
           </p>
         </div>
 
+        {/* Audio & Tafsir Links (shown as links only — no embedded video at the start) */}
+        {(effectiveAudioId || allVideos.length > 0) && (
+          <div className={`rounded-3xl border p-5 md:p-6 mb-8 shadow-sm transition-colors duration-300 ${st.mainCard}`} dir="rtl">
+            <h2 className="flex items-center gap-2 text-sm font-bold font-sans mb-4">
+              <span className="inline-flex items-center justify-center w-7 h-7 rounded-xl bg-amber-500/15 text-amber-700">
+                <Play className="w-3.5 h-3.5 fill-current" />
+              </span>
+              الاستماع والمشاهدة — سورة {surahName}
+            </h2>
+            <div className="flex flex-col gap-2.5">
+              {effectiveAudioId && (
+                <div className="flex items-center gap-2 flex-wrap">
+                  <button
+                    type="button"
+                    onClick={() => setAudioOpened(true)}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-natural-900 hover:bg-natural-800 text-white text-sm font-sans font-semibold transition shadow-sm cursor-pointer"
+                  >
+                    <Music className="w-4 h-4" />
+                    <span>استماع: تلاوة السورة</span>
+                  </button>
+                  <a
+                    href={`https://www.youtube.com/watch?v=${effectiveAudioId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-natural-300 hover:bg-natural-100 text-sm font-sans font-semibold text-natural-700 transition cursor-pointer"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    <span>فتح رابط التلاوة على يوتيوب</span>
+                  </a>
+                </div>
+              )}
+              {allVideos.length > 0 && (
+                <div className="flex flex-col gap-2">
+                  <p className="text-xs font-sans font-bold text-natural-600">فيديوهات التفسير المرئي لهذه السورة:</p>
+                  <div className="flex flex-col gap-2">
+                    {allVideos.map((video) => (
+                      <button
+                        key={video.id}
+                        type="button"
+                        onClick={() => setActiveVideo(video)}
+                        className="flex items-center justify-between gap-3 px-4 py-2.5 rounded-xl border border-natural-200 hover:border-amber-400 hover:bg-amber-50 text-right transition cursor-pointer group"
+                      >
+                        <span className="flex items-center gap-2 min-w-0">
+                          <Video className="w-4 h-4 text-amber-600 shrink-0" />
+                          <span className="text-sm font-sans font-medium text-natural-800 truncate group-hover:text-amber-900">{video.title}</span>
+                        </span>
+                        <span className="flex items-center gap-2 shrink-0 text-[11px] font-sans font-semibold text-natural-500">
+                          <span>{video.scholar}</span>
+                          <span className="bg-natural-100 px-2 py-0.5 rounded">الآية {video.ayahNumber}</span>
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Surah Text */}
         <div className={`rounded-3xl p-8 md:p-12 border leading-[2.2] text-center text-4xl md:text-5xl font-amiri mb-12 transition-colors duration-300 ${st.mainCard}`} dir="rtl">
           {effectiveAyahs.map((ayah) => {
@@ -775,9 +836,9 @@ export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, 
           })}
         </div>
 
-        {/* Suggested Videos - Floating Sidebar */}
+        {/* Suggested Videos - Floating Sidebar (only after audio/video has been opened) */}
         <AnimatePresence>
-          {suggestedVideos.length > 0 && !focusMode && (
+          {suggestedVideos.length > 0 && !focusMode && (activeVideo || audioOpened) && (
             <motion.div 
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -811,9 +872,9 @@ export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, 
           )}
         </AnimatePresence>
         
-        {/* Mobile Suggested Videos Overlay - Bottom */}
+        {/* Mobile Suggested Videos Overlay - Bottom (only after audio/video has been opened) */}
         <AnimatePresence>
-          {suggestedVideos.length > 0 && !focusMode && (
+          {suggestedVideos.length > 0 && !focusMode && (activeVideo || audioOpened) && (
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

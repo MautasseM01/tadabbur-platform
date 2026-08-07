@@ -1,9 +1,10 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { CheckCircle2, Circle } from 'lucide-react';
 import { SURAH_NAMES, orderSurahIds, SurahSort } from '@/lib/surahs';
 import SurahSortSelect from '@/components/SurahSortSelect';
+import { getVideosFirestore, getAllSurahAudioIdsFirestore } from '@/lib/firebaseSync';
 
 export interface SurahCoverage {
   id: number;
@@ -15,7 +16,41 @@ export interface SurahCoverage {
 
 export default function SurahCoverageTable({ rows }: { rows: SurahCoverage[] }) {
   const [sort, setSort] = useState<SurahSort>('mushafi');
-  const byId = useMemo(() => new Map(rows.map((r) => [r.id, r])), [rows]);
+  const [liveRows, setLiveRows] = useState<SurahCoverage[]>(rows);
+
+  // Recompute statuses from the runtime overlay (browser memory) so saves made
+  // in the admin pages are reflected here immediately.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const [videos, audioIds] = await Promise.all([
+          getVideosFirestore(),
+          getAllSurahAudioIdsFirestore(),
+        ]);
+        if (cancelled) return;
+        setLiveRows(
+          rows.map((r) => {
+            const videosForSurah = videos.filter((v) => v.surahId === r.id);
+            return {
+              ...r,
+              done: !!audioIds[r.id],
+              sh: videosForSurah.some((v) => v.scholar.includes('شحرور')),
+              sa: videosForSurah.some((v) => v.scholar.includes('السامرائي')),
+              videoCount: videosForSurah.length,
+            };
+          })
+        );
+      } catch {
+        // keep server-rendered rows
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [rows]);
+
+  const byId = useMemo(() => new Map(liveRows.map((r) => [r.id, r])), [liveRows]);
   const ordered = useMemo(() => orderSurahIds(sort), [sort]);
 
   return (

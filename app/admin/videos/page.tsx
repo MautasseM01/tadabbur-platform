@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { VideoExplanation } from '@/lib/mock-data';
 import { SURAH_NAMES } from '@/lib/surahs';
+import { getVideosFirestore, addVideoFirestore, deleteVideoFirestore } from '@/lib/firebaseSync';
 import { Plus, Trash2, Loader2, CheckCircle2, AlertTriangle, Video } from 'lucide-react';
 
 function extractYouTubeId(url: string): string {
@@ -37,9 +38,8 @@ export default function VideoManagement() {
 
   const loadVideos = useCallback(async () => {
     try {
-      const res = await fetch('/api/videos');
-      const data = await res.json();
-      setVideos(Array.isArray(data.videos) ? data.videos : []);
+      const videos = await getVideosFirestore();
+      setVideos(videos);
     } catch (err) {
       console.error('Error loading videos:', err);
     } finally {
@@ -51,9 +51,8 @@ export default function VideoManagement() {
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch('/api/videos');
-        const data = await res.json();
-        if (!cancelled) setVideos(Array.isArray(data.videos) ? data.videos : []);
+        const videos = await getVideosFirestore();
+        if (!cancelled) setVideos(videos);
       } catch (err) {
         console.error('Error loading videos:', err);
       } finally {
@@ -89,25 +88,27 @@ export default function VideoManagement() {
     };
 
     try {
-      const res = await fetch('/api/videos', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newVid),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setMessage({ type: 'success', text: `تم الحفظ محلياً بنجاح: ${data.video.title}` });
-        setUrl('');
-        setTitle('');
-        setScholar('');
-        setAyahNumber(1);
-        await loadVideos();
-      } else {
-        setMessage({ type: 'error', text: data.error || 'تعذر الحفظ.' });
+      // Durable save: browser overlay (works on any deployment)
+      await addVideoFirestore(newVid);
+      // Best-effort server persistence (dev only)
+      try {
+        await fetch('/api/videos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newVid),
+        });
+      } catch {
+        // serverless read-only filesystem — overlay already covers it
       }
+      setMessage({ type: 'success', text: `تم الحفظ بنجاح: ${newVid.title}` });
+      setUrl('');
+      setTitle('');
+      setScholar('');
+      setAyahNumber(1);
+      await loadVideos();
     } catch (err) {
       console.error('Failed to save video:', err);
-      setMessage({ type: 'error', text: 'تعذر الاتصال بالخادم لحفظ الفيديو.' });
+      setMessage({ type: 'error', text: 'تعذر حفظ الفيديو.' });
     } finally {
       setSaving(false);
     }
@@ -116,11 +117,16 @@ export default function VideoManagement() {
   const handleDelete = async (id: string) => {
     setVideos(prev => prev.filter(v => v.id !== id));
     try {
-      await fetch('/api/videos', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id }),
-      });
+      await deleteVideoFirestore(id);
+      try {
+        await fetch('/api/videos', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id }),
+        });
+      } catch {
+        // serverless read-only filesystem — overlay already covers it
+      }
     } catch (err) {
       console.error('Failed to delete video:', err);
     }
