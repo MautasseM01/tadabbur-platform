@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { VideoExplanation } from '@/lib/mock-data';
 import { SURAH_NAMES } from '@/lib/surahs';
 import { Plus, Trash2, Loader2, CheckCircle2, AlertTriangle, Video } from 'lucide-react';
@@ -126,6 +126,15 @@ export default function VideoManagement() {
     }
   };
 
+  // Order videos by surah (mushafi) then ayah number
+  const sortedVideos = useMemo(
+    () =>
+      [...videos].sort((a, b) =>
+        a.surahId !== b.surahId ? a.surahId - b.surahId : a.ayahNumber - b.ayahNumber
+      ),
+    [videos]
+  );
+
   const inputCls = "w-full bg-white border border-natural-300 rounded-xl px-3 py-2 text-sm text-natural-900 focus:outline-none focus:ring-2 focus:ring-amber-500";
 
   return (
@@ -234,7 +243,7 @@ export default function VideoManagement() {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4">
-          {videos.map(video => (
+          {sortedVideos.map(video => (
             <div key={video.id} className="bg-white border border-natural-300 rounded-2xl p-6 flex flex-col md:flex-row gap-6 items-start md:items-center justify-between shadow-sm">
               <div className="flex gap-4 items-center flex-1 min-w-0">
                 <div className="w-20 h-14 bg-natural-900 rounded-xl overflow-hidden shrink-0 relative">

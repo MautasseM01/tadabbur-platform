@@ -14,6 +14,28 @@ export function getNuzulRank(surahId: number): number {
   return SURAH_NUZUL_ORDER.indexOf(surahId) + 1;
 }
 
+export type SurahSort = 'mushafi' | 'alpha' | 'nuzul';
+
+export const SURAH_SORT_OPTIONS: { value: SurahSort; label: string }[] = [
+  { value: 'mushafi', label: 'ترتيب المصحف' },
+  { value: 'alpha', label: 'أبجدي' },
+  { value: 'nuzul', label: 'ترتيب النزول' },
+];
+
+const ALL_MUSHAFI_IDS = Array.from({ length: 114 }, (_, i) => i + 1);
+
+// Returns surah ids (1..114) in the requested order. 'mushafi' is the
+// canonical default: index order of SURAH_NAMES = mushafi order.
+export function orderSurahIds(sort: SurahSort): number[] {
+  if (sort === 'nuzul') return SURAH_NUZUL_ORDER;
+  if (sort === 'alpha') {
+    return ALL_MUSHAFI_IDS.slice().sort((a, b) =>
+      SURAH_NAMES[a - 1].localeCompare(SURAH_NAMES[b - 1], 'ar')
+    );
+  }
+  return ALL_MUSHAFI_IDS;
+}
+
 export const SURAH_NAMES = [
   "الفاتحة", "البقرة", "آل عمران", "النساء", "المائدة", "الأنعام", "الأعراف", "الأنفال", "التوبة", "يونس",
   "هود", "يوسف", "الرعد", "إبراهيم", "الحجر", "النحل", "الإسراء", "الكهف", "مريم", "طه",

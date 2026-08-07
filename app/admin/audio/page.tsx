@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { SURAH_NAMES } from '@/lib/surahs';
+import { SURAH_NAMES, orderSurahIds, SurahSort } from '@/lib/surahs';
+import SurahSortSelect from '@/components/SurahSortSelect';
 import { CheckCircle2, AlertTriangle, Loader2, Save, Search, Music, ExternalLink, RefreshCw, FileDown } from 'lucide-react';
 
 function extractYouTubeId(value: string): string {
@@ -36,6 +37,7 @@ export default function SurahAudioTable() {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<'all' | 'filled' | 'missing'>('all');
+  const [sort, setSort] = useState<SurahSort>('mushafi');
 
   const load = useCallback(async () => {
     try {
@@ -148,7 +150,7 @@ export default function SurahAudioTable() {
 
   const filtered = useMemo(() => {
     const q = query.trim();
-    const list = Array.from({ length: 114 }, (_, i) => i + 1);
+    const list = orderSurahIds(sort);
     return list.filter((id) => {
       const name = SURAH_NAMES[id - 1];
       const value = extractYouTubeId(inputs[id] || '');
@@ -158,7 +160,7 @@ export default function SurahAudioTable() {
       if (q && !name.includes(q) && !String(id).includes(q)) return false;
       return true;
     });
-  }, [query, filter, inputs]);
+  }, [query, filter, inputs, sort]);
 
   const inputCls =
     'w-full bg-white border border-natural-300 rounded-xl px-3 py-2 text-sm text-natural-900 focus:outline-none focus:ring-2 focus:ring-amber-500 font-mono dir-ltr text-left';
@@ -207,6 +209,7 @@ export default function SurahAudioTable() {
 
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-3 bg-white border border-natural-300 rounded-2xl p-4 shadow-sm">
+        <SurahSortSelect value={sort} onChange={setSort} />
         <div className="flex items-center gap-2 flex-1 min-w-52">
           <Search className="w-4 h-4 text-natural-400" />
           <input

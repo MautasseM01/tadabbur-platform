@@ -1,8 +1,8 @@
-import { Clock, Video, Users, Activity, CheckCircle2, Circle, Bot } from 'lucide-react';
+import { Clock, Video, Users, Activity, Bot } from 'lucide-react';
 import { MOCK_VIDEOS, AUDIO_YOUTUBE_IDS } from '@/lib/mock-data';
 import { getDb } from '@/lib/db';
-import { SURAH_NAMES } from '@/lib/surahs';
 import Link from 'next/link';
+import SurahCoverageTable from '@/components/admin/SurahCoverageTable';
 
 export default function AdminDashboard() {
   const allSurahs = Array.from({ length: 114 }, (_, i) => i + 1);
@@ -49,52 +49,7 @@ export default function AdminDashboard() {
       </div>
 
       <div className="bg-white border border-natural-300 rounded-2xl shadow-sm overflow-hidden">
-        <table className="w-full text-right h-full">
-          <thead>
-            <tr className="bg-natural-100 border-b border-natural-300">
-              <th className="p-4 text-[11px] uppercase tracking-widest font-sans font-bold text-natural-600">السورة</th>
-              <th className="p-4 text-[11px] uppercase tracking-widest font-sans font-bold text-natural-600">الحالة</th>
-              <th className="p-4 text-[11px] uppercase tracking-widest font-sans font-bold text-natural-600">فيديوهات محمد شحرور</th>
-              <th className="p-4 text-[11px] uppercase tracking-widest font-sans font-bold text-natural-600">فيديوهات فاضل السامرائي</th>
-              <th className="p-4 text-[11px] uppercase tracking-widest font-sans font-bold text-natural-600">إجراء</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-natural-200">
-            {allSurahs.map(surahId => {
-              const status = getProgressStatus(surahId);
-              const surahName = SURAH_NAMES[surahId - 1];
-              return (
-                <tr key={surahId} className="hover:bg-natural-50 transition">
-                  <td className="p-4 font-sans text-natural-800 font-bold">
-                    {surahId}. سورة {surahName}
-                  </td>
-                  <td className="p-4">
-                    {status.done ? (
-                      <span className="inline-flex items-center gap-1 text-emerald-600 text-xs font-bold bg-emerald-50 px-2 py-1 rounded">
-                        <CheckCircle2 className="w-4 h-4" /> مكتمل جزئياً
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 text-natural-500 text-xs font-bold bg-natural-100 px-2 py-1 rounded">
-                        <Circle className="w-4 h-4" /> قيد الانتظار
-                      </span>
-                    )}
-                  </td>
-                  <td className="p-4">
-                    {status.sh ? <CheckCircle2 className="w-5 h-5 text-emerald-500" /> : <Circle className="w-5 h-5 text-natural-300" />}
-                  </td>
-                  <td className="p-4">
-                    {status.sa ? <CheckCircle2 className="w-5 h-5 text-emerald-500" /> : <Circle className="w-5 h-5 text-natural-300" />}
-                  </td>
-                  <td className="p-4">
-                    <a href={`/admin/sync?surahId=${surahId}`} className="text-[11px] font-bold text-natural-600 hover:text-natural-900 underline">
-                      إدارة
-                    </a>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        <SurahCoverageTable rows={allSurahs.map((id) => ({ id, ...getProgressStatus(id) }))} />
       </div>
     </div>
   );

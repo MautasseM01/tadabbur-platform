@@ -52,19 +52,25 @@ export async function GET(req: NextRequest) {
     if (apiRes.ok) {
       const data = await apiRes.json();
       if (data.code === 200 && data.data && Array.isArray(data.data.matches)) {
-        ayahMatches = data.data.matches.slice(0, 20).map((match: any) => {
-          const surahId = match.surah.number;
-          const surahName = SURAH_NAMES[surahId - 1] || match.surah.name;
-          const ayahNumber = match.numberInSurah;
-          return {
-            id: `${surahId}_${ayahNumber}`,
-            surahId,
-            surahName,
-            ayahNumber,
-            text: match.text,
-            url: `/surah/${surahId}?highlight=${ayahNumber}`
-          };
-        });
+        ayahMatches = data.data.matches
+          .slice(0, 20)
+          .map((match: any) => {
+            const surahId = match.surah.number;
+            const surahName = SURAH_NAMES[surahId - 1] || match.surah.name;
+            const ayahNumber = match.numberInSurah;
+            return {
+              id: `${surahId}_${ayahNumber}`,
+              surahId,
+              surahName,
+              ayahNumber,
+              text: match.text,
+              url: `/surah/${surahId}?highlight=${ayahNumber}`
+            };
+          })
+          // Mushafi order: by surah id, then by ayah number
+          .sort((a: any, b: any) =>
+            a.surahId !== b.surahId ? a.surahId - b.surahId : a.ayahNumber - b.ayahNumber
+          );
       }
     }
   } catch (err) {
@@ -90,7 +96,11 @@ export async function GET(req: NextRequest) {
           surahName: SURAH_NAMES[v.surahId - 1] || `سورة ${v.surahId}`,
           ayahNumber: v.ayahNumber,
           url: `/surah/${v.surahId}?highlight=${v.ayahNumber}`
-        }));
+        }))
+        // Mushafi order: by surah id, then by ayah number
+        .sort((a, b) =>
+          a.surahId !== b.surahId ? a.surahId - b.surahId : a.ayahNumber - b.ayahNumber
+        );
     }
   } catch {
     // ignore

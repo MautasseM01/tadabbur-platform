@@ -2,49 +2,19 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { Sparkles, PlayCircle, Clock, ArrowDownWideNarrow } from 'lucide-react';
-import { SURAH_NAMES, SURAH_NUZUL_ORDER } from '@/lib/surahs';
-
-export type SurahSort = 'mushafi' | 'alpha' | 'nuzul';
-
-const SORT_OPTIONS: { value: SurahSort; label: string }[] = [
-  { value: 'mushafi', label: 'ترتيب المصحف' },
-  { value: 'alpha', label: 'أبجدي' },
-  { value: 'nuzul', label: 'ترتيب النزول' },
-];
+import { Sparkles, PlayCircle, Clock } from 'lucide-react';
+import { SURAH_NAMES, orderSurahIds, SurahSort } from '@/lib/surahs';
+import SurahSortSelect from '@/components/SurahSortSelect';
 
 export default function SurahGrid({ preparedIds }: { preparedIds: number[] }) {
   const [sort, setSort] = useState<SurahSort>('mushafi');
   const prepared = useMemo(() => new Set(preparedIds), [preparedIds]);
-
-  const ordered = useMemo(() => {
-    if (sort === 'alpha') {
-      return Array.from({ length: 114 }, (_, i) => i + 1).sort((a, b) =>
-        SURAH_NAMES[a - 1].localeCompare(SURAH_NAMES[b - 1], 'ar')
-      );
-    }
-    if (sort === 'nuzul') return SURAH_NUZUL_ORDER;
-    return Array.from({ length: 114 }, (_, i) => i + 1);
-  }, [sort]);
+  const ordered = useMemo(() => orderSurahIds(sort), [sort]);
 
   return (
     <>
       <div className="flex flex-wrap items-center gap-3 mb-6">
-        <div className="flex items-center gap-2 bg-white border border-natural-200 rounded-xl px-3 py-2 shadow-sm">
-          <ArrowDownWideNarrow className="w-4 h-4 text-natural-500" />
-          <select
-            value={sort}
-            onChange={(e) => setSort(e.target.value as SurahSort)}
-            className="bg-transparent text-sm font-sans font-semibold text-natural-700 focus:outline-none cursor-pointer"
-            aria-label="ترتيب الفهرس"
-          >
-            {SORT_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <SurahSortSelect value={sort} onChange={setSort} />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" dir="rtl">
