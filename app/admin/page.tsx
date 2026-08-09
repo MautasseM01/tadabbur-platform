@@ -1,17 +1,13 @@
 'use client';
 
-import { Suspense, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { AdminStoreProvider } from '@/lib/adminStore';
 import OverviewTab from '@/components/admin/OverviewTab';
 import AudioTab from '@/components/admin/AudioTab';
 import VideosTab from '@/components/admin/VideosTab';
 import SyncTab from '@/components/admin/SyncTab';
 import AITab from '@/components/admin/AITab';
-
-// Server-render per request so the tab bar and active tab (from ?tab=) render
-// in the HTML instead of only after client hydration.
-export const dynamic = 'force-dynamic';
 import { LayoutDashboard, Music, Video as VideoIcon, Clock, Bot } from 'lucide-react';
 
 type TabKey = 'overview' | 'audio' | 'videos' | 'sync' | 'ai';
@@ -24,28 +20,42 @@ const TABS: { key: TabKey; label: string; icon: React.ReactNode }[] = [
   { key: 'ai', label: 'أتمتة بالذكاء الاصطناعي', icon: <Bot className="w-4 h-4" /> },
 ];
 
-function isTabKey(value: string | null): value is TabKey {
-  return value === 'overview' || value === 'audio' || value === 'videos' || value === 'sync' || value === 'ai';
+const isValidTab = (value: string | null): value is TabKey =>
+  value === 'overview' || value === 'audio' || value === 'videos' || value === 'sync' || value === 'ai';
+
+// Read the URL query directly (browser-only) instead of useSearchParams so the
+// whole dashboard renders in the server HTML with no client-only boundary.
+function readUrlTab(): TabKey {
+  if (typeof window === 'undefined') return 'overview';
+  const tab = new URLSearchParams(window.location.search).get('tab');
+  return isValidTab(tab) ? tab : 'overview';
+}
+
+function readUrlSurahId(): number {
+  if (typeof window === 'undefined') return 21;
+  const raw = new URLSearchParams(window.location.search).get('surahId');
+  const parsed = parseInt(raw || '', 10);
+  if (isNaN(parsed)) return 21;
+  return Math.min(114, Math.max(1, parsed));
 }
 
 function AdminTabs() {
-  const searchParams = useSearchParams();
-  const urlTab = searchParams.get('tab');
-  const urlSurahId = searchParams.get('surahId');
-
-  const [tab, setTab] = useState<TabKey>(() => (isTabKey(urlTab) ? urlTab : 'overview'));
+  const router = useRouter();
+  const [tab, setTab] = useState<TabKey>(readUrlTab);
+  const [surahIdForSync, setSurahIdForSync] = useState<number>(readUrlSurahId);
 
   const goTo = (key: TabKey) => {
     setTab(key);
     const params = new URLSearchParams();
     if (key !== 'overview') params.set('tab', key);
-    const { pathname, origin } = window.location;
-    window.history.replaceState(null, '', `${origin}${pathname}${params.size ? `?${params.toString()}` : ''}`);
+    router.replace(`/admin${params.size ? `?${params.toString()}` : ''}`, { scroll: false });
   };
 
-  const surahIdForSync = urlSurahId && !isNaN(parseInt(urlSurahId, 10))
-    ? Math.min(114, Math.max(1, parseInt(urlSurahId, 10)))
-    : 21;
+  const openSyncFor = (surahId: number) => {
+    setSurahIdForSync(surahId);
+    setTab('sync');
+    router.replace(`/admin?tab=sync&surahId=${surahId}`, { scroll: false });
+  };
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto" dir="rtl">
@@ -67,13 +77,11 @@ function AdminTabs() {
         ))}
       </div>
 
-      <Suspense fallback={<div className="p-16 text-center font-sans text-natural-500">جاري التحميل...</div>}>
-        {tab === 'overview' && <OverviewTab onOpenAI={() => goTo('ai')} />}
-        {tab === 'audio' && <AudioTab />}
-        {tab === 'videos' && <VideosTab />}
-        {tab === 'sync' && <SyncTab key={surahIdForSync} initialSurahId={surahIdForSync} />}
-        {tab === 'ai' && <AITab />}
-      </Suspense>
+      {tab === 'overview' && <OverviewTab onOpenAI={() => goTo('ai')} onOpenSync={openSyncFor} />}
+      {tab === 'audio' && <AudioTab />}
+      {tab === 'videos' && <VideosTab />}
+      {tab === 'sync' && <SyncTab key={surahIdForSync} initialSurahId={surahIdForSync} />}
+      {tab === 'ai' && <AITab />}
     </div>
   );
 }
@@ -81,9 +89,7 @@ function AdminTabs() {
 export default function AdminDashboardPage() {
   return (
     <AdminStoreProvider>
-      <Suspense fallback={<div className="p-16 text-center font-sans text-natural-500">جاري التحميل...</div>}>
-        <AdminTabs />
-      </Suspense>
+      <AdminTabs />
     </AdminStoreProvider>
   );
 }

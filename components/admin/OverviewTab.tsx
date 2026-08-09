@@ -4,7 +4,7 @@ import { Bot } from 'lucide-react';
 import SurahCoverageTable from '@/components/admin/SurahCoverageTable';
 import { useAdminStore } from '@/lib/adminStore';
 
-export default function OverviewTab({ onOpenAI }: { onOpenAI: () => void }) {
+export default function OverviewTab({ onOpenAI, onOpenSync }: { onOpenAI: () => void; onOpenSync: (surahId: number) => void }) {
   const { coverage } = useAdminStore();
 
   return (
@@ -29,7 +29,7 @@ export default function OverviewTab({ onOpenAI }: { onOpenAI: () => void }) {
       </div>
 
       <div className="bg-white border border-natural-300 rounded-2xl shadow-sm overflow-hidden">
-        <SurahCoverageTable rows={coverage} />
+        <SurahCoverageTable rows={coverage} onOpenSync={onOpenSync} />
       </div>
     </div>
   );

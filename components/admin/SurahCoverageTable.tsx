@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import Link from 'next/link';
 import { CheckCircle2, Circle } from 'lucide-react';
 import { SURAH_NAMES, orderSurahIds, SurahSort } from '@/lib/surahs';
 import SurahSortSelect from '@/components/SurahSortSelect';
@@ -14,7 +13,7 @@ export interface SurahCoverage {
   videoCount: number;
 }
 
-export default function SurahCoverageTable({ rows }: { rows: SurahCoverage[] }) {
+export default function SurahCoverageTable({ rows, onOpenSync }: { rows: SurahCoverage[]; onOpenSync?: (surahId: number) => void }) {
   const [sort, setSort] = useState<SurahSort>('mushafi');
   const byId = useMemo(() => new Map(rows.map((r) => [r.id, r])), [rows]);
   const ordered = useMemo(() => orderSurahIds(sort), [sort]);
@@ -62,9 +61,12 @@ export default function SurahCoverageTable({ rows }: { rows: SurahCoverage[] }) 
                   {status.sa ? <CheckCircle2 className="w-5 h-5 text-emerald-500" /> : <Circle className="w-5 h-5 text-natural-300" />}
                 </td>
                 <td className="p-4">
-                  <Link href={`/admin?tab=sync&surahId=${surahId}`} className="text-[11px] font-bold text-natural-600 hover:text-natural-900 underline">
+                  <button
+                    onClick={() => onOpenSync?.(surahId)}
+                    className="text-[11px] font-bold text-natural-600 hover:text-natural-900 underline cursor-pointer"
+                  >
                     إدارة
-                  </Link>
+                  </button>
                 </td>
               </tr>
             );
