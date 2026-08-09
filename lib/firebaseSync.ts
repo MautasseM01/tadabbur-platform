@@ -42,9 +42,17 @@ export interface LocalOverlay {
   videos: VideoExplanation[];
   surahAudioIds: Record<number, string>;
   surahSyncs: Record<number, Ayah[]>;
+  deletedVideoIds?: string[];
 }
 
-const EMPTY_OVERLAY: LocalOverlay = { videos: [], surahAudioIds: {}, surahSyncs: {} };
+/**
+ * Tombstones for videos that must stay deleted even if they exist in older
+ * browser overlays or runtime copies (e.g. content wrongly added as tafsir).
+ * Deletions made through the admin UI are appended to the overlay instead.
+ */
+export const SEEDED_DELETED_VIDEO_IDS: string[] = ['v_jinn_recitation'];
+
+const EMPTY_OVERLAY: LocalOverlay = { videos: [], surahAudioIds: {}, surahSyncs: {}, deletedVideoIds: [] };
 
 export function readLocalOverlay(): LocalOverlay | null {
   if (typeof window === 'undefined') return null;
@@ -66,13 +74,15 @@ export function writeLocalOverlay(data: LocalOverlay): void {
 }
 
 function mergeOverlay(base: LocalOverlay, overlay: LocalOverlay | null): LocalOverlay {
-  if (!overlay) return base;
+  if (!overlay) overlay = EMPTY_OVERLAY;
+  const deletedIds = new Set([...SEEDED_DELETED_VIDEO_IDS, ...(overlay.deletedVideoIds || [])]);
   return {
     videos: Array.from(
       new Map([...base.videos, ...(overlay.videos || [])].map((v) => [v.id, v])).values()
-    ),
+    ).filter((v) => !deletedIds.has(v.id)),
     surahAudioIds: { ...base.surahAudioIds, ...(overlay.surahAudioIds || {}) },
     surahSyncs: { ...base.surahSyncs, ...(overlay.surahSyncs || {}) },
+    deletedVideoIds: Array.from(deletedIds),
   };
 }
 

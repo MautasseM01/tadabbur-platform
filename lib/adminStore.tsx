@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { VideoExplanation, Ayah, AUDIO_YOUTUBE_IDS } from '@/lib/mock-data';
 import { getDb } from '@/lib/db';
-import { LocalOverlay, readLocalOverlay, writeLocalOverlay } from '@/lib/firebaseSync';
+import { LocalOverlay, readLocalOverlay, writeLocalOverlay, SEEDED_DELETED_VIDEO_IDS } from '@/lib/firebaseSync';
 
 /**
  * Unified admin store (single source of truth).
@@ -43,13 +43,15 @@ const AdminContext = createContext<AdminStoreValue | null>(null);
 
 function buildBase(): LocalOverlay {
   const local = getDb();
-  const overlay = readLocalOverlay();
+  const overlay = readLocalOverlay() || { videos: [], surahAudioIds: {}, surahSyncs: {}, deletedVideoIds: [] };
+  const deletedIds = new Set([...SEEDED_DELETED_VIDEO_IDS, ...(overlay.deletedVideoIds || [])]);
   return {
     videos: Array.from(
-      new Map([...local.videos, ...(overlay?.videos || [])].map((v) => [v.id, v])).values()
-    ),
-    surahAudioIds: { ...AUDIO_YOUTUBE_IDS, ...local.surahAudioIds, ...(overlay?.surahAudioIds || {}) },
-    surahSyncs: { ...local.surahSyncs, ...(overlay?.surahSyncs || {}) },
+      new Map([...local.videos, ...(overlay.videos || [])].map((v) => [v.id, v])).values()
+    ).filter((v) => !deletedIds.has(v.id)),
+    surahAudioIds: { ...AUDIO_YOUTUBE_IDS, ...local.surahAudioIds, ...(overlay.surahAudioIds || {}) },
+    surahSyncs: { ...local.surahSyncs, ...(overlay.surahSyncs || {}) },
+    deletedVideoIds: Array.from(deletedIds),
   };
 }
 
@@ -93,7 +95,11 @@ export function AdminStoreProvider({ children }: { children: React.ReactNode }) 
   }, []);
 
   const deleteVideo = useCallback(async (id: string) => {
-    setDb((prev) => ({ ...prev, videos: prev.videos.filter((v) => v.id !== id) }));
+    setDb((prev) => ({
+      ...prev,
+      videos: prev.videos.filter((v) => v.id !== id),
+      deletedVideoIds: Array.from(new Set([...(prev.deletedVideoIds || []), id])),
+    }));
     try {
       await fetch('/api/videos', {
         method: 'DELETE',
