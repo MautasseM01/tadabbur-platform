@@ -8,6 +8,10 @@ import AudioTab from '@/components/admin/AudioTab';
 import VideosTab from '@/components/admin/VideosTab';
 import SyncTab from '@/components/admin/SyncTab';
 import AITab from '@/components/admin/AITab';
+
+// Server-render per request so the tab bar and active tab (from ?tab=) render
+// in the HTML instead of only after client hydration.
+export const dynamic = 'force-dynamic';
 import { LayoutDashboard, Music, Video as VideoIcon, Clock, Bot } from 'lucide-react';
 
 type TabKey = 'overview' | 'audio' | 'videos' | 'sync' | 'ai';
