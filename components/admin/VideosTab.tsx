@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { VideoExplanation } from '@/lib/mock-data';
 import { SURAH_NAMES } from '@/lib/surahs';
-import { getVideosFirestore, addVideoFirestore, deleteVideoFirestore } from '@/lib/firebaseSync';
+import { useAdminStore } from '@/lib/adminStore';
 import { Plus, Trash2, Loader2, CheckCircle2, AlertTriangle, Video } from 'lucide-react';
 
 function extractYouTubeId(url: string): string {
@@ -22,9 +22,8 @@ function extractYouTubeId(url: string): string {
   return trimmed;
 }
 
-export default function VideoManagement() {
-  const [videos, setVideos] = useState<VideoExplanation[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function VideosTab() {
+  const { videos, addVideo, deleteVideo } = useAdminStore();
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -35,34 +34,6 @@ export default function VideoManagement() {
   const [startTime, setStartTime] = useState(0);
   const [title, setTitle] = useState('');
   const [scholar, setScholar] = useState('');
-
-  const loadVideos = useCallback(async () => {
-    try {
-      const videos = await getVideosFirestore();
-      setVideos(videos);
-    } catch (err) {
-      console.error('Error loading videos:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const videos = await getVideosFirestore();
-        if (!cancelled) setVideos(videos);
-      } catch (err) {
-        console.error('Error loading videos:', err);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const handleAdd = async () => {
     const youtubeId = extractYouTubeId(url);
@@ -88,24 +59,13 @@ export default function VideoManagement() {
     };
 
     try {
-      // Durable save: browser overlay (works on any deployment)
-      await addVideoFirestore(newVid);
-      // Best-effort server persistence (dev only)
-      try {
-        await fetch('/api/videos', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(newVid),
-        });
-      } catch {
-        // serverless read-only filesystem — overlay already covers it
-      }
+      // One call into the unified store — reflected everywhere instantly
+      await addVideo(newVid);
       setMessage({ type: 'success', text: `تم الحفظ بنجاح: ${newVid.title}` });
       setUrl('');
       setTitle('');
       setScholar('');
       setAyahNumber(1);
-      await loadVideos();
     } catch (err) {
       console.error('Failed to save video:', err);
       setMessage({ type: 'error', text: 'تعذر حفظ الفيديو.' });
@@ -115,18 +75,8 @@ export default function VideoManagement() {
   };
 
   const handleDelete = async (id: string) => {
-    setVideos(prev => prev.filter(v => v.id !== id));
     try {
-      await deleteVideoFirestore(id);
-      try {
-        await fetch('/api/videos', {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id }),
-        });
-      } catch {
-        // serverless read-only filesystem — overlay already covers it
-      }
+      await deleteVideo(id);
     } catch (err) {
       console.error('Failed to delete video:', err);
     }
@@ -145,11 +95,9 @@ export default function VideoManagement() {
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto font-sans" dir="rtl">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-natural-900">إدارة التفسير المرئي</h1>
-          <p className="text-natural-600 text-sm">ربط مقاطع يوتيوب التحليلية بآيات محددة وحفظها في قاعدة البيانات الثابتة.</p>
-        </div>
+      <div>
+        <h1 className="text-2xl font-bold text-natural-900">إدارة التفسير المرئي</h1>
+        <p className="text-natural-600 text-sm">ربط مقاطع يوتيوب التحليلية بآيات محددة — تُحفظ في الذاكرة الموحدة وتنعكس فوراً على صفحة السورة والنظرة العامة.</p>
       </div>
 
       {/* Add Video Form */}
@@ -237,58 +185,51 @@ export default function VideoManagement() {
           className="mt-4 flex items-center gap-2 bg-natural-800 hover:bg-natural-900 text-white px-6 py-3 rounded-xl font-medium transition shadow-sm text-sm cursor-pointer disabled:opacity-50"
         >
           {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-          <span>{saving ? 'جاري الحفظ...' : 'حفظ الفيديو محلياً ومزامنته'}</span>
+          <span>{saving ? 'جاري الحفظ...' : 'حفظ الفيديو في الذاكرة الموحدة'}</span>
         </button>
       </div>
 
       {/* Videos List */}
-      {loading ? (
-        <div className="p-16 flex justify-center items-center text-natural-500 gap-3">
-          <Loader2 className="w-6 h-6 animate-spin text-amber-500" />
-          <span>جاري تحميل الفيديوهات...</span>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 gap-4">
-          {sortedVideos.map(video => (
-            <div key={video.id} className="bg-white border border-natural-300 rounded-2xl p-6 flex flex-col md:flex-row gap-6 items-start md:items-center justify-between shadow-sm">
-              <div className="flex gap-4 items-center flex-1 min-w-0">
-                <div className="w-20 h-14 bg-natural-900 rounded-xl overflow-hidden shrink-0 relative">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={`https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`}
-                    alt={video.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="min-w-0">
-                  <h3 className="text-lg font-bold text-natural-900 truncate">{video.title}</h3>
-                  <p className="text-natural-600 text-xs mt-1">{video.scholar}</p>
-                  <div className="mt-3 flex gap-2 text-[10px] font-mono text-natural-700 flex-wrap">
-                    <span className="bg-natural-100 px-2 py-1 rounded">السورة: {video.surahId} ({SURAH_NAMES[video.surahId - 1]})</span>
-                    <span className="bg-natural-100 px-2 py-1 rounded">الآية: {video.ayahNumber}</span>
-                    <span className="bg-natural-100 px-2 py-1 rounded">البدء: {video.startTime}s</span>
-                    <span className="bg-natural-100 px-2 py-1 rounded">ID: {video.youtubeId}</span>
-                  </div>
+      <div className="grid grid-cols-1 gap-4">
+        {sortedVideos.map(video => (
+          <div key={video.id} className="bg-white border border-natural-300 rounded-2xl p-6 flex flex-col md:flex-row gap-6 items-start md:items-center justify-between shadow-sm">
+            <div className="flex gap-4 items-center flex-1 min-w-0">
+              <div className="w-20 h-14 bg-natural-900 rounded-xl overflow-hidden shrink-0 relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`}
+                  alt={video.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="min-w-0">
+                <h3 className="text-lg font-bold text-natural-900 truncate">{video.title}</h3>
+                <p className="text-natural-600 text-xs mt-1">{video.scholar}</p>
+                <div className="mt-3 flex gap-2 text-[10px] font-mono text-natural-700 flex-wrap">
+                  <span className="bg-natural-100 px-2 py-1 rounded">السورة: {video.surahId} ({SURAH_NAMES[video.surahId - 1]})</span>
+                  <span className="bg-natural-100 px-2 py-1 rounded">الآية: {video.ayahNumber}</span>
+                  <span className="bg-natural-100 px-2 py-1 rounded">البدء: {video.startTime}s</span>
+                  <span className="bg-natural-100 px-2 py-1 rounded">ID: {video.youtubeId}</span>
                 </div>
               </div>
-
-              <button
-                onClick={() => handleDelete(video.id)}
-                className="p-3 text-red-700 hover:bg-red-50 rounded-xl transition border border-transparent hover:border-red-200 cursor-pointer"
-                title="حذف الفيديو"
-              >
-                <Trash2 className="w-5 h-5" />
-              </button>
             </div>
-          ))}
 
-          {videos.length === 0 && (
-            <div className="p-12 text-center text-natural-500 border border-dashed border-natural-300 rounded-2xl bg-natural-50">
-              لا توجد فيديوهات مضافة حالياً.
-            </div>
-          )}
-        </div>
-      )}
+            <button
+              onClick={() => handleDelete(video.id)}
+              className="p-3 text-red-700 hover:bg-red-50 rounded-xl transition border border-transparent hover:border-red-200 cursor-pointer"
+              title="حذف الفيديو"
+            >
+              <Trash2 className="w-5 h-5" />
+            </button>
+          </div>
+        ))}
+
+        {videos.length === 0 && (
+          <div className="p-12 text-center text-natural-500 border border-dashed border-natural-300 rounded-2xl bg-natural-50">
+            لا توجد فيديوهات مضافة حالياً.
+          </div>
+        )}
+      </div>
     </div>
   );
 }

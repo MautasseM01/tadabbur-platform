@@ -1,10 +1,10 @@
 'use client';
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
+import Link from 'next/link';
 import { CheckCircle2, Circle } from 'lucide-react';
 import { SURAH_NAMES, orderSurahIds, SurahSort } from '@/lib/surahs';
 import SurahSortSelect from '@/components/SurahSortSelect';
-import { getVideosFirestore, getAllSurahAudioIdsFirestore } from '@/lib/firebaseSync';
 
 export interface SurahCoverage {
   id: number;
@@ -16,41 +16,7 @@ export interface SurahCoverage {
 
 export default function SurahCoverageTable({ rows }: { rows: SurahCoverage[] }) {
   const [sort, setSort] = useState<SurahSort>('mushafi');
-  const [liveRows, setLiveRows] = useState<SurahCoverage[]>(rows);
-
-  // Recompute statuses from the runtime overlay (browser memory) so saves made
-  // in the admin pages are reflected here immediately.
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const [videos, audioIds] = await Promise.all([
-          getVideosFirestore(),
-          getAllSurahAudioIdsFirestore(),
-        ]);
-        if (cancelled) return;
-        setLiveRows(
-          rows.map((r) => {
-            const videosForSurah = videos.filter((v) => v.surahId === r.id);
-            return {
-              ...r,
-              done: !!audioIds[r.id],
-              sh: videosForSurah.some((v) => v.scholar.includes('شحرور')),
-              sa: videosForSurah.some((v) => v.scholar.includes('السامرائي')),
-              videoCount: videosForSurah.length,
-            };
-          })
-        );
-      } catch {
-        // keep server-rendered rows
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [rows]);
-
-  const byId = useMemo(() => new Map(liveRows.map((r) => [r.id, r])), [liveRows]);
+  const byId = useMemo(() => new Map(rows.map((r) => [r.id, r])), [rows]);
   const ordered = useMemo(() => orderSurahIds(sort), [sort]);
 
   return (
@@ -96,9 +62,9 @@ export default function SurahCoverageTable({ rows }: { rows: SurahCoverage[] }) 
                   {status.sa ? <CheckCircle2 className="w-5 h-5 text-emerald-500" /> : <Circle className="w-5 h-5 text-natural-300" />}
                 </td>
                 <td className="p-4">
-                  <a href={`/admin/sync?surahId=${surahId}`} className="text-[11px] font-bold text-natural-600 hover:text-natural-900 underline">
+                  <Link href={`/admin?tab=sync&surahId=${surahId}`} className="text-[11px] font-bold text-natural-600 hover:text-natural-900 underline">
                     إدارة
-                  </a>
+                  </Link>
                 </td>
               </tr>
             );

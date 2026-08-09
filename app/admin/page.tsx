@@ -1,56 +1,85 @@
-import { Clock, Video, Users, Activity, Bot } from 'lucide-react';
-import { MOCK_VIDEOS, AUDIO_YOUTUBE_IDS } from '@/lib/mock-data';
-import { getDb } from '@/lib/db';
-import Link from 'next/link';
-import SurahCoverageTable from '@/components/admin/SurahCoverageTable';
+'use client';
 
-export default function AdminDashboard() {
-  const allSurahs = Array.from({ length: 114 }, (_, i) => i + 1);
-  
-  const db = getDb();
-  
-  const getProgressStatus = (surahId: number) => {
-    const allVideos = [...MOCK_VIDEOS, ...db.videos];
-    const videosForSurah = allVideos.filter(v => v.surahId === surahId);
-    const hasShahrur = videosForSurah.some(v => v.scholar.includes('شحرور'));
-    const hasSamarrai = videosForSurah.some(v => v.scholar.includes('السامرائي'));
-    
-    const hasAudioId = (db.surahAudioIds && db.surahAudioIds[surahId] !== undefined)
-      ? db.surahAudioIds[surahId] !== ""
-      : !!AUDIO_YOUTUBE_IDS[surahId];
-      
-    // It's done if it has a custom sync array AND an active audio ID
-    const hasCustomSync = !!db.surahSyncs[surahId] && db.surahSyncs[surahId].length > 0;
-    
-    // We consider it generally done if it has an Audio ID (so user can see it in main page). The sync might be perfect or AI-generated.
-    const isDone = hasAudioId;
-    
-    return { done: isDone, sh: hasShahrur, sa: hasSamarrai, videoCount: videosForSurah.length };
+import { Suspense, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { AdminStoreProvider } from '@/lib/adminStore';
+import OverviewTab from '@/components/admin/OverviewTab';
+import AudioTab from '@/components/admin/AudioTab';
+import VideosTab from '@/components/admin/VideosTab';
+import SyncTab from '@/components/admin/SyncTab';
+import AITab from '@/components/admin/AITab';
+import { LayoutDashboard, Music, Video as VideoIcon, Clock, Bot } from 'lucide-react';
+
+type TabKey = 'overview' | 'audio' | 'videos' | 'sync' | 'ai';
+
+const TABS: { key: TabKey; label: string; icon: React.ReactNode }[] = [
+  { key: 'overview', label: 'نظرة عامة', icon: <LayoutDashboard className="w-4 h-4" /> },
+  { key: 'audio', label: 'روابط التلاوة', icon: <Music className="w-4 h-4" /> },
+  { key: 'videos', label: 'فيديوهات التفسير', icon: <VideoIcon className="w-4 h-4" /> },
+  { key: 'sync', label: 'المزامنة الدقيقة', icon: <Clock className="w-4 h-4" /> },
+  { key: 'ai', label: 'أتمتة بالذكاء الاصطناعي', icon: <Bot className="w-4 h-4" /> },
+];
+
+function isTabKey(value: string | null): value is TabKey {
+  return value === 'overview' || value === 'audio' || value === 'videos' || value === 'sync' || value === 'ai';
+}
+
+function AdminTabs() {
+  const searchParams = useSearchParams();
+  const urlTab = searchParams.get('tab');
+  const urlSurahId = searchParams.get('surahId');
+
+  const [tab, setTab] = useState<TabKey>(() => (isTabKey(urlTab) ? urlTab : 'overview'));
+
+  const goTo = (key: TabKey) => {
+    setTab(key);
+    const params = new URLSearchParams();
+    if (key !== 'overview') params.set('tab', key);
+    const { pathname, origin } = window.location;
+    window.history.replaceState(null, '', `${origin}${pathname}${params.size ? `?${params.toString()}` : ''}`);
   };
 
+  const surahIdForSync = urlSurahId && !isNaN(parseInt(urlSurahId, 10))
+    ? Math.min(114, Math.max(1, parseInt(urlSurahId, 10)))
+    : 21;
+
   return (
-    <div className="space-y-8 max-w-5xl mx-auto">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-3xl font-bold font-sans text-natural-900">حالة تغطية سور القرآن</h1>
-        <Link 
-          href="/admin/ai-processing" 
-          className="flex items-center gap-2 bg-natural-900 hover:bg-natural-800 text-white px-4 py-2 rounded-xl transition font-sans font-medium text-sm"
-        >
-          <Bot className="w-4 h-4" />
-          <span>أتمتة جلب الفيديوهات بالذكاء الاصطناعي</span>
-        </Link>
-      </div>
-      
-      <div className="bg-natural-100 border border-natural-300 rounded-2xl p-8 max-w-3xl">
-        <h3 className="text-[11px] uppercase tracking-widest font-sans font-bold text-natural-600 mb-2 text-right">قائمة المهام</h3>
-        <p className="text-natural-800 text-sm leading-relaxed mb-4 text-justify" dir="rtl">
-          تابع تقدم المشروع في تغطية جميع سور القرآن الكريم بمقاطع التفسير المرئي لمحمد شحرور وفاضل السامرائي وتزامنها مع التلاوة.
-        </p>
+    <div className="space-y-6 max-w-7xl mx-auto" dir="rtl">
+      {/* Tab Bar */}
+      <div className="sticky top-0 z-30 bg-natural-50/95 backdrop-blur-xl border border-natural-300 rounded-2xl p-2 shadow-sm flex items-center gap-1 overflow-x-auto">
+        {TABS.map((t) => (
+          <button
+            key={t.key}
+            onClick={() => goTo(t.key)}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-sans font-semibold transition whitespace-nowrap cursor-pointer ${
+              tab === t.key
+                ? 'bg-natural-900 text-white shadow-md'
+                : 'text-natural-600 hover:bg-natural-100 hover:text-natural-900'
+            }`}
+          >
+            {t.icon}
+            <span>{t.label}</span>
+          </button>
+        ))}
       </div>
 
-      <div className="bg-white border border-natural-300 rounded-2xl shadow-sm overflow-hidden">
-        <SurahCoverageTable rows={allSurahs.map((id) => ({ id, ...getProgressStatus(id) }))} />
-      </div>
+      <Suspense fallback={<div className="p-16 text-center font-sans text-natural-500">جاري التحميل...</div>}>
+        {tab === 'overview' && <OverviewTab onOpenAI={() => goTo('ai')} />}
+        {tab === 'audio' && <AudioTab />}
+        {tab === 'videos' && <VideosTab />}
+        {tab === 'sync' && <SyncTab key={surahIdForSync} initialSurahId={surahIdForSync} />}
+        {tab === 'ai' && <AITab />}
+      </Suspense>
     </div>
+  );
+}
+
+export default function AdminDashboardPage() {
+  return (
+    <AdminStoreProvider>
+      <Suspense fallback={<div className="p-16 text-center font-sans text-natural-500">جاري التحميل...</div>}>
+        <AdminTabs />
+      </Suspense>
+    </AdminStoreProvider>
   );
 }

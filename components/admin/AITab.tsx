@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Bot, Youtube, Plus, Loader2, CheckCircle2 } from 'lucide-react';
+import { Bot, Youtube, Loader2, CheckCircle2 } from 'lucide-react';
 
 interface ProcessedResult {
   url: string;
@@ -12,7 +12,7 @@ interface ProcessedResult {
   status: 'success' | 'error';
 }
 
-export default function AIProcessingPage() {
+export default function AITab() {
   const [urls, setUrls] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [results, setResults] = useState<ProcessedResult[]>([]);
@@ -67,12 +67,12 @@ export default function AIProcessingPage() {
           className="w-full text-left bg-natural-50 border border-natural-300 rounded-xl p-4 min-h-[150px] font-mono text-sm focus:outline-none focus:ring-2 focus:ring-natural-500 transition-shadow"
           dir="ltr"
         />
-        
+
         <div className="mt-4 flex justify-end">
           <button
             onClick={handleProcess}
             disabled={isProcessing || urls.trim().length === 0}
-            className="bg-natural-900 hover:bg-natural-800 disabled:opacity-50 text-white px-6 py-3 rounded-xl font-bold font-sans transition-all flex items-center gap-2"
+            className="bg-natural-900 hover:bg-natural-800 disabled:opacity-50 text-white px-6 py-3 rounded-xl font-bold font-sans transition-all flex items-center gap-2 cursor-pointer"
           >
             {isProcessing ? (
               <>
