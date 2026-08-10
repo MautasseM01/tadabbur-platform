@@ -233,3 +233,12 @@ export function firstHitAyahForSurah(result: ConcordanceResult, surahId: number)
   const hit = result.hits.find((h) => h.surahId === surahId);
   return hit ? hit.ayahNumber : null;
 }
+
+/** Ordered ayah hits (mushafi order), used by /api/search and the UI alike. */
+export function searchCorpusHits(
+  corpus: CorpusAyah[],
+  rawQuery: string,
+  limit = 20
+): ConcordanceResult['hits'] {
+  return searchConcordance(corpus, rawQuery).hits.slice(0, limit);
+}

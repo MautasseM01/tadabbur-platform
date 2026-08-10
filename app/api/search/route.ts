@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SURAH_NAMES } from '@/lib/surahs';
 import { getDb } from '@/lib/db';
+import { searchCorpusHits, CorpusAyah } from '@/lib/quranSearch';
 
-// In the API the Bismillah ships as ayah 1 of Al-Fatiha. The reader renders it
-// as a separate block and renumbers الحمد لله... as ayah 1..6, so search links
-// must use the displayed numbering (see app/surah/[id]/page.tsx).
-function displayAyahNumber(surahId: number, apiNumber: number): number {
-  return surahId === 1 ? apiNumber - 1 : apiNumber;
-}
+// The reader renders the Bismillah as a separate block and numbers
+// الحمد لله... as ayah 1..6, so search links use the displayed numbering —
+// our own corpus already stores displayed numbers for Al-Fatiha (a1 = الحمد).
+import corpus from '@/data/quran-corpus.json';
+const CORPUS = corpus as unknown as CorpusAyah[];
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -22,8 +22,6 @@ export async function GET(req: NextRequest) {
       videoMatches: []
     });
   }
-
-  const queryLower = query.toLowerCase();
 
   // 1. Search Surahs by Name or Number
   const surahMatches: any[] = [];
@@ -47,44 +45,20 @@ export async function GET(req: NextRequest) {
     }
   });
 
-  // 2. Search Ayahs via AlQuran Cloud API
-  let ayahMatches: any[] = [];
-  try {
-    const cleanSearchQuery = query.replace(/^(سورة|آية|سوره|اية)\s+/i, '');
-    const apiRes = await fetch(
-      `https://api.alquran.cloud/v1/search/${encodeURIComponent(cleanSearchQuery)}/all/ar.quran-simple`,
-      { next: { revalidate: 3600 } }
+  // 2. Search Ayahs against the local concordance corpus (deterministic,
+  //    rasm-aware; no dependency on alquran.cloud's unreliable search API).
+  const ayahMatches: any[] = searchCorpusHits(CORPUS, query.replace(/^(سورة|آية|سوره|اية)\s+/i, ''), 20)
+    .map((hit) => ({
+      id: `${hit.surahId}_${hit.ayahNumber}`,
+      surahId: hit.surahId,
+      surahName: hit.surahName,
+      ayahNumber: hit.ayahNumber,
+      text: hit.text,
+      url: `/surah/${hit.surahId}?highlight=${hit.ayahNumber}`
+    }))
+    .sort((a: any, b: any) =>
+      a.surahId !== b.surahId ? a.surahId - b.surahId : a.ayahNumber - b.ayahNumber
     );
-
-    if (apiRes.ok) {
-      const data = await apiRes.json();
-      if (data.code === 200 && data.data && Array.isArray(data.data.matches)) {
-        ayahMatches = data.data.matches
-          .slice(0, 20)
-          .map((match: any) => {
-            const surahId = match.surah.number;
-            const surahName = SURAH_NAMES[surahId - 1] || match.surah.name;
-            const ayahNumber = displayAyahNumber(surahId, match.numberInSurah);
-            return {
-              id: `${surahId}_${ayahNumber}`,
-              surahId,
-              surahName,
-              ayahNumber,
-              text: match.text,
-              url: `/surah/${surahId}?highlight=${ayahNumber}`
-            };
-          })
-          // Exclude the "0" (Bismillah block) rows that never render numbered
-          .filter((m: any) => m.ayahNumber >= 1)
-          // Mushafi order: by surah id, then by ayah number
-          .sort((a: any, b: any) =>
-            a.surahId !== b.surahId ? a.surahId - b.surahId : a.ayahNumber - b.ayahNumber
-          );
-      }
-    }
-  } catch (err) {
-    console.error('Quran search API error:', err);
-  }
 
   // 3. Search local videos from DB
   let videoMatches: any[] = [];
