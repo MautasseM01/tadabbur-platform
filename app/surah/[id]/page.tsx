@@ -6,6 +6,18 @@ import { deriveArabicRoot } from '@/lib/arabicLexicon';
 // Helper to format fetched ayahs
 const BISMILLAH = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ";
 
+// The quran API uses Arabic variants (alef-wasla "ٱ", special sukun markers,
+// dagger-alef, tatweel...). Strip them so بسم الله always matches regardless
+// of glyph differences.
+function normalizeArabic(s: string): string {
+  return s
+    .replace(/[\u064B-\u065F\u0670\u0640\u06D6-\u06ED\u200c\u200d\u200e\u200f\s]/g, '')
+    .replace(/\u0671/g, '\u0627');
+}
+
+// Bismillah is exactly 4 words in every written form.
+const BISMILLAH_NORMALIZED = normalizeArabic(BISMILLAH);
+
 function processSurahData(apiData: any, savedSyncs?: Ayah[]): Ayah[] {
   const surahId = apiData.number;
   
@@ -13,10 +25,26 @@ function processSurahData(apiData: any, savedSyncs?: Ayah[]): Ayah[] {
   let result: Ayah[] = [];
   
   apiData.ayahs.forEach((ayah: any, index: number) => {
-    // For Al-Fatiha the API ships the Bismillah as its own first ayah (ayah 1).
+    let text = ayah.text;
+    let bismillahText: string | null = null;
+
+    // Al-Fatiha: the API ships the Bismillah as its own first ayah (ayah 1).
     // It must ALWAYS stay outside the numbered text: render it as the special
     // Bismillah entry (id 0) and shift every real ayah down by one.
-    if (surahId === 1 && index === 0 && ayah.text.trim() === BISMILLAH) {
+    if (surahId === 1 && index === 0) {
+      bismillahText = text.trim() || BISMILLAH;
+    } else if (surahId !== 9 && index === 0) {
+      // All other surahs: the API prefixes بسم الله onto the first ayah.
+      // Detect it robustly by its 4 words, whatever the glyphs are, and
+      // separate it so it is NEVER part of ayah 1.
+      const words = text.trim().split(/\s+/);
+      if (words.length >= 4 && normalizeArabic(words.slice(0, 4).join('')) === BISMILLAH_NORMALIZED) {
+        bismillahText = words.slice(0, 4).join(' ');
+        text = words.slice(4).join(' ').trim();
+      }
+    }
+
+    if (bismillahText) {
       let bStartTime = currentTime;
       let bEndTime = currentTime + 5.0; // Typical Bismillah duration in tartil
 
@@ -26,7 +54,7 @@ function processSurahData(apiData: any, savedSyncs?: Ayah[]): Ayah[] {
         bEndTime = savedMatch.endTime;
       }
 
-      const bWordsStr = BISMILLAH.split(' ');
+      const bWordsStr = bismillahText.split(' ');
       const totalBChars = bWordsStr.reduce((acc, w) => acc + w.length, 0);
       let currentBWordTime = bStartTime;
       const bDuration = bEndTime - bStartTime;
@@ -51,67 +79,19 @@ function processSurahData(apiData: any, savedSyncs?: Ayah[]): Ayah[] {
         id: 0,
         surahId,
         ayahNumber: 0,
-        text: BISMILLAH,
+        text: bismillahText,
         words: bWords,
         startTime: bStartTime,
         endTime: bEndTime,
         isBismillah: true
       });
-      return;
+      if (surahId === 1 && index === 0) return;
     }
 
-    let text = ayah.text;
     const isFatiha = surahId === 1;
     // The real ayahs of Al-Fatiha are renumbered after extracting the Bismillah
     // (الحمد لله... becomes ayah 1, never 2).
     const ayahNumber = isFatiha ? ayah.numberInSurah - 1 : ayah.numberInSurah;
-
-    // Separate Bismillah out of the first Ayah's text for all surahs except
-    // Al-Fatiha (handled above) and At-Tawbah (where it doesn't exist)
-     if (!isFatiha && surahId !== 9 && index === 0 && text.startsWith(BISMILLAH)) {
-       text = text.substring(BISMILLAH.length).trim();
-       
-       let bStartTime = currentTime;
-       let bEndTime = currentTime + 5.0; // Typical Bismillah duration in tartil
-       
-       const savedMatch = savedSyncs?.find(s => s.isBismillah);
-       if (savedMatch) {
-         bStartTime = savedMatch.startTime;
-         bEndTime = savedMatch.endTime;
-       }
-       
-       const bWordsStr = BISMILLAH.split(' ');
-       const totalBChars = bWordsStr.reduce((acc, w) => acc + w.length, 0);
-       let currentBWordTime = bStartTime;
-       const bDuration = bEndTime - bStartTime;
-       
-       const bWords = bWordsStr.map((wordStr: string, wIndex: number) => {
-         const wDuration = (wordStr.length / totalBChars) * bDuration;
-         const start = currentBWordTime;
-         currentBWordTime += wDuration;
-         return {
-           id: `0-${wIndex}`,
-           text: wordStr,
-           root: deriveArabicRoot(wordStr),
-           occurrences: 0,
-           startTime: start,
-           endTime: currentBWordTime
-         };
-       });
-       
-       currentTime = bEndTime + 1.0; // small pause
-       
-       result.push({
-         id: 0,
-         surahId,
-         ayahNumber: 0,
-         text: BISMILLAH,
-         words: bWords,
-         startTime: bStartTime,
-         endTime: bEndTime,
-         isBismillah: true
-       });
-    }
 
     const textWords = text.split(' ');
     
