@@ -7,6 +7,7 @@ import { SURAH_NAMES } from '@/lib/surahs';
 import WordRootModal from './WordRootModal';
 import WordComparisonModal from './WordComparisonModal';
 import PinnedPlayer from './PinnedPlayer';
+import CollapsibleSection from '@/components/CollapsibleSection';
 import ModelSelector from '@/components/ai/ModelSelector';
 import { saveAyahNoteToFirestore, syncSurahProgressToFirestore, fetchUserNotesFromFirestore, syncDashboardProgressToFirestore, getSurahSyncsFirestore, getVideosFirestore, getSurahAudioIdFirestore } from '@/lib/firebaseSync';
 import { Play, Video, ArrowRight, ArrowLeft, Sun, Moon, BookOpen, FileText, StickyNote, X, Save, Trash2, CheckCircle2, SkipForward, Eye, EyeOff, Sparkles, ArrowLeftRight, Clock, Pause, RotateCcw, ChevronLeft, ChevronRight, Home, Music, ExternalLink } from 'lucide-react';
@@ -672,12 +673,23 @@ export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, 
         {/* Audio & Tafsir Links (shown as links only — no embedded video at the start) */}
         {(effectiveAudioId || allVideos.length > 0) && (
           <div className={`rounded-3xl border p-5 md:p-6 mb-8 shadow-sm transition-colors duration-300 ${st.mainCard}`} dir="rtl">
-            <h2 className="flex items-center gap-2 text-sm font-bold font-sans mb-4">
-              <span className="inline-flex items-center justify-center w-7 h-7 rounded-xl bg-amber-500/15 text-amber-700">
-                <Play className="w-3.5 h-3.5 fill-current" />
-              </span>
-              الاستماع والمشاهدة — سورة {surahName}
-            </h2>
+            <CollapsibleSection
+              title={
+                <span className="flex items-center gap-2 text-sm font-bold font-sans">
+                  <span className="inline-flex items-center justify-center w-7 h-7 rounded-xl bg-amber-500/15 text-amber-700">
+                    <Play className="w-3.5 h-3.5 fill-current" />
+                  </span>
+                  الاستماع والمشاهدة — سورة {surahName}
+                </span>
+              }
+              subtitle={
+                <span className="text-xs font-sans font-semibold">
+                  {effectiveAudioId ? 'تلاوة' : ''}
+                  {effectiveAudioId && allVideos.length > 0 ? ' + ' : ''}
+                  {allVideos.length > 0 ? `${allVideos.length} فيديو تفسير` : ''}
+                </span>
+              }
+            >
             <div className="flex flex-col gap-2.5">
               {effectiveAudioId && (
                 <div className="flex items-center gap-2 flex-wrap">
@@ -725,6 +737,7 @@ export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, 
                 </div>
               )}
             </div>
+            </CollapsibleSection>
           </div>
         )}
 

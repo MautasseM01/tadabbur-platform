@@ -2,6 +2,7 @@
 
 import { Bot } from 'lucide-react';
 import SurahCoverageTable from '@/components/admin/SurahCoverageTable';
+import CollapsibleSection from '@/components/CollapsibleSection';
 import { useAdminStore } from '@/lib/adminStore';
 
 export default function OverviewTab({ onOpenAI, onOpenSync }: { onOpenAI: () => void; onOpenSync: (surahId: number) => void }) {
@@ -28,8 +29,19 @@ export default function OverviewTab({ onOpenAI, onOpenSync }: { onOpenAI: () => 
         </p>
       </div>
 
-      <div className="bg-white border border-natural-300 rounded-2xl shadow-sm overflow-hidden">
-        <SurahCoverageTable rows={coverage} onOpenSync={onOpenSync} />
+      <div className="bg-white border border-natural-300 rounded-2xl shadow-sm overflow-hidden p-4">
+        <CollapsibleSection
+          title={<span className="text-sm font-bold font-sans">جدول تغطية السور (114)</span>}
+          badge={
+            <span className="text-[11px] font-sans font-bold bg-natural-100 text-natural-600 px-2.5 py-1 rounded-full">
+              {coverage.filter((c) => c.done).length} مكتملة
+            </span>
+          }
+        >
+          <div className="pt-4">
+            <SurahCoverageTable rows={coverage} onOpenSync={onOpenSync} />
+          </div>
+        </CollapsibleSection>
       </div>
     </div>
   );

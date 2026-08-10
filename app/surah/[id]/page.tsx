@@ -13,10 +13,62 @@ function processSurahData(apiData: any, savedSyncs?: Ayah[]): Ayah[] {
   let result: Ayah[] = [];
   
   apiData.ayahs.forEach((ayah: any, index: number) => {
+    // For Al-Fatiha the API ships the Bismillah as its own first ayah (ayah 1).
+    // It must ALWAYS stay outside the numbered text: render it as the special
+    // Bismillah entry (id 0) and shift every real ayah down by one.
+    if (surahId === 1 && index === 0 && ayah.text.trim() === BISMILLAH) {
+      let bStartTime = currentTime;
+      let bEndTime = currentTime + 5.0; // Typical Bismillah duration in tartil
+
+      const savedMatch = savedSyncs?.find(s => s.isBismillah);
+      if (savedMatch) {
+        bStartTime = savedMatch.startTime;
+        bEndTime = savedMatch.endTime;
+      }
+
+      const bWordsStr = BISMILLAH.split(' ');
+      const totalBChars = bWordsStr.reduce((acc, w) => acc + w.length, 0);
+      let currentBWordTime = bStartTime;
+      const bDuration = bEndTime - bStartTime;
+
+      const bWords = bWordsStr.map((wordStr: string, wIndex: number) => {
+        const wDuration = (wordStr.length / totalBChars) * bDuration;
+        const start = currentBWordTime;
+        currentBWordTime += wDuration;
+        return {
+          id: `0-${wIndex}`,
+          text: wordStr,
+          root: deriveArabicRoot(wordStr),
+          occurrences: 0,
+          startTime: start,
+          endTime: currentBWordTime
+        };
+      });
+
+      currentTime = bEndTime + 1.0; // small pause
+
+      result.push({
+        id: 0,
+        surahId,
+        ayahNumber: 0,
+        text: BISMILLAH,
+        words: bWords,
+        startTime: bStartTime,
+        endTime: bEndTime,
+        isBismillah: true
+      });
+      return;
+    }
+
     let text = ayah.text;
-    
-    // Separate Bismillah out of the first Ayah's text for all surahs except Al-Fatiha (where it's already a separate proper Ayah 1) and At-Tawbah (where it doesn't exist)
-     if (surahId !== 1 && surahId !== 9 && index === 0 && text.startsWith(BISMILLAH)) {
+    const isFatiha = surahId === 1;
+    // The real ayahs of Al-Fatiha are renumbered after extracting the Bismillah
+    // (الحمد لله... becomes ayah 1, never 2).
+    const ayahNumber = isFatiha ? ayah.numberInSurah - 1 : ayah.numberInSurah;
+
+    // Separate Bismillah out of the first Ayah's text for all surahs except
+    // Al-Fatiha (handled above) and At-Tawbah (where it doesn't exist)
+     if (!isFatiha && surahId !== 9 && index === 0 && text.startsWith(BISMILLAH)) {
        text = text.substring(BISMILLAH.length).trim();
        
        let bStartTime = currentTime;
@@ -68,7 +120,7 @@ function processSurahData(apiData: any, savedSyncs?: Ayah[]): Ayah[] {
     let endTime = currentTime + (text.length * 0.12); 
     
     // Override with DB synced timings if available
-    const savedMatch = savedSyncs?.find(s => s.ayahNumber === ayah.numberInSurah && !s.isBismillah);
+    const savedMatch = savedSyncs?.find(s => s.ayahNumber === ayahNumber && !s.isBismillah);
     if (savedMatch) {
        startTime = savedMatch.startTime;
        endTime = savedMatch.endTime;
@@ -98,7 +150,7 @@ function processSurahData(apiData: any, savedSyncs?: Ayah[]): Ayah[] {
         const start = currentWordTime;
         currentWordTime += wDuration;
         return {
-          id: `${ayah.numberInSurah}-${wIndex}`,
+          id: `${ayahNumber}-${wIndex}`,
           text: wordStr,
           root: deriveArabicRoot(wordStr),
           occurrences: Math.floor(Math.random() * 50) + 1,
@@ -111,9 +163,9 @@ function processSurahData(apiData: any, savedSyncs?: Ayah[]): Ayah[] {
     currentTime = endTime + 0.8; // pause between ayahs
     
     result.push({
-      id: ayah.numberInSurah,
+      id: ayahNumber,
       surahId: apiData.number,
-      ayahNumber: ayah.numberInSurah,
+      ayahNumber,
       text,
       words,
       startTime,

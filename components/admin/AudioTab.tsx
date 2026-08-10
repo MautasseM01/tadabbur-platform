@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { SURAH_NAMES, orderSurahIds, SurahSort } from '@/lib/surahs';
 import SurahSortSelect from '@/components/SurahSortSelect';
+import CollapsibleSection from '@/components/CollapsibleSection';
 import { useAdminStore } from '@/lib/adminStore';
 import { CheckCircle2, AlertTriangle, Loader2, Save, Search, Music, ExternalLink, RefreshCw, FileDown } from 'lucide-react';
 
@@ -213,7 +214,16 @@ export default function AudioTab() {
       </div>
 
       {/* The Table */}
-      <div className="bg-white border border-natural-300 rounded-2xl shadow-sm overflow-hidden">
+      <div className="bg-white border border-natural-300 rounded-2xl shadow-sm overflow-hidden p-4">
+        <CollapsibleSection
+          title={<span className="text-sm font-bold font-sans">جدول روابط التلاوة (114 سورة)</span>}
+          badge={
+            <span className="text-[11px] font-sans font-bold bg-natural-100 text-natural-600 px-2.5 py-1 rounded-full">
+              {Object.values(entries).filter(Boolean).length} مكتملة
+            </span>
+          }
+        >
+          <div className="pt-4">
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-natural-50 border-b border-natural-200 text-natural-600 text-xs font-bold">
@@ -310,6 +320,8 @@ export default function AudioTab() {
             )}
           </tbody>
         </table>
+          </div>
+        </CollapsibleSection>
       </div>
 
       <div className="text-xs text-natural-500">
