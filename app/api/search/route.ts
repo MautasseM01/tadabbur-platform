@@ -63,14 +63,16 @@ export async function GET(req: NextRequest) {
 
   // TEMP-DEBUG: dump matching internals for /api/search?q=…&debug=1
   if (searchParams.get('debug') === '1') {
-    const { normalizeArabicForSearch } = await import('@/lib/quranSearch');
+    const mod = await import('@/lib/quranSearch');
     const probe = CORPUS.find((x) => x.s === 1 && x.a === 3);
     const tok = probe ? probe.t.split(' ')[0] : '';
+    const normQuery = mod.normalizeArabicForSearch(query);
+    const formsOfToken = mod.__debugTokenForms(tok);
     return NextResponse.json({
       searchDebug: {
-        probeToken: tok,
-        probeTokenCodes: [...tok].map((ch: string) => ch.codePointAt(0)?.toString(16)),
-        normalizedProbe: normalizeArabicForSearch(tok),
+        rawQuery: query,
+        normQuery,
+        probeTokenForms: formsOfToken,
       },
     });
   }

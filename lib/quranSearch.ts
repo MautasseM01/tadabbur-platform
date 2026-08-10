@@ -242,3 +242,15 @@ export function searchCorpusHits(
 ): ConcordanceResult['hits'] {
   return searchConcordance(corpus, rawQuery).hits.slice(0, limit);
 }
+
+/** TEMP-DEBUG: expose the plain-form variants for a raw token. */
+export function __debugTokenForms(rawToken: string): string[] {
+  const forms = new Set<string>();
+  const dropped = plainDropped(rawToken);
+  forms.add(dropped);
+  if (rawToken.includes(DAGGER_ALEF)) {
+    const extended = plainWithDaggerAsAlef(rawToken);
+    if (extended && extended !== dropped) forms.add(extended);
+  }
+  return [...forms];
+}
