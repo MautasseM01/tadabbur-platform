@@ -12,7 +12,11 @@ const BISMILLAH = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرّ
 function normalizeArabic(s: string): string {
   return s
     .replace(/[\u064B-\u065F\u0670\u0640\u06D6-\u06ED\u200c\u200d\u200e\u200f\s]/g, '')
-    .replace(/\u0671/g, '\u0627');
+    .replace(/\u0671/g, '\u0627') // alef-wasla -> alef
+    .replace(/\u06CC/g, '\u064A') // farsi yeh -> arabic yeh
+    .replace(/\u0649/g, '\u064A') // alef maqsura -> yeh
+    .replace(/\u06A9/g, '\u0643') // farsi kaf -> arabic kaf
+    .replace(/\u0623|\u0625/g, '\u0627'); // hamza-alef forms -> alef
 }
 
 // Bismillah is exactly 4 words in every written form.
