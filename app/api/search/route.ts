@@ -47,7 +47,8 @@ export async function GET(req: NextRequest) {
 
   // 2. Search Ayahs against the local concordance corpus (deterministic,
   //    rasm-aware; no dependency on alquran.cloud's unreliable search API).
-  const ayahMatches: any[] = searchCorpusHits(CORPUS, query.replace(/^(سورة|آية|سوره|اية)\s+/i, ''), 20)
+  const cleanQuery = query.replace(/^(سورة|آية|سوره|اية)\s+/i, '');
+  const ayahMatches: any[] = searchCorpusHits(CORPUS, cleanQuery, 20)
     .map((hit) => ({
       id: `${hit.surahId}_${hit.ayahNumber}`,
       surahId: hit.surahId,
@@ -59,6 +60,20 @@ export async function GET(req: NextRequest) {
     .sort((a: any, b: any) =>
       a.surahId !== b.surahId ? a.surahId - b.surahId : a.ayahNumber - b.ayahNumber
     );
+
+  // TEMP-DEBUG: dump matching internals for /api/search?q=…&debug=1
+  if (searchParams.get('debug') === '1') {
+    const { normalizeArabicForSearch } = await import('@/lib/quranSearch');
+    const probe = CORPUS.find((x) => x.s === 1 && x.a === 3);
+    const tok = probe ? probe.t.split(' ')[0] : '';
+    return NextResponse.json({
+      searchDebug: {
+        probeToken: tok,
+        probeTokenCodes: [...tok].map((ch: string) => ch.codePointAt(0)?.toString(16)),
+        normalizedProbe: normalizeArabicForSearch(tok),
+      },
+    });
+  }
 
   // 3. Search local videos from DB
   let videoMatches: any[] = [];
