@@ -61,22 +61,6 @@ export async function GET(req: NextRequest) {
       a.surahId !== b.surahId ? a.surahId - b.surahId : a.ayahNumber - b.ayahNumber
     );
 
-  // TEMP-DEBUG: dump matching internals for /api/search?q=…&debug=1
-  if (searchParams.get('debug') === '1') {
-    const mod = await import('@/lib/quranSearch');
-    const probe = CORPUS.find((x) => x.s === 1 && x.a === 3);
-    const tok = probe ? probe.t.split(' ')[0] : '';
-    const normQuery = mod.normalizeArabicForSearch(query);
-    const formsOfToken = mod.__debugTokenForms(tok);
-    return NextResponse.json({
-      searchDebug: {
-        rawQuery: query,
-        normQuery,
-        probeTokenForms: formsOfToken,
-      },
-    });
-  }
-
   // 3. Search local videos from DB
   let videoMatches: any[] = [];
   try {

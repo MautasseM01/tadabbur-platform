@@ -144,7 +144,16 @@ function tokenFormsMap(corpus: CorpusAyah[]): Map<string, string[]> {
         const extended = plainWithDaggerAsAlef(rawToken);
         if (extended && extended !== dropped) forms.add(extended);
       }
-      map.set(normalizeArabicForSearch(rawToken), [...forms]);
+      // UNION into the map: the same normalized token («ملك») may come from
+      // both a daggered «مَـٰلِكِ» (→ extended «مالك») and a plain «مَلِكِ»
+      // (→ no extended form): a plain overwrite would drop the extended form.
+      const key = normalizeArabicForSearch(rawToken);
+      const existing = map.get(key);
+      if (existing) {
+        for (const f of forms) if (!existing.includes(f)) existing.push(f);
+      } else {
+        map.set(key, [...forms]);
+      }
     }
   }
   tokenFormsCache = map;
@@ -241,16 +250,4 @@ export function searchCorpusHits(
   limit = 20
 ): ConcordanceResult['hits'] {
   return searchConcordance(corpus, rawQuery).hits.slice(0, limit);
-}
-
-/** TEMP-DEBUG: expose the plain-form variants for a raw token. */
-export function __debugTokenForms(rawToken: string): string[] {
-  const forms = new Set<string>();
-  const dropped = plainDropped(rawToken);
-  forms.add(dropped);
-  if (rawToken.includes(DAGGER_ALEF)) {
-    const extended = plainWithDaggerAsAlef(rawToken);
-    if (extended && extended !== dropped) forms.add(extended);
-  }
-  return [...forms];
 }
