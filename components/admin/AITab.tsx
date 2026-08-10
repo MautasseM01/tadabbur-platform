@@ -32,13 +32,16 @@ export default function AITab() {
         body: JSON.stringify({ urls: urlArray })
       });
 
-      if (!response.ok) throw new Error("فشل في معالجة الفيديوهات");
+      if (!response.ok) {
+        const errData = await response.json().catch(() => null);
+        throw new Error(errData?.error || 'فشل في معالجة الفيديوهات');
+      }
 
       const data = await response.json();
       setResults(data.results);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      alert('حدث خطأ أثناء المعالجة.');
+      alert(error?.message || 'حدث خطأ أثناء المعالجة.');
     } finally {
       setIsProcessing(false);
     }
@@ -52,7 +55,9 @@ export default function AITab() {
         </div>
         <div>
           <h1 className="text-2xl font-bold font-sans text-natural-900">أتمتة الفيديوهات بالذكاء الاصطناعي</h1>
-          <p className="text-sm text-natural-600 font-sans">قم بإدراج روابط يوتيوب وسنقوم باستخراج النصوص (Transcript) ومطابقتها مع السور والآيات.</p>
+          <p className="text-sm text-natural-600 font-sans">
+            الوضع الحالي: الميزة معطّلة مؤقتاً بانتظار منظومة Transcription حقيقية — لن تُنشئ بيانات تخمينية في قاعدة الفيديوهات.
+          </p>
         </div>
       </div>
 

@@ -1,12 +1,25 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Flame, HardDrive, ShieldCheck, User as UserIcon } from 'lucide-react';
 import TadabburProgressWidget from '@/components/TadabburProgressWidget';
 import DataBackup from '@/components/DataBackup';
 
 export default function ProfileDashboardPage() {
+  const [streakDays, setStreakDays] = useState<number>(0);
+
+  useEffect(() => {
+    try {
+      const progressKey = 'tadabbur_progress_data_v1';
+      const saved = JSON.parse(localStorage.getItem(progressKey) || '{}');
+      const streak = typeof saved.studyStreakDays === 'number' ? saved.studyStreakDays : 0;
+      setStreakDays(streak);
+    } catch {
+      // ignore
+    }
+  }, []);
+
   return (
     <main className="min-h-screen bg-natural-50 pb-24 font-sans" dir="rtl">
       {/* Top Banner */}
@@ -18,7 +31,7 @@ export default function ProfileDashboardPage() {
             <div className="flex items-center gap-3">
               <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
                 <Flame className="w-3.5 h-3.5 text-amber-600" />
-                <span>شعلة التدبر: 7 أيام متتالية</span>
+                <span>شعلة التدبر: {streakDays} يوم متتالية</span>
               </span>
               <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
                 <HardDrive className="w-3.5 h-3.5 text-emerald-600" />

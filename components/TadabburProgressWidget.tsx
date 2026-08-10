@@ -112,28 +112,23 @@ const DEFAULT_ROOTS_DATA: LinguisticRootItem[] = [
   }
 ];
 
+// Honest defaults: everything starts at zero until real activity is recorded.
 const DEFAULT_PROGRESS_DATA: TadabburProgressData = {
-  totalAyahsAnalyzed: 142,
-  totalWordsAnalyzed: 428,
-  averageDailyMinutes: 34,
-  studyStreakDays: 7,
-  mostStudiedSurahs: [
-    { name: 'سورة الأنبياء', ayahsCount: 48, readAyahs: 84, totalAyahs: 112, sessionsCount: 14, color: '#d97706' },
-    { name: 'سورة الفاتحة', ayahsCount: 7, readAyahs: 7, totalAyahs: 7, sessionsCount: 10, color: '#059669' },
-    { name: 'سورة البقرة', ayahsCount: 24, readAyahs: 143, totalAyahs: 286, sessionsCount: 8, color: '#0284c7' },
-    { name: 'سورة الكهف', ayahsCount: 22, readAyahs: 66, totalAyahs: 110, sessionsCount: 7, color: '#7c3aed' },
-    { name: 'سورة يس', ayahsCount: 20, readAyahs: 50, totalAyahs: 83, sessionsCount: 6, color: '#ea580c' },
-  ],
+  totalAyahsAnalyzed: 0,
+  totalWordsAnalyzed: 0,
+  averageDailyMinutes: 0,
+  studyStreakDays: 0,
+  mostStudiedSurahs: [],
   dailyInteractionTime: [
-    { day: 'السبت', minutes: 25, ayahs: 18 },
-    { day: 'الأحد', minutes: 40, ayahs: 24 },
-    { day: 'الإثنين', minutes: 30, ayahs: 20 },
-    { day: 'الثلاثاء', minutes: 45, ayahs: 28 },
-    { day: 'الأربعاء', minutes: 20, ayahs: 12 },
-    { day: 'الخميس', minutes: 38, ayahs: 22 },
-    { day: 'الجمعة', minutes: 52, ayahs: 32 },
+    { day: 'السبت', minutes: 0, ayahs: 0 },
+    { day: 'الأحد', minutes: 0, ayahs: 0 },
+    { day: 'الإثنين', minutes: 0, ayahs: 0 },
+    { day: 'الثلاثاء', minutes: 0, ayahs: 0 },
+    { day: 'الأربعاء', minutes: 0, ayahs: 0 },
+    { day: 'الخميس', minutes: 0, ayahs: 0 },
+    { day: 'الجمعة', minutes: 0, ayahs: 0 },
   ],
-  frequentLinguisticRoots: DEFAULT_ROOTS_DATA
+  frequentLinguisticRoots: []
 };
 
 const STORAGE_KEY = 'tadabbur_progress_data_v1';
@@ -209,9 +204,13 @@ export default function TadabburProgressWidget() {
     const addedMinutes = 15;
     const addedWords = 9;
 
+    // Log to TODAY's column (same day mapping as the surah session timer)
+    const todayDay = new Date().getDay();
+    const dayMap = [1, 2, 3, 4, 5, 6, 0];
+    const todayIndex = dayMap[todayDay];
+
     const updatedDaily = data.dailyInteractionTime.map((item, index) => {
-      // Add to Friday (last day in array) for current session
-      if (index === data.dailyInteractionTime.length - 1) {
+      if (index === todayIndex) {
         return {
           ...item,
           minutes: item.minutes + addedMinutes,
@@ -262,16 +261,9 @@ export default function TadabburProgressWidget() {
     saveProgressData(DEFAULT_PROGRESS_DATA);
   };
 
-  // Adjust display multiplier based on timeframe tab
-  const getMultiplier = () => {
-    if (timeframe === 'month') return 4;
-    if (timeframe === 'all') return 18;
-    return 1;
-  };
-
-  const multiplier = getMultiplier();
-  const displayTotalAyahs = data.totalAyahsAnalyzed * (timeframe === 'week' ? 1 : timeframe === 'month' ? 3.8 : 12.5);
-  const displayTotalWords = data.totalWordsAnalyzed * (timeframe === 'week' ? 1 : timeframe === 'month' ? 3.8 : 12.5);
+  // No invented multipliers: the same honest numbers are shown in every tab
+  const displayTotalAyahs = data.totalAyahsAnalyzed;
+  const displayTotalWords = data.totalWordsAnalyzed;
 
   const formattedSurahData = data.mostStudiedSurahs.map((item) => {
     const total = item.totalAyahs || (item.name.includes('الفاتحة') ? 7 : item.name.includes('الأنبياء') ? 112 : item.name.includes('البقرة') ? 286 : item.name.includes('الكهف') ? 110 : 83);
@@ -288,13 +280,13 @@ export default function TadabburProgressWidget() {
       readCount,
       analyzedPct,
       readPct,
-      displayAyahs: Math.round(item.ayahsCount * multiplier),
+      displayAyahs: item.ayahsCount,
     };
   });
 
   const formattedDailyData = data.dailyInteractionTime.map((item) => ({
     ...item,
-    displayMinutes: timeframe === 'week' ? item.minutes : Math.round(item.minutes * 1.15),
+    displayMinutes: item.minutes,
   }));
 
   const rootsList = data.frequentLinguisticRoots || DEFAULT_ROOTS_DATA;
@@ -391,6 +383,25 @@ export default function TadabburProgressWidget() {
           </div>
         </div>
       </div>
+
+      {/* Empty state: no real activity recorded yet */}
+      {data.totalAyahsAnalyzed === 0 && data.totalWordsAnalyzed === 0 && (
+        <div className="rounded-2xl border-2 border-dashed border-natural-300 bg-natural-50/60 p-10 text-center mb-8">
+          <BookOpen className="w-10 h-10 text-natural-300 mx-auto mb-3" />
+          <h3 className="text-lg font-bold font-sans text-natural-800 mb-1">لا توجد بيانات بعد</h3>
+          <p className="text-sm font-sans text-natural-500 max-w-md mx-auto leading-relaxed">
+            لم تُسجَّل أي جلسة تدبر بعد. ابدأ بفتح أي سورة واقرأ وتدبر — سيتم احتساب
+            وقت جلساتك وملاحظاتك وجذورك تلقائياً في هذه اللوحة.
+          </p>
+          <a
+            href="/#fihris"
+            className="inline-flex items-center gap-2 mt-5 px-5 py-2.5 rounded-xl bg-natural-900 hover:bg-natural-800 text-white text-sm font-sans font-semibold transition"
+          >
+            <BookOpen className="w-4 h-4" />
+            تصفح فهرس السور
+          </a>
+        </div>
+      )}
 
       {/* Top Summary Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

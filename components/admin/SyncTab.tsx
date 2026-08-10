@@ -4,7 +4,7 @@ import React, { useState, useEffect, useTransition, useCallback } from 'react';
 import { Ayah } from '@/lib/mock-data';
 import { Save, CheckCircle, Clock, Wand2, Youtube } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { fetchSurahSyncs, saveSurahSyncs, fetchSurahAudioId, saveSurahAudioId, runAIAutoSync } from '@/app/admin/sync/actions';
+import { fetchSurahSyncs, saveSurahSyncs, fetchSurahAudioId, saveSurahAudioId, runAutoSyncEstimate } from '@/app/admin/sync/actions';
 import { useAdminStore } from '@/lib/adminStore';
 import { SURAH_NAMES } from '@/lib/surahs';
 import PinnedPlayer from '@/components/surah/PinnedPlayer';
@@ -130,7 +130,7 @@ export default function SyncTab({ initialSurahId = 21 }: { initialSurahId?: numb
   const handleAISync = async () => {
     setIsSyncing(true);
     try {
-      const newAyahs = await runAIAutoSync(surahId, ayahs);
+      const newAyahs = await runAutoSyncEstimate(surahId, ayahs);
       setAyahs(newAyahs);
     } finally {
       setIsSyncing(false);
@@ -171,7 +171,7 @@ export default function SyncTab({ initialSurahId = 21 }: { initialSurahId?: numb
               className="px-4 py-2 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded-xl font-medium transition shadow-sm text-sm flex items-center gap-2 border border-amber-300 disabled:opacity-50 cursor-pointer"
             >
               <Wand2 className="w-4 h-4" />
-              <span>{isSyncing ? 'جاري المزامنة...' : 'مزامنة ذكية (AI)'}</span>
+              <span>{isSyncing ? 'جاري التقدير...' : 'تزامن تلقائي (تقدير التوقيتات)'}</span>
             </button>
 
             <div className="inline-flex items-center gap-2 bg-natural-100 text-natural-800 px-3 py-2 rounded-xl font-mono text-sm border border-natural-300">

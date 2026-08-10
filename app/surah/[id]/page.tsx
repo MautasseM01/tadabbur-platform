@@ -11,7 +11,7 @@ const BISMILLAH = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرّ
 // of glyph differences.
 function normalizeArabic(s: string): string {
   return s
-    .replace(/[\u064B-\u065F\u0670\u0640\u06D6-\u06ED\u200c\u200d\u200e\u200f\s]/g, '')
+    .replace(/[\u064B-\u065F\u0670\u0640\u06D6-\u06ED\u08E3-\u08FF\u200a\u200b\u200c\u200d\u200e\u200f\u2060\s]/g, '')
     .replace(/\u0671/g, '\u0627') // alef-wasla -> alef
     .replace(/\u06CC/g, '\u064A') // farsi yeh -> arabic yeh
     .replace(/\u0649/g, '\u064A') // alef maqsura -> yeh
@@ -122,7 +122,7 @@ function processSurahData(apiData: any, savedSyncs?: Ayah[]): Ayah[] {
       // Still need to make sure root property works or map it if missing in saved
       words = words.map(w => ({
          ...w,
-         occurrences: w.occurrences || Math.floor(Math.random() * 50) + 1
+         occurrences: w.occurrences || 0
       }));
     } else {
       const totalChars = textWords.reduce((acc: number, w: string) => acc + w.length, 0);
@@ -137,7 +137,7 @@ function processSurahData(apiData: any, savedSyncs?: Ayah[]): Ayah[] {
           id: `${ayahNumber}-${wIndex}`,
           text: wordStr,
           root: deriveArabicRoot(wordStr),
-          occurrences: Math.floor(Math.random() * 50) + 1,
+          occurrences: 0,
           startTime: start,
           endTime: currentWordTime
         };
@@ -156,6 +156,17 @@ function processSurahData(apiData: any, savedSyncs?: Ayah[]): Ayah[] {
       endTime
     });
   });
+
+  // REAL root frequency: how many times every word root appears across this
+  // surah (honest numbers — no random placeholders in the word analysis UI).
+  const rootCount = new Map<string, number>();
+  result.forEach((a) => a.words.forEach((w) => {
+    const r = w.root || '';
+    if (r) rootCount.set(r, (rootCount.get(r) || 0) + 1);
+  }));
+  result.forEach((a) => a.words.forEach((w) => {
+    w.occurrences = w.root ? (rootCount.get(w.root) || 0) : 0;
+  }));
   
   return result;
 }

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import AuthHeader from '@/components/AuthHeader';
-import { BookOpenText, LayoutDashboard, UserRound, ScrollText } from 'lucide-react';
+import { BookOpenText, LayoutDashboard, UserRound, ScrollText, SearchX } from 'lucide-react';
 
 const NAV_ITEMS = [
   {
@@ -11,6 +11,12 @@ const NAV_ITEMS = [
     label: 'القرآن الكريم',
     icon: ScrollText,
     match: (path: string) => path === '/' || path.startsWith('/surah'),
+  },
+  {
+    href: '/quran-search',
+    label: 'المعجم والتكرار',
+    icon: SearchX,
+    match: (path: string) => path.startsWith('/quran-search'),
   },
   {
     href: '/profile',

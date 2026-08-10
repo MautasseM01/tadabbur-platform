@@ -265,6 +265,7 @@ export default function AudioTab() {
                     />
                     {value && (
                       <img
+                        loading="lazy"
                         src={`https://img.youtube.com/vi/${value}/mqdefault.jpg`}
                         alt=""
                         className="mt-2 h-14 rounded-lg border border-natural-200 object-cover"

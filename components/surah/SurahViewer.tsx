@@ -474,9 +474,11 @@ export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, 
           videoId={activeVideo ? activeVideo.youtubeId : (effectiveAudioId || '')}
           startTime={activeVideo ? activeVideo.startTime : undefined}
           seekTime={requestedSeekTime}
+          onSeeked={() => setRequestedSeekTime(null)}
           title={activeVideo ? activeVideo.title : `تلاوة سورة ${surahName}`}
           subtitle={activeVideo ? activeVideo.scholar : "استمع وتدبر"}
           autoPlay={!!activeVideo}
+          theme={theme}
           autoPlayNext={autoPlayNext}
           onToggleAutoPlayNext={handleToggleAutoPlayNext}
           onTimeUpdate={activeVideo ? undefined : setCurrentTime}
@@ -870,7 +872,7 @@ export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, 
                       className={`flex flex-col border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition text-right group ${st.videoCard}`}
                     >
                       <div className="relative w-full aspect-video bg-natural-900 flex items-center justify-center text-white shrink-0">
-                        <img src={`https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`} className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-40 transition" alt="" />
+                        <img loading="lazy" src={`https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`} className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-40 transition" alt="" />
                         <Video className="w-8 h-8 relative z-10" />
                       </div>
                       <div className="p-3 w-full">
@@ -903,7 +905,7 @@ export default function SurahViewer({ ayahs, videos, youtubeAudioId, surahName, 
                         className={`flex text-right w-64 border gap-2 rounded-xl overflow-hidden shadow-sm transition shrink-0 ${st.videoCard}`}
                       >
                         <div className="w-20 aspect-square bg-natural-900 shrink-0 relative flex items-center justify-center">
-                          <img src={`https://img.youtube.com/vi/${video.youtubeId}/default.jpg`} className="absolute inset-0 w-full h-full object-cover opacity-60" alt="" />
+                          <img loading="lazy" src={`https://img.youtube.com/vi/${video.youtubeId}/default.jpg`} className="absolute inset-0 w-full h-full object-cover opacity-60" alt="" />
                           <Play className="w-6 h-6 text-white relative z-10 opacity-80" />
                         </div>
                         <div className="p-2 flex flex-col justify-center">

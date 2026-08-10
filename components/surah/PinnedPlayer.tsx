@@ -19,10 +19,18 @@ interface PinnedPlayerProps {
   subtitle?: string;
   onTimeUpdate?: (time: number) => void;
   onClose?: () => void; // If provided, shows a close button (for Tafsir)
+  onSeeked?: () => void; // Called after an external seek is consumed
   autoPlay?: boolean;
   autoPlayNext?: boolean;
   onToggleAutoPlayNext?: () => void;
+  theme?: 'light' | 'sepia' | 'dark';
 }
+
+const PLAYER_THEMES = {
+  light: 'bg-white/95 border-natural-200 text-natural-900',
+  sepia: 'bg-[#faf4e8]/95 border-[#dfd0b5] text-[#3e2e1e]',
+  dark: 'bg-[#1a1a20]/95 border-[#2e2e38] text-zinc-100',
+};
 
 export default function PinnedPlayer({ 
   videoId, 
@@ -32,9 +40,11 @@ export default function PinnedPlayer({
   subtitle,
   onTimeUpdate,
   onClose,
+  onSeeked,
   autoPlay = false,
   autoPlayNext = true,
-  onToggleAutoPlayNext
+  onToggleAutoPlayNext,
+  theme = 'light'
 }: PinnedPlayerProps) {
   const playerRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -43,14 +53,17 @@ export default function PinnedPlayer({
   const [isMuted, setIsMuted] = useState(false);
   // Collapsed by default (compact audio bar); expanded only for tafsir videos.
   const [isExpanded, setIsExpanded] = useState<boolean>(() => !!onClose);
+  const latestOptions = useRef({ startTime, autoPlay });
+  latestOptions.current = { startTime, autoPlay };
 
-  // Handle external seek requests
+  // Handle external seek requests (single-use: consumed once then reset)
   useEffect(() => {
     if (isReady && playerRef.current && seekTime !== undefined && seekTime !== null) {
       playerRef.current.seekTo(seekTime, true);
       playerRef.current.playVideo();
+      onSeeked?.();
     }
-  }, [seekTime, isReady]);
+  }, [seekTime, isReady, onSeeked]);
 
   useEffect(() => {
     // Destroy previous player when videoId changes
@@ -74,6 +87,7 @@ export default function PinnedPlayer({
     }
 
     function initPlayer() {
+      const { startTime: st, autoPlay: ap } = latestOptions.current;
       // The div to replace with iframe
       const playerDiv = document.createElement('div');
       playerDiv.id = 'yt-player-target';
@@ -84,18 +98,18 @@ export default function PinnedPlayer({
         width: '100%',
         videoId: videoId,
         playerVars: {
-          autoplay: autoPlay ? 1 : 0,
+          autoplay: ap ? 1 : 0,
           controls: 1,
           rel: 0,
           fs: 1,
-          start: Math.floor(startTime),
+          start: Math.floor(st),
           modestbranding: 1,
           playsinline: 1,
         },
         events: {
           onReady: (event: any) => {
             setIsReady(true);
-            if (autoPlay) {
+            if (ap) {
               event.target.playVideo();
             }
           },
@@ -115,7 +129,7 @@ export default function PinnedPlayer({
          containerRef.current.innerHTML = '';
       }
     };
-  }, [videoId, autoPlay, startTime]); // Re-init when dependencies change
+  }, [videoId]); // Re-init only when the video actually changes
 
   // Polling for time update
   useEffect(() => {
@@ -151,7 +165,7 @@ export default function PinnedPlayer({
   };
 
   return (
-    <div className="sticky top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-2xl border-b border-natural-200 shadow-sm transition-all duration-500">
+    <div className={`sticky top-0 left-0 right-0 z-50 backdrop-blur-2xl border-b shadow-sm transition-all duration-500 ${PLAYER_THEMES[theme]}`}>
       <div className="max-w-5xl mx-auto px-4 w-full">
         
         {/* Expanded Video Container */}
@@ -182,8 +196,8 @@ export default function PinnedPlayer({
 
            {/* Title Info */}
            <div className="flex-1 text-center px-4 flex flex-col justify-center overflow-hidden">
-             <h3 className="font-sans font-bold text-natural-900 truncate text-sm">{title}</h3>
-             {subtitle && <p className="font-sans text-[11px] text-natural-500 truncate mt-0.5">{subtitle}</p>}
+             <h3 className={`font-sans font-bold truncate text-sm ${theme === 'dark' ? 'text-zinc-100' : 'text-natural-900'}`}>{title}</h3>
+             {subtitle && <p className={`font-sans text-[11px] truncate mt-0.5 ${theme === 'dark' ? 'text-zinc-400' : 'text-natural-500'}`}>{subtitle}</p>}
            </div>
 
            {/* Play/Pause & Auto-Play Next */}

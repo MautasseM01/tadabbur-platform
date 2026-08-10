@@ -197,6 +197,7 @@ export default function VideosTab() {
               <div className="w-20 h-14 bg-natural-900 rounded-xl overflow-hidden shrink-0 relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
+                  loading="lazy"
                   src={`https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`}
                   alt={video.title}
                   className="w-full h-full object-cover"

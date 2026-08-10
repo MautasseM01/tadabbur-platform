@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { SURAH_NAMES } from '@/lib/surahs';
 import { getDb } from '@/lib/db';
 
+// In the API the Bismillah ships as ayah 1 of Al-Fatiha. The reader renders it
+// as a separate block and renumbers الحمد لله... as ayah 1..6, so search links
+// must use the displayed numbering (see app/surah/[id]/page.tsx).
+function displayAyahNumber(surahId: number, apiNumber: number): number {
+  return surahId === 1 ? apiNumber - 1 : apiNumber;
+}
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const rawQuery = searchParams.get('q') || '';
@@ -57,7 +64,7 @@ export async function GET(req: NextRequest) {
           .map((match: any) => {
             const surahId = match.surah.number;
             const surahName = SURAH_NAMES[surahId - 1] || match.surah.name;
-            const ayahNumber = match.numberInSurah;
+            const ayahNumber = displayAyahNumber(surahId, match.numberInSurah);
             return {
               id: `${surahId}_${ayahNumber}`,
               surahId,
@@ -67,6 +74,8 @@ export async function GET(req: NextRequest) {
               url: `/surah/${surahId}?highlight=${ayahNumber}`
             };
           })
+          // Exclude the "0" (Bismillah block) rows that never render numbered
+          .filter((m: any) => m.ayahNumber >= 1)
           // Mushafi order: by surah id, then by ayah number
           .sort((a: any, b: any) =>
             a.surahId !== b.surahId ? a.surahId - b.surahId : a.ayahNumber - b.ayahNumber
